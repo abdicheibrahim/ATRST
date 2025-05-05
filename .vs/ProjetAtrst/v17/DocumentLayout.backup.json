@@ -1,0 +1,241 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\abdic\\OneDrive\\Desktop\\Projet Atrst\\ProjetAtrst\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{C6701EF3-00A6-4AAE-BA64-AD216D863698}|ProjetAtrst\\ProjetAtrst.csproj|c:\\users\\abdic\\onedrive\\desktop\\projet atrst\\projetatrst\\projetatrst\\date\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C6701EF3-00A6-4AAE-BA64-AD216D863698}|ProjetAtrst\\ProjetAtrst.csproj|solutionrelative:projetatrst\\date\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C6701EF3-00A6-4AAE-BA64-AD216D863698}|ProjetAtrst\\ProjetAtrst.csproj|c:\\users\\abdic\\onedrive\\desktop\\projet atrst\\projetatrst\\projetatrst\\migrations\\20250504214200_initialmysql.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C6701EF3-00A6-4AAE-BA64-AD216D863698}|ProjetAtrst\\ProjetAtrst.csproj|solutionrelative:projetatrst\\migrations\\20250504214200_initialmysql.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C6701EF3-00A6-4AAE-BA64-AD216D863698}|ProjetAtrst\\ProjetAtrst.csproj|c:\\users\\abdic\\onedrive\\desktop\\projet atrst\\projetatrst\\projetatrst\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C6701EF3-00A6-4AAE-BA64-AD216D863698}|ProjetAtrst\\ProjetAtrst.csproj|solutionrelative:projetatrst\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C6701EF3-00A6-4AAE-BA64-AD216D863698}|ProjetAtrst\\ProjetAtrst.csproj|c:\\users\\abdic\\onedrive\\desktop\\projet atrst\\projetatrst\\projetatrst\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{C6701EF3-00A6-4AAE-BA64-AD216D863698}|ProjetAtrst\\ProjetAtrst.csproj|solutionrelative:projetatrst\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C6701EF3-00A6-4AAE-BA64-AD216D863698}|ProjetAtrst\\ProjetAtrst.csproj|c:\\users\\abdic\\onedrive\\desktop\\projet atrst\\projetatrst\\projetatrst\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{C6701EF3-00A6-4AAE-BA64-AD216D863698}|ProjetAtrst\\ProjetAtrst.csproj|solutionrelative:projetatrst\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C6701EF3-00A6-4AAE-BA64-AD216D863698}|ProjetAtrst\\ProjetAtrst.csproj|c:\\users\\abdic\\onedrive\\desktop\\projet atrst\\projetatrst\\projetatrst\\views\\user\\employments.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{C6701EF3-00A6-4AAE-BA64-AD216D863698}|ProjetAtrst\\ProjetAtrst.csproj|solutionrelative:projetatrst\\views\\user\\employments.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C6701EF3-00A6-4AAE-BA64-AD216D863698}|ProjetAtrst\\ProjetAtrst.csproj|c:\\users\\abdic\\onedrive\\desktop\\projet atrst\\projetatrst\\projetatrst\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{C6701EF3-00A6-4AAE-BA64-AD216D863698}|ProjetAtrst\\ProjetAtrst.csproj|solutionrelative:projetatrst\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C6701EF3-00A6-4AAE-BA64-AD216D863698}|ProjetAtrst\\ProjetAtrst.csproj|c:\\users\\abdic\\onedrive\\desktop\\projet atrst\\projetatrst\\projetatrst\\views\\user\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{C6701EF3-00A6-4AAE-BA64-AD216D863698}|ProjetAtrst\\ProjetAtrst.csproj|solutionrelative:projetatrst\\views\\user\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C6701EF3-00A6-4AAE-BA64-AD216D863698}|ProjetAtrst\\ProjetAtrst.csproj|c:\\users\\abdic\\onedrive\\desktop\\projet atrst\\projetatrst\\projetatrst\\views\\team\\joinrequests.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{C6701EF3-00A6-4AAE-BA64-AD216D863698}|ProjetAtrst\\ProjetAtrst.csproj|solutionrelative:projetatrst\\views\\team\\joinrequests.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C6701EF3-00A6-4AAE-BA64-AD216D863698}|ProjetAtrst\\ProjetAtrst.csproj|c:\\users\\abdic\\onedrive\\desktop\\projet atrst\\projetatrst\\projetatrst\\views\\project\\workpackages.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{C6701EF3-00A6-4AAE-BA64-AD216D863698}|ProjetAtrst\\ProjetAtrst.csproj|solutionrelative:projetatrst\\views\\project\\workpackages.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C6701EF3-00A6-4AAE-BA64-AD216D863698}|ProjetAtrst\\ProjetAtrst.csproj|c:\\users\\abdic\\onedrive\\desktop\\projet atrst\\projetatrst\\projetatrst\\views\\project\\editproject.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{C6701EF3-00A6-4AAE-BA64-AD216D863698}|ProjetAtrst\\ProjetAtrst.csproj|solutionrelative:projetatrst\\views\\project\\editproject.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C6701EF3-00A6-4AAE-BA64-AD216D863698}|ProjetAtrst\\ProjetAtrst.csproj|c:\\users\\abdic\\onedrive\\desktop\\projet atrst\\projetatrst\\projetatrst\\views\\project\\documents.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{C6701EF3-00A6-4AAE-BA64-AD216D863698}|ProjetAtrst\\ProjetAtrst.csproj|solutionrelative:projetatrst\\views\\project\\documents.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C6701EF3-00A6-4AAE-BA64-AD216D863698}|ProjetAtrst\\ProjetAtrst.csproj|c:\\users\\abdic\\onedrive\\desktop\\projet atrst\\projetatrst\\projetatrst\\controllers\\projectcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C6701EF3-00A6-4AAE-BA64-AD216D863698}|ProjetAtrst\\ProjetAtrst.csproj|solutionrelative:projetatrst\\controllers\\projectcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "20250504214200_InitialMySql.cs",
+              "DocumentMoniker": "C:\\Users\\abdic\\OneDrive\\Desktop\\Projet Atrst\\ProjetAtrst\\ProjetAtrst\\Migrations\\20250504214200_InitialMySql.cs",
+              "RelativeDocumentMoniker": "ProjetAtrst\\Migrations\\20250504214200_InitialMySql.cs",
+              "ToolTip": "C:\\Users\\abdic\\OneDrive\\Desktop\\Projet Atrst\\ProjetAtrst\\ProjetAtrst\\Migrations\\20250504214200_InitialMySql.cs",
+              "RelativeToolTip": "ProjetAtrst\\Migrations\\20250504214200_InitialMySql.cs",
+              "ViewState": "AgIAABkAAAAAAAAAAAAgwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-04T21:42:01.053Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ApplicationDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\abdic\\OneDrive\\Desktop\\Projet Atrst\\ProjetAtrst\\ProjetAtrst\\Date\\ApplicationDbContext.cs",
+              "RelativeDocumentMoniker": "ProjetAtrst\\Date\\ApplicationDbContext.cs",
+              "ToolTip": "C:\\Users\\abdic\\OneDrive\\Desktop\\Projet Atrst\\ProjetAtrst\\ProjetAtrst\\Date\\ApplicationDbContext.cs",
+              "RelativeToolTip": "ProjetAtrst\\Date\\ApplicationDbContext.cs",
+              "ViewState": "AgIAABoAAAAAAAAAAAAuwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-04T21:30:39.115Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\abdic\\OneDrive\\Desktop\\Projet Atrst\\ProjetAtrst\\ProjetAtrst\\Program.cs",
+              "RelativeDocumentMoniker": "ProjetAtrst\\Program.cs",
+              "ToolTip": "C:\\Users\\abdic\\OneDrive\\Desktop\\Projet Atrst\\ProjetAtrst\\ProjetAtrst\\Program.cs",
+              "RelativeToolTip": "ProjetAtrst\\Program.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAA8AAAA6AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-04T20:29:42.579Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "site.css",
+              "DocumentMoniker": "C:\\Users\\abdic\\OneDrive\\Desktop\\Projet Atrst\\ProjetAtrst\\ProjetAtrst\\wwwroot\\css\\site.css",
+              "RelativeDocumentMoniker": "ProjetAtrst\\wwwroot\\css\\site.css",
+              "ToolTip": "C:\\Users\\abdic\\OneDrive\\Desktop\\Projet Atrst\\ProjetAtrst\\ProjetAtrst\\wwwroot\\css\\site.css",
+              "RelativeToolTip": "ProjetAtrst\\wwwroot\\css\\site.css",
+              "ViewState": "AgIAAHIAAAAAAAAAAAAAwJIAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2025-05-04T19:31:58.332Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "appsettings.Development.json",
+              "DocumentMoniker": "C:\\Users\\abdic\\OneDrive\\Desktop\\Projet Atrst\\ProjetAtrst\\ProjetAtrst\\appsettings.Development.json",
+              "RelativeDocumentMoniker": "ProjetAtrst\\appsettings.Development.json",
+              "ToolTip": "C:\\Users\\abdic\\OneDrive\\Desktop\\Projet Atrst\\ProjetAtrst\\ProjetAtrst\\appsettings.Development.json",
+              "RelativeToolTip": "ProjetAtrst\\appsettings.Development.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAABQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-05-03T11:53:38.991Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\abdic\\OneDrive\\Desktop\\Projet Atrst\\ProjetAtrst\\ProjetAtrst\\appsettings.json",
+              "RelativeDocumentMoniker": "ProjetAtrst\\appsettings.json",
+              "ToolTip": "C:\\Users\\abdic\\OneDrive\\Desktop\\Projet Atrst\\ProjetAtrst\\ProjetAtrst\\appsettings.json",
+              "RelativeToolTip": "ProjetAtrst\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-05-03T11:52:50.318Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\abdic\\OneDrive\\Desktop\\Projet Atrst\\ProjetAtrst\\ProjetAtrst\\Views\\User\\Index.cshtml",
+              "RelativeDocumentMoniker": "ProjetAtrst\\Views\\User\\Index.cshtml",
+              "ToolTip": "C:\\Users\\abdic\\OneDrive\\Desktop\\Projet Atrst\\ProjetAtrst\\ProjetAtrst\\Views\\User\\Index.cshtml",
+              "RelativeToolTip": "ProjetAtrst\\Views\\User\\Index.cshtml",
+              "ViewState": "AgIAAEsAAAAAAAAAACBjwAMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-04-30T11:11:50.874Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Employments.cshtml",
+              "DocumentMoniker": "C:\\Users\\abdic\\OneDrive\\Desktop\\Projet Atrst\\ProjetAtrst\\ProjetAtrst\\Views\\User\\Employments.cshtml",
+              "RelativeDocumentMoniker": "ProjetAtrst\\Views\\User\\Employments.cshtml",
+              "ToolTip": "C:\\Users\\abdic\\OneDrive\\Desktop\\Projet Atrst\\ProjetAtrst\\ProjetAtrst\\Views\\User\\Employments.cshtml",
+              "RelativeToolTip": "ProjetAtrst\\Views\\User\\Employments.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-04-30T10:23:48.811Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "JoinRequests.cshtml",
+              "DocumentMoniker": "C:\\Users\\abdic\\OneDrive\\Desktop\\Projet Atrst\\ProjetAtrst\\ProjetAtrst\\Views\\team\\JoinRequests.cshtml",
+              "RelativeDocumentMoniker": "ProjetAtrst\\Views\\team\\JoinRequests.cshtml",
+              "ToolTip": "C:\\Users\\abdic\\OneDrive\\Desktop\\Projet Atrst\\ProjetAtrst\\ProjetAtrst\\Views\\team\\JoinRequests.cshtml",
+              "RelativeToolTip": "ProjetAtrst\\Views\\team\\JoinRequests.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-04-30T10:22:45.091Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "WorkPackages.cshtml",
+              "DocumentMoniker": "C:\\Users\\abdic\\OneDrive\\Desktop\\Projet Atrst\\ProjetAtrst\\ProjetAtrst\\Views\\Project\\WorkPackages.cshtml",
+              "RelativeDocumentMoniker": "ProjetAtrst\\Views\\Project\\WorkPackages.cshtml",
+              "ToolTip": "C:\\Users\\abdic\\OneDrive\\Desktop\\Projet Atrst\\ProjetAtrst\\ProjetAtrst\\Views\\Project\\WorkPackages.cshtml",
+              "RelativeToolTip": "ProjetAtrst\\Views\\Project\\WorkPackages.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-04-30T10:20:31.293Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "ProjectController.cs",
+              "DocumentMoniker": "C:\\Users\\abdic\\OneDrive\\Desktop\\Projet Atrst\\ProjetAtrst\\ProjetAtrst\\Controllers\\ProjectController.cs",
+              "RelativeDocumentMoniker": "ProjetAtrst\\Controllers\\ProjectController.cs",
+              "ToolTip": "C:\\Users\\abdic\\OneDrive\\Desktop\\Projet Atrst\\ProjetAtrst\\ProjetAtrst\\Controllers\\ProjectController.cs",
+              "RelativeToolTip": "ProjetAtrst\\Controllers\\ProjectController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-30T10:03:42.705Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "EditProject.cshtml",
+              "DocumentMoniker": "C:\\Users\\abdic\\OneDrive\\Desktop\\Projet Atrst\\ProjetAtrst\\ProjetAtrst\\Views\\Project\\EditProject.cshtml",
+              "RelativeDocumentMoniker": "ProjetAtrst\\Views\\Project\\EditProject.cshtml",
+              "ToolTip": "C:\\Users\\abdic\\OneDrive\\Desktop\\Projet Atrst\\ProjetAtrst\\ProjetAtrst\\Views\\Project\\EditProject.cshtml",
+              "RelativeToolTip": "ProjetAtrst\\Views\\Project\\EditProject.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-04-30T09:14:10.903Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Documents.cshtml",
+              "DocumentMoniker": "C:\\Users\\abdic\\OneDrive\\Desktop\\Projet Atrst\\ProjetAtrst\\ProjetAtrst\\Views\\Project\\Documents.cshtml",
+              "RelativeDocumentMoniker": "ProjetAtrst\\Views\\Project\\Documents.cshtml",
+              "ToolTip": "C:\\Users\\abdic\\OneDrive\\Desktop\\Projet Atrst\\ProjetAtrst\\ProjetAtrst\\Views\\Project\\Documents.cshtml",
+              "RelativeToolTip": "ProjetAtrst\\Views\\Project\\Documents.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-04-30T09:05:27.621Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
