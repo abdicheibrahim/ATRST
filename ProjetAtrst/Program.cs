@@ -1,5 +1,5 @@
 using MySqlConnector;
-
+using Microsoft.AspNetCore.Identity;
 namespace ProjetAtrst
 {
     public class Program
@@ -21,6 +21,19 @@ namespace ProjetAtrst
                 options.UseMySql(connectionString,ServerVersion.AutoDetect(connectionString))
             );
 
+            builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = true;
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 8;
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireLowercase = true;
+            })
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+
+
+
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
@@ -37,7 +50,7 @@ namespace ProjetAtrst
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(

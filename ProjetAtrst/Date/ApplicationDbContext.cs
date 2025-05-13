@@ -1,8 +1,10 @@
-﻿using ProjetAtrst.Models;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using ProjetAtrst.Models;
 
 namespace ProjetAtrst.Date
 {
-    public class ApplicationDbContext :DbContext
+    public class ApplicationDbContext :IdentityDbContext<IdentityUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -16,7 +18,7 @@ namespace ProjetAtrst.Date
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // التهيئة السابقة لـ ProjectExpert
+            base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<ProjectExpert>()
                 .HasKey(e => new { e.ProjectId, e.ExpertId });
 
@@ -32,28 +34,24 @@ namespace ProjetAtrst.Date
                 .HasForeignKey(pe => pe.ExpertId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // تهيئة العلاقة بين Researcher وProject
             modelBuilder.Entity<Researcher>()
                 .HasOne(r => r.Project)
                 .WithMany(p => p.Researchers)
                 .HasForeignKey(r => r.ProjectId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // تهيئة العلاقة بين Admin وExperts
             modelBuilder.Entity<Expert>()
                 .HasOne(e => e.Admin)
                 .WithMany(a => a.Experts)
                 .HasForeignKey(e => e.AdminId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // تهيئة العلاقة بين Admin وResearchers
             modelBuilder.Entity<Researcher>()
                 .HasOne(r => r.Admin)
                 .WithMany(a => a.Researchers)
                 .HasForeignKey(r => r.AdminId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // تهيئة العلاقة بين Admin وProjects
             modelBuilder.Entity<Project>()
                 .HasOne(p => p.Admin)
                 .WithMany(a => a.Projects)
