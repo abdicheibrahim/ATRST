@@ -1,15 +1,14 @@
 ﻿namespace ProjetAtrst.Models
 {
-    public class Researcher:Person
+    public class Researcher:ApplicationUser
     {
-        [Required]
-        public bool Status { get; set; } = false;
-        [Required]
-        public string RegisterDate { get; set; }=string.Empty;
-        public int ProjectId { get; set; } = -1;
-        public Project Project { get; set; } = default!;
-        public int AdminId { get; set; } = -1;
-        public Admin Admin  { get; set; } =default!;
+        public DateTime RegisterDate { get; set; } = DateTime.UtcNow;
+        public bool IsCompleted { get; set; } = false;
+        public string? ApprovedByAdminId { get; set; } 
+        public Admin? ApprovedByAdmin { get; set; }
+        public bool? IsApprovedByAdmin { get; set; }
+        // null=> pending, true=> approved, false=> rejected
+       
     }
 }
  

@@ -2,6 +2,7 @@
 
 namespace ProjetAtrst.Controllers
 {
+    [Authorize]
     public class teamController : Controller
     {
         public IActionResult Details()

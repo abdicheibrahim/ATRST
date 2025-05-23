@@ -6,8 +6,8 @@ namespace ProjetAtrst.Models
 
     {
         [MaxLength(50)]
-        public string FirstName { get; set; } = string.Empty;
+        public string? FirstName { get; set; } = string.Empty;
         [MaxLength(50)]
-        public string LastName { get; set; } = string.Empty;
+        public string? LastName { get; set; } = string.Empty;
     }
 }

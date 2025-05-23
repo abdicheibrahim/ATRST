@@ -2,6 +2,7 @@
 
 namespace ProjetAtrst.Controllers
 {
+    [Authorize]
     public class ProjectController : Controller
     {
         public IActionResult EditProject()

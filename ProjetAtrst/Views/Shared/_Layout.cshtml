@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity;
+@inject SignInManager<ApplicationUser> _SignInManager;
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -29,7 +31,16 @@
             </button>
             <div class="user-menu">
                 <a asp-controller="User" asp-action="EditProfile"><i class="fa-solid fa-user"></i> Profile</a>
-                <a asp-controller="User" asp-action="Login"><i class="fa-solid fa-right-from-bracket"></i> Sign out</a>
+                @if(_SignInManager.IsSignedIn(User))
+                {
+                    <a asp-controller="Account" asp-action="Logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login"><i class="fa-solid fa-right-from-bracket"></i> Login</a>
+                <a asp-controller="Account" asp-action="Register"><i class="fa-solid fa-right-from-bracket"></i> Register</a>
+                }
+                
             </div>
         </div>
     </div>

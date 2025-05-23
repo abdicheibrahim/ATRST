@@ -1,5 +1,6 @@
 using MySqlConnector;
 using Microsoft.AspNetCore.Identity;
+using ProjetAtrst.Models;
 namespace ProjetAtrst
 {
     public class Program
@@ -21,14 +22,25 @@ namespace ProjetAtrst
                 options.UseMySql(connectionString,ServerVersion.AutoDetect(connectionString))
             );
 
-            builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
-                options.SignIn.RequireConfirmedAccount = true;
                 options.Password.RequireDigit = false;
                 options.Password.RequiredLength = 8;
                 options.Password.RequireNonAlphanumeric = true;
                 options.Password.RequireUppercase = true;
                 options.Password.RequireLowercase = true;
+                
+                //LockOut Settings
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.AllowedForNewUsers = true;
+
+                //user settings
+                options.User.RequireUniqueEmail = true;
+
+                // signIn Settin
+                options.SignIn.RequireConfirmedEmail = false;
+                options.SignIn.RequireConfirmedPhoneNumber = false;
             })
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 

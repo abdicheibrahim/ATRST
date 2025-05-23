@@ -1,9 +1,9 @@
 ﻿namespace ProjetAtrst.Models
 {
-    public class Expert : Person
+    public class Expert : Researcher
     {
-        public int AdminId { get; set; }
-        public Admin Admin { get; set; } = default!;
-        public ICollection<ProjectExpert> ProjectExperts { get; set; } = new List<ProjectExpert>();
+      
+        public ICollection<ProjectEvaluation> Evaluations { get; set; } = new List<ProjectEvaluation>();
+       
     }
 }
