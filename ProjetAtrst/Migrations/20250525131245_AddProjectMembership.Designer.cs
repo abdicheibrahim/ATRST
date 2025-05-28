@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjetAtrst.Date;
 
@@ -11,9 +12,11 @@ using ProjetAtrst.Date;
 namespace ProjetAtrst.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250525131245_AddProjectMembership")]
+    partial class AddProjectMembership
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -438,62 +441,14 @@ namespace ProjetAtrst.Migrations
                     b.Property<string>("ApprovedByAdminId")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<DateTime>("Birthday")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<DateTime>("DipDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("DipInstitution")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Diploma")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Establishment")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("FirstNameAr")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Grade")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.Property<bool?>("IsApprovedByAdmin")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("IsCompleted")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<string>("LastNameAr")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<string>("Mobile")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.Property<DateTime>("RegisterDate")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Speciality")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("longtext");
 
                     b.HasIndex("ApprovedByAdminId");
 

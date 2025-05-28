@@ -48,7 +48,7 @@
     <!--  Sidebar -->
     <div class="sidebar" id="sidebar">
         <h6>Profile</h6>
-        <a asp-controller="User" asp-action="EditProfile" class="@(Context.Request.RouteValues["action"]?.ToString() == "EditProfile" ? "active" : "") nav-link"><i class="fa-solid fa-user"></i> Profile</a>
+        <a asp-controller="Researcher" asp-action="Profile" class="@(Context.Request.RouteValues["action"]?.ToString() == "EditProfile" ? "active" : "") nav-link"><i class="fa-solid fa-user"></i> Profile</a>
         <a asp-controller="User" asp-action="Education" class="@(Context.Request.RouteValues["action"]?.ToString() == "Education" ? "active" : "") nav-link"><i class="fa-solid fa-graduation-cap"></i> Education</a>
         <a asp-controller="User" asp-action="Employments" class="@(Context.Request.RouteValues["action"]?.ToString() == "Employments" ? "active" : "") nav-link"><i class="fa-solid fa-address-card"></i> Employments</a>
 

@@ -1,6 +1,8 @@
-using MySqlConnector;
 using Microsoft.AspNetCore.Identity;
 using ProjetAtrst.Models;
+using ProjetAtrst.Repository;
+using ProjetAtrst.Services.Implementation;
+using ProjetAtrst.Services.Interfaces;
 namespace ProjetAtrst
 {
     public class Program
@@ -47,6 +49,10 @@ namespace ProjetAtrst
 
 
             builder.Services.AddControllersWithViews();
+            builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            builder.Services.AddScoped<IResearcherService, ResearcherService>();
+            builder.Services.AddScoped<IProjectService, ProjectService>();
+
 
             var app = builder.Build();
 

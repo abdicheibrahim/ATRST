@@ -19,7 +19,7 @@ namespace ProjetAtrst.Models
         // null=> pending, true=> approved, false=> rejected
         public string? ApprovedByAdminId { get; set; }
         public Admin? ApprovedByAdmin { get; set; } = default!;
-        public ICollection<ProjectMember> Members { get; set; } = new List<ProjectMember>();
+        public ICollection<ProjectMembership>? ProjectMemberships { get; set; }
         public ICollection<JoinRequest> JoinRequests { get; set; } = new List<JoinRequest>();
         public ICollection<ProjectEvaluation> Evaluations { get; set; } = new List<ProjectEvaluation>();
         public ICollection<ProjectFile> Files { get; set; } = new List<ProjectFile>();

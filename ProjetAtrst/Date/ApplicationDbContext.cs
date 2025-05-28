@@ -71,10 +71,10 @@ namespace ProjetAtrst.Date
                 .OnDelete(DeleteBehavior.Restrict);
 
             //   Project -> ProjectMember
-            modelBuilder.Entity<ProjectMember>()
-                .HasOne(r => r.JoinedProject)
-                .WithMany(p => p.Members)
-                .HasForeignKey(r => r.JoinedProjectId)
+            modelBuilder.Entity<ProjectMembership>()
+                .HasOne(r => r.Project)
+                .WithMany(p => p.ProjectMemberships)
+                .HasForeignKey(r => r.ProjectId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             //   Project -> ProjectFile
@@ -114,6 +114,12 @@ namespace ProjetAtrst.Date
                 .HasForeignKey(j => j.ReceiverId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            //  ProjectMember -> ProjectMembership
+            modelBuilder.Entity<ProjectMembership>()
+                 .HasOne(pm => pm.Member)
+                .WithMany(m => m.ProjectMemberships)
+                .HasForeignKey(pm => pm.MemberId);
+
             //         < --Expert-- >
 
             //  Expert -> ProjectEvaluation
@@ -150,7 +156,10 @@ namespace ProjetAtrst.Date
                 .HasForeignKey(p => p.ApprovedByAdminId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-          
+            // Key ProjectMembership
+            modelBuilder.Entity<ProjectMembership>()
+                .HasKey(pm => new { pm.MemberId, pm.ProjectId });
+
 
             base.OnModelCreating(modelBuilder);
         }
