@@ -154,6 +154,16 @@ namespace ProjetAtrst.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ProjetAtrst.Models.Admin", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Admins");
+                });
+
             modelBuilder.Entity("ProjetAtrst.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -161,6 +171,9 @@ namespace ProjetAtrst.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("Birthday")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -177,7 +190,18 @@ namespace ProjetAtrst.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
+                    b.Property<string>("FirstNameAr")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("Gender")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("LastName")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("LastNameAr")
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
@@ -204,6 +228,9 @@ namespace ProjetAtrst.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<DateTime>("RegisterDate")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("longtext");
 
@@ -224,8 +251,16 @@ namespace ProjetAtrst.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
 
-                    b.UseTptMappingStrategy();
+            modelBuilder.Entity("ProjetAtrst.Models.Expert", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Experts");
                 });
 
             modelBuilder.Entity("ProjetAtrst.Models.InvitationRequest", b =>
@@ -235,9 +270,6 @@ namespace ProjetAtrst.Migrations
                         .HasColumnType("int");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool?>("IsAccepted")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("ReceiverId")
                         .IsRequired()
@@ -249,6 +281,9 @@ namespace ProjetAtrst.Migrations
 
                     b.Property<DateTime>("SentAt")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<int>("TargetProjectId")
                         .HasColumnType("int");
@@ -275,9 +310,6 @@ namespace ProjetAtrst.Migrations
                     b.Property<string>("ApprovedById")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<bool?>("IsApproved")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<int>("ProjectId")
                         .HasColumnType("int");
 
@@ -288,6 +320,9 @@ namespace ProjetAtrst.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ApprovedById");
@@ -297,6 +332,39 @@ namespace ProjetAtrst.Migrations
                     b.HasIndex("RequesterId");
 
                     b.ToTable("JoinRequests");
+                });
+
+            modelBuilder.Entity("ProjetAtrst.Models.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("ProjetAtrst.Models.Project", b =>
@@ -310,27 +378,33 @@ namespace ProjetAtrst.Migrations
                     b.Property<string>("ApprovedByAdminId")
                         .HasColumnType("varchar(255)");
 
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("varchar(500)");
 
-                    b.Property<bool?>("IsApprovedByAdmin")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<bool>("IsCompleted")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime>("LastActivity")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("LeaderId")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
+                    b.Property<int>("ProjectStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("longtext");
-
-                    b.Property<DateTime>("creationDate")
-                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
@@ -406,6 +480,26 @@ namespace ProjetAtrst.Migrations
                     b.ToTable("ProjectFiles");
                 });
 
+            modelBuilder.Entity("ProjetAtrst.Models.ProjectLeader", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProjectLeaders");
+                });
+
+            modelBuilder.Entity("ProjetAtrst.Models.ProjectMember", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProjectMembers");
+                });
+
             modelBuilder.Entity("ProjetAtrst.Models.ProjectMembership", b =>
                 {
                     b.Property<string>("MemberId")
@@ -421,104 +515,53 @@ namespace ProjetAtrst.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("ProjectMembership");
-                });
-
-            modelBuilder.Entity("ProjetAtrst.Models.Admin", b =>
-                {
-                    b.HasBaseType("ProjetAtrst.Models.ApplicationUser");
-
-                    b.ToTable("Admins", (string)null);
+                    b.ToTable("ProjectMemberships");
                 });
 
             modelBuilder.Entity("ProjetAtrst.Models.Researcher", b =>
                 {
-                    b.HasBaseType("ProjetAtrst.Models.ApplicationUser");
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("ApprovedByAdminId")
                         .HasColumnType("varchar(255)");
-
-                    b.Property<DateTime>("Birthday")
-                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime>("DipDate")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("DipInstitution")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Diploma")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Establishment")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("FirstNameAr")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.Property<string>("Grade")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<bool?>("IsApprovedByAdmin")
+                    b.Property<bool>("IsApprovedByAdmin")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("IsCompleted")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<string>("LastNameAr")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
                     b.Property<string>("Mobile")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<DateTime>("RegisterDate")
-                        .HasColumnType("datetime(6)");
-
                     b.Property<string>("Speciality")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Status")
-                        .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("ApprovedByAdminId");
 
-                    b.ToTable("Researchers", (string)null);
-                });
-
-            modelBuilder.Entity("ProjetAtrst.Models.Expert", b =>
-                {
-                    b.HasBaseType("ProjetAtrst.Models.Researcher");
-
-                    b.ToTable("Experts", (string)null);
-                });
-
-            modelBuilder.Entity("ProjetAtrst.Models.ProjectLeader", b =>
-                {
-                    b.HasBaseType("ProjetAtrst.Models.Researcher");
-
-                    b.ToTable("ProjectLeaders", (string)null);
-                });
-
-            modelBuilder.Entity("ProjetAtrst.Models.ProjectMember", b =>
-                {
-                    b.HasBaseType("ProjetAtrst.Models.Researcher");
-
-                    b.ToTable("ProjectMembers", (string)null);
+                    b.ToTable("Researchers");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -572,6 +615,28 @@ namespace ProjetAtrst.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ProjetAtrst.Models.Admin", b =>
+                {
+                    b.HasOne("ProjetAtrst.Models.ApplicationUser", "User")
+                        .WithOne("Admin")
+                        .HasForeignKey("ProjetAtrst.Models.Admin", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ProjetAtrst.Models.Expert", b =>
+                {
+                    b.HasOne("ProjetAtrst.Models.Researcher", "Researcher")
+                        .WithOne("Expert")
+                        .HasForeignKey("ProjetAtrst.Models.Expert", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Researcher");
+                });
+
             modelBuilder.Entity("ProjetAtrst.Models.InvitationRequest", b =>
                 {
                     b.HasOne("ProjetAtrst.Models.ProjectMember", "Receiver")
@@ -623,6 +688,17 @@ namespace ProjetAtrst.Migrations
                     b.Navigation("Project");
 
                     b.Navigation("Requester");
+                });
+
+            modelBuilder.Entity("ProjetAtrst.Models.Notification", b =>
+                {
+                    b.HasOne("ProjetAtrst.Models.Researcher", "User")
+                        .WithMany("Notifications")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ProjetAtrst.Models.Project", b =>
@@ -681,6 +757,28 @@ namespace ProjetAtrst.Migrations
                     b.Navigation("UploadedBy");
                 });
 
+            modelBuilder.Entity("ProjetAtrst.Models.ProjectLeader", b =>
+                {
+                    b.HasOne("ProjetAtrst.Models.Researcher", "Researcher")
+                        .WithOne("ProjectLeader")
+                        .HasForeignKey("ProjetAtrst.Models.ProjectLeader", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Researcher");
+                });
+
+            modelBuilder.Entity("ProjetAtrst.Models.ProjectMember", b =>
+                {
+                    b.HasOne("ProjetAtrst.Models.Researcher", "Researcher")
+                        .WithOne("ProjectMember")
+                        .HasForeignKey("ProjetAtrst.Models.ProjectMember", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Researcher");
+                });
+
             modelBuilder.Entity("ProjetAtrst.Models.ProjectMembership", b =>
                 {
                     b.HasOne("ProjetAtrst.Models.ProjectMember", "Member")
@@ -700,15 +798,6 @@ namespace ProjetAtrst.Migrations
                     b.Navigation("Project");
                 });
 
-            modelBuilder.Entity("ProjetAtrst.Models.Admin", b =>
-                {
-                    b.HasOne("ProjetAtrst.Models.ApplicationUser", null)
-                        .WithOne()
-                        .HasForeignKey("ProjetAtrst.Models.Admin", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("ProjetAtrst.Models.Researcher", b =>
                 {
                     b.HasOne("ProjetAtrst.Models.Admin", "ApprovedByAdmin")
@@ -716,40 +805,34 @@ namespace ProjetAtrst.Migrations
                         .HasForeignKey("ApprovedByAdminId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("ProjetAtrst.Models.ApplicationUser", null)
-                        .WithOne()
+                    b.HasOne("ProjetAtrst.Models.ApplicationUser", "User")
+                        .WithOne("Researcher")
                         .HasForeignKey("ProjetAtrst.Models.Researcher", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ApprovedByAdmin");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ProjetAtrst.Models.Admin", b =>
+                {
+                    b.Navigation("ApprovedProjects");
+
+                    b.Navigation("ApprovedResearchers");
+                });
+
+            modelBuilder.Entity("ProjetAtrst.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("Admin");
+
+                    b.Navigation("Researcher");
                 });
 
             modelBuilder.Entity("ProjetAtrst.Models.Expert", b =>
                 {
-                    b.HasOne("ProjetAtrst.Models.Researcher", null)
-                        .WithOne()
-                        .HasForeignKey("ProjetAtrst.Models.Expert", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ProjetAtrst.Models.ProjectLeader", b =>
-                {
-                    b.HasOne("ProjetAtrst.Models.Researcher", null)
-                        .WithOne()
-                        .HasForeignKey("ProjetAtrst.Models.ProjectLeader", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ProjetAtrst.Models.ProjectMember", b =>
-                {
-                    b.HasOne("ProjetAtrst.Models.Researcher", null)
-                        .WithOne()
-                        .HasForeignKey("ProjetAtrst.Models.ProjectMember", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Evaluations");
                 });
 
             modelBuilder.Entity("ProjetAtrst.Models.Project", b =>
@@ -763,18 +846,6 @@ namespace ProjetAtrst.Migrations
                     b.Navigation("ProjectMemberships");
 
                     b.Navigation("SentInvitations");
-                });
-
-            modelBuilder.Entity("ProjetAtrst.Models.Admin", b =>
-                {
-                    b.Navigation("ApprovedProjects");
-
-                    b.Navigation("ApprovedResearchers");
-                });
-
-            modelBuilder.Entity("ProjetAtrst.Models.Expert", b =>
-                {
-                    b.Navigation("Evaluations");
                 });
 
             modelBuilder.Entity("ProjetAtrst.Models.ProjectLeader", b =>
@@ -795,6 +866,17 @@ namespace ProjetAtrst.Migrations
                     b.Navigation("ReceivedInvitations");
 
                     b.Navigation("SentJoinRequests");
+                });
+
+            modelBuilder.Entity("ProjetAtrst.Models.Researcher", b =>
+                {
+                    b.Navigation("Expert");
+
+                    b.Navigation("Notifications");
+
+                    b.Navigation("ProjectLeader");
+
+                    b.Navigation("ProjectMember");
                 });
 #pragma warning restore 612, 618
         }

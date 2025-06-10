@@ -1,0 +1,45 @@
+﻿@model IEnumerable<Project>
+
+@{
+    ViewData["Title"] = "المشاريع المفتوحة";
+}
+
+<h2>المشاريع المفتوحة</h2>
+
+@if (!Model.Any())
+{
+    <p>لا توجد مشاريع مفتوحة حاليًا.</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>العنوان</th>
+                <th>الوصف</th>
+                <th>القائد</th>
+                <th>تاريخ البدء</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var project in Model)
+            {
+                <tr>
+                    <td>@project.Title</td>
+                    <td>@project.Description</td>
+                    @* <td>@project.Leader?.Researcher.User?.FirstName</td> *@
+                    <td>@project.LastActivity.ToShortDateString()</td>
+                    <td>
+                        <a asp-controller="JoinRequest" asp-action="RequestJoin" asp-route-id="@project.Id"
+                           class="btn btn-primary">طلب الانضمام</a>
+                    </td>
+                    <td>
+                        <a asp-controller="JoinRequest" asp-action="RequestJoin" asp-route-id="@project.Id"
+                           class="btn btn-primary">عرض المزيد من التفصيل</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

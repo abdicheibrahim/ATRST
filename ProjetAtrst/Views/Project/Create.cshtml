@@ -1,0 +1,36 @@
+﻿
+@model CreateProjectViewModel
+
+@{
+    ViewData["Title"] = "إنشاء مشروع جديد";
+}
+
+<h2>إنشاء مشروع جديد</h2>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="Title"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger" />
+    </div>
+
+  
+
+    <div class="form-group">
+        <label asp-for="ProjectStatus"></label>
+        <input asp-for="ProjectStatus" type="text" class="form-control" />
+        <span asp-validation-for="ProjectStatus" class="text-danger" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">إنشاء المشروع</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,93 +1,137 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ProjetAtrst.Models;
-using ProjetAtrst.ViewModel.Identity;
+using ProjetAtrst.Interfaces.Services;
+using ProjetAtrst.ViewModels.Identity;
+using ProjetAtrst.ViewModels.Researcher;
 
 namespace ProjetAtrst.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly IResearcherService _researcherService;
+        private readonly IUserService _userService;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        public AccountController(UserManager<ApplicationUser> userManager , SignInManager<ApplicationUser> signInManager)
+        public AccountController(IResearcherService researcherService, IUserService userService, UserManager<ApplicationUser> userManager)
         {
+            _researcherService = researcherService;
+            _userService = userService;
             _userManager = userManager;
-            _signInManager = signInManager;
-        }
-        [HttpGet]
-        public IActionResult Login()
-        {
-            return View();
-        }
-        [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var user=await _userManager.FindByEmailAsync(model.Email);
-                if(user==null)
-                {
-                    ModelState.AddModelError(string.Empty, "Username or Password is wrong");
-                    return View(model);
-                }
-                var vaildPassword= await _userManager.CheckPasswordAsync(user,model.Password);
-                if(vaildPassword==false)
-                {
-                    ModelState.AddModelError(string.Empty, "Username or Password is wrong");
-                    return View(model);
-                }
-                 var result= await _signInManager.PasswordSignInAsync(user,model.Password,model.RememberMe,false);
-                if(result.Succeeded)
-                {
-                    return RedirectToAction("Index", "Home");
-                }
-
-            }
-            return View(model);
         }
 
-        [HttpGet]
-        public IActionResult Register()
-        {
-            return View();
-        }
+        // GET: /Account/Register
+        public IActionResult Register() => View();
+
+        // POST: /Account/Register
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            if (ModelState.IsValid) 
-            {
-                var user=await _userManager.FindByEmailAsync(model.Email);
-                if (user == null)
-                {
-                    var newUser = new ApplicationUser()
-                    {
-                        Email=model.Email,
-                        UserName=model.Email
-                    };
-                    var result=await _userManager.CreateAsync(newUser,model.Password);
-                    if (result.Succeeded)
-                    {
-                        await _signInManager.SignInAsync(newUser, isPersistent: false);
-                        return RedirectToAction("Index", "Home");
-                    }
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty,error.Description);
-                    }
-                    return View(model);
-                }
-                ModelState.AddModelError(string.Empty, "User Email Is Exist");
+            if (!ModelState.IsValid)
                 return View(model);
-               
-            }
+
+            var result = await _researcherService.RegisterNewResearcherAsync(model);
+            if (result.Succeeded)
+                return RedirectToAction("Index", "Home");
+
+            foreach (var error in result.Errors)
+                ModelState.AddModelError("", error.Description);
+
             return View(model);
         }
 
-        [HttpGet]
+        // GET: /Account/Login
+        public IActionResult Login() => View();
+
+        // POST: /Account/Login
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var success = await _researcherService.LoginAsync(model);
+            if (success)
+                return RedirectToAction("Index", "Dashboard");
+
+            ModelState.AddModelError("", "Invalid login attempt.");
+            return View(model);
+        }
+
+        // GET: /Account/Dashboard
+        public async Task<IActionResult> Dashboard()
+        {
+            var dashboard = await _researcherService.GetDashboardAsync(User);
+            if (dashboard == null)
+                return NotFound();
+
+            return View(dashboard);
+        }
+
+       
+        // GET: /Account/Logout
         public async Task<IActionResult> Logout()
         {
-            await _signInManager.SignOutAsync();
+            await _researcherService.LogoutAsync();
+            return RedirectToAction("Login", "Account");
+
+        }
+
+        // GET: /Account/CompleteProfile
+        [HttpGet]
+        public async Task<IActionResult> CompleteProfile()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToAction("Login");
+
+            var model = await _userService.GetCompleteProfileViewModelAsync(user.Id);
+            if (model == null)
+                return NotFound(); // or Redirect
+
+            return View(model);
+        }
+
+        // POST: /Account/CompleteProfile
+        [HttpPost]
+        public async Task<IActionResult> CompleteProfile(CompleteProfileViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToAction("Login");
+
+            await _userService.CompleteUserProfileAsync(user.Id, model);
+
             return RedirectToAction("Index", "Home");
+        }
+
+        // GET: /Account/ChooseRole
+        [HttpGet]
+        public IActionResult ChooseRole()
+        {
+            return View();
+        }
+
+        // POST: /Account/JoinProject
+        [HttpPost]
+        public IActionResult JoinProject()
+        {
+            // Redirect to available projects or search page
+            return RedirectToAction("AvailableProjects", "Team");
+        }
+
+        // POST: /Account/BecomeLeader
+        [HttpPost]
+        public IActionResult BecomeLeader()
+        {
+            // Redirect to create project page
+            return RedirectToAction("CreateProject", "Project");
         }
     }
 }
+
+
+
+

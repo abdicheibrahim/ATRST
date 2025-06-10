@@ -1,0 +1,80 @@
+﻿@model ProjetAtrst.ViewModels.DashboardViewModel
+@{
+    var accessStatus = ViewBag.AccessStatus as ProjetAtrst.ViewModels.UserAccess.UserAccessStatusViewModel;
+}
+
+<div class="container mt-4">
+    <h2>مرحبًا، @Model.UserName</h2>
+
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <div class="card border-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">📊 ملخص المشاريع</h5>
+                    <p>عدد المشاريع التي تقودها: <strong>@Model.ProjectsLedCount</strong></p>
+                    <p>عدد المشاريع التي أنت عضو فيها: <strong>@Model.ProjectsMemberCount</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card border-info mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">🧾 حالتك كباحث</h5>
+                    <p>الملف مكتمل: <strong>@(accessStatus?.IsCompleted == true ? "نعم" : "لا")</strong></p>
+                    <p>تمت الموافقة: <strong>@(accessStatus?.IsApproved == true ? "نعم" : "لا")</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.CanCreateProject)
+    {
+        <a href="@Url.Action("Create", "Project")" class="btn btn-primary">➕ إنشاء مشروع جديد</a>
+        <a class="btn btn-success" asp-controller="Project" asp-action="Create">
+            + إنشاء مشروع جديد
+        </a>
+    }
+
+    <a href="@Url.Action("AvailableToJoin", "Project")" class="btn btn-outline-secondary ms-2">🔍 استعراض المشاريع المفتوحة</a>
+    <a class="btn btn-outline-primary" asp-controller="Project" asp-action="OpenProjects">
+        عرض المشاريع المفتوحة
+    </a>
+    <hr />
+
+    @if (Model.RecentProjects != null && Model.RecentProjects.Any())
+    {
+        <h4>📁 مشاريعك الأخيرة</h4>
+        <ul class="list-group">
+            @foreach (var project in Model.RecentProjects)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>@project.Title</strong> - الحالة: @project.Status - آخر تحديث: @project.LastActivity.ToString("dd/MM/yyyy")
+                    </div>
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <div class="alert alert-info mt-3">
+            @if (!(accessStatus?.IsLeader == true || accessStatus?.IsMember == true))
+            {
+                <p>🚀 ابدأ الآن بإنشاء مشروعك الأول أو انضم إلى مشروع مناسب.</p>
+            }
+            else
+            {
+                <p>لا توجد مشاريع حالية لعرضها.</p>
+            }
+        </div>
+    }
+
+    @if (Model.ProjectsLedCount > 0 && Model.PendingJoinRequestsCount > 0)
+    {
+        <div class="alert alert-warning mt-4">
+            لديك <strong>@Model.PendingJoinRequestsCount</strong> طلب(ات) انضمام جديدة في مشاريعك.
+            <a href="@Url.Action("JoinRequests", "Leader")" class="btn btn-sm btn-outline-dark ms-2">عرض الطلبات</a>
+        </div>
+    }
+</div>

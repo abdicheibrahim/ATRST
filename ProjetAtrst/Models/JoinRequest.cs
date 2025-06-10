@@ -1,5 +1,12 @@
 ﻿namespace ProjetAtrst.Models
 {
+    public enum JoinRequestStatus
+    {
+        Pending,
+        Accepted,
+        Rejected
+    }
+
     public class JoinRequest
     {
         public int Id { get; set; }
@@ -11,9 +18,10 @@
         public Project Project { get; set; } = default!;
 
         public DateTime RequestedAt { get; set; }
-        public bool? IsApproved { get; set; }
-        // null=> pending, true=> approved, false=> rejected
+        public JoinRequestStatus Status { get; set; }
+        
         public string? ApprovedById { get; set; }
         public ProjectLeader? ApprovedBy { get; set; }
     }
+
 }

@@ -18,19 +18,21 @@ namespace ProjetAtrst.Date
         public DbSet<ProjectFile> ProjectFiles { get; set; }
         public DbSet<ProjectEvaluation> ProjectEvaluations { get; set; }
         public DbSet<InvitationRequest> InvitationRequests { get; set; }
-       
-
+        public DbSet<ProjectMembership> ProjectMemberships { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            // TPT Configuration
-            modelBuilder.Entity<Admin>().ToTable("Admins");
-            modelBuilder.Entity<Expert>().ToTable("Experts");
-            modelBuilder.Entity<ProjectLeader>().ToTable("ProjectLeaders");
-            modelBuilder.Entity<ProjectMember>().ToTable("ProjectMembers");
-            modelBuilder.Entity<Researcher>().ToTable("Researchers");
+            //// TPT Configuration
+            //modelBuilder.Entity<Admin>().ToTable("Admins");
+            //modelBuilder.Entity<Expert>().ToTable("Experts");
+            //modelBuilder.Entity<ProjectLeader>().ToTable("ProjectLeaders");
+            //modelBuilder.Entity<ProjectMember>().ToTable("ProjectMembers");
+            //modelBuilder.Entity<Researcher>().ToTable("Researchers");
 
+            
+    
             //         <--ProjectLeader-->
 
             //  ProjectLeader => JoinRequest 
@@ -61,6 +63,7 @@ namespace ProjetAtrst.Date
                 .HasForeignKey(p => p.UploadedById)
                 .OnDelete(DeleteBehavior.Restrict);
 
+
             //         < --Project-- >
 
             //   Project -> JoinRequest
@@ -70,7 +73,7 @@ namespace ProjetAtrst.Date
                 .HasForeignKey(r => r.ProjectId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            //   Project -> ProjectMember
+            //   Project -> ProjectMembership
             modelBuilder.Entity<ProjectMembership>()
                 .HasOne(r => r.Project)
                 .WithMany(p => p.ProjectMemberships)
@@ -107,7 +110,7 @@ namespace ProjetAtrst.Date
                 .HasForeignKey(j => j.RequesterId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            //  ProjectMember -> JoinRequest
+            //  ProjectMember -> InvitationRequest
             modelBuilder.Entity<InvitationRequest>()
                 .HasOne(j => j.Receiver)
                 .WithMany(r => r.ReceivedInvitations)
@@ -120,6 +123,8 @@ namespace ProjetAtrst.Date
                 .WithMany(m => m.ProjectMemberships)
                 .HasForeignKey(pm => pm.MemberId);
 
+           
+
             //         < --Expert-- >
 
             //  Expert -> ProjectEvaluation
@@ -129,6 +134,8 @@ namespace ProjetAtrst.Date
                 .WithMany(e => e.Evaluations)
                 .HasForeignKey(pe => pe.ExpertId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            
 
             //         < --Admin-- >
 
@@ -156,11 +163,40 @@ namespace ProjetAtrst.Date
                 .HasForeignKey(p => p.ApprovedByAdminId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            //         < --Researcher-- >
+
+            //  ApplicationUser 1 <-> 1 Researcher
+            modelBuilder.Entity<ApplicationUser>()
+                .HasOne(a => a.Researcher)
+                .WithOne(r => r.User)
+                .HasForeignKey<Researcher>(r => r.Id)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            //  Researcher 1 <-> 1 Leader
+            modelBuilder.Entity<Researcher>()
+                .HasOne(r => r.ProjectLeader)
+                .WithOne(l => l.Researcher)
+                .HasForeignKey<ProjectLeader>(l => l.Id)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            //  Researcher 1 <-> 1 Member
+            modelBuilder.Entity<Researcher>()
+                .HasOne(r => r.ProjectMember)
+                .WithOne(m => m.Researcher)
+                .HasForeignKey<ProjectMember>(m => m.Id)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            //----------------
             // Key ProjectMembership
             modelBuilder.Entity<ProjectMembership>()
                 .HasKey(pm => new { pm.MemberId, pm.ProjectId });
 
-
+            // Notification
+            modelBuilder.Entity<Notification>()
+           .HasOne(n => n.User)
+           .WithMany(u => u.Notifications) 
+           .HasForeignKey(n => n.UserId)
+           .OnDelete(DeleteBehavior.Cascade);
             base.OnModelCreating(modelBuilder);
         }
 

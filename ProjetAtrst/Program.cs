@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Identity;
 using ProjetAtrst.Models;
-using ProjetAtrst.Repository;
-using ProjetAtrst.Services.Implementation;
-using ProjetAtrst.Services.Interfaces;
+using ProjetAtrst.Repositories;
+using ProjetAtrst.Interfaces;
+using ProjetAtrst.Interfaces.Services;
+using ProjetAtrst.Interfaces.Repositories;
+using ProjetAtrst.Services;
 namespace ProjetAtrst
 {
     public class Program
@@ -49,10 +51,23 @@ namespace ProjetAtrst
 
 
             builder.Services.AddControllersWithViews();
-            builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped<IResearcherService, ResearcherService>();
+            builder.Services.AddScoped<IResearcherRepository, ResearcherRepository>();
+            builder.Services.AddScoped<IUserAccessService, UserAccessService>();
+            builder.Services.AddScoped<INotificationService, NotificationService>();
+            builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IProjectRepository,ProjectRepository>();
             builder.Services.AddScoped<IProjectService, ProjectService>();
-
+            builder.Services.AddScoped<IJoinRequestRepository, JoinRequestRepository>();
+            builder.Services.AddScoped<IDashboardService, DashboardService>();
+            builder.Services.AddScoped<IProjectLeaderRepository, ProjectLeaderRepository>();
+            builder.Services.AddScoped<IInvitationRequestService, InvitationRequestService>();
+            builder.Services.AddScoped<IInvitationRequestRepository, InvitationRequestRepository>();
+            builder.Services.AddScoped<IProjectMembershipRepository, ProjectMembershipRepository>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddHttpContextAccessor();
 
             var app = builder.Build();
 

@@ -1,0 +1,44 @@
+﻿@model List<Notification>
+
+<h3>الإشعارات</h3>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>العنوان</th>
+            <th>الرسالة</th>
+            <th>التاريخ</th>
+            <th>الحالة</th>
+            <th>إجراء</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var n in Model)
+        {
+            <tr>
+                <td>@n.Title</td>
+                <td>@n.Message</td>
+                <td>@n.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+                <td>
+                    @if (n.IsRead)
+                    {
+                        <span class="text-success">مقروء</span>
+                    }
+                    else
+                    {
+                        <span class="text-danger">جديد</span>
+                    }
+                </td>
+                <td>
+                    @if (!n.IsRead)
+                    {
+                        <form asp-action="MarkAsRead" method="post">
+                            <input type="hidden" name="id" value="@n.Id" />
+                            <button type="submit" class="btn btn-sm btn-primary">وضع كمقروء</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

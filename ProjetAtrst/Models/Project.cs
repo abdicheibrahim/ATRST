@@ -1,6 +1,19 @@
 ﻿
 namespace ProjetAtrst.Models
 {
+    public enum Status
+    {
+        Pending,
+        Accepted,
+        Rejected
+    }
+    public enum ProjectStatus
+    {
+        Open,
+        Closed,
+        Archived
+    }
+
     public class Project
     {
         [Key]
@@ -8,15 +21,17 @@ namespace ProjetAtrst.Models
        
         public string Title { get; set; }= string.Empty;
 
-        public DateTime creationDate { get; set; } = DateTime.UtcNow;
+        public DateTime CreationDate { get; set; } = DateTime.UtcNow;
 
         [MaxLength(500)]
         public string Description { get; set; }=string.Empty;
+        public DateTime LastActivity { get; set; } = DateTime.UtcNow;
+
         public string LeaderId { get; set; } = default!;
         public ProjectLeader Leader { get; set; } = default!;
         public bool IsCompleted { get; set; } = false;
-        public bool? IsApprovedByAdmin { get; set; } = false;
-        // null=> pending, true=> approved, false=> rejected
+        public Status Status { get; set; } = Status.Pending;
+        public ProjectStatus ProjectStatus { get; set; } = ProjectStatus.Open;
         public string? ApprovedByAdminId { get; set; }
         public Admin? ApprovedByAdmin { get; set; } = default!;
         public ICollection<ProjectMembership>? ProjectMemberships { get; set; }

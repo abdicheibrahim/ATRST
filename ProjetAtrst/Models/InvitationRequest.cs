@@ -1,5 +1,12 @@
 ﻿namespace ProjetAtrst.Models
 {
+    public enum InvitationRequestStatus
+    {
+        Pending,
+        Accepted,
+        Rejected
+    }
+
     public class InvitationRequest
     {
         public int Id { get; set; }
@@ -14,6 +21,6 @@
 
         public DateTime SentAt { get; set; } = DateTime.UtcNow;
 
-        public bool? IsAccepted { get; set; } // null = pending, true = accepted, false = declined
+        public InvitationRequestStatus Status { get; set; } =InvitationRequestStatus.Pending;
     }
 }

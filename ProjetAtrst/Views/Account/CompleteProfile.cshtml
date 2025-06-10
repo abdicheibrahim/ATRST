@@ -1,0 +1,123 @@
+﻿@{
+    ViewData["Title"] = "Profile";
+}
+@using ProjetAtrst.ViewModels.Researcher
+@model CompleteProfileViewModel
+
+@if (Model.IsCompleted)
+{
+    <div class="alert alert-success text-center">
+        <i class="fa-solid fa-check">ملفك مكتمل ✅ — يمكنك تعديل البيانات هنا إذا أردت.</i> 
+    </div>
+}
+else
+{
+    <div class="alert alert-warning text-center">
+        يرجى إكمال البيانات أدناه لتفعيل حسابك.
+    </div>
+}
+
+<form asp-action="CompleteProfile" method="post">
+    <div class=" row shadow-sm g-3 needs-validation  p-3 mb-5 mt-3 bg-white border rounded">
+        <h5>Personal Details</h5>
+        <div class="col-md-6">
+            <label asp-for="FirstName" class="form-label">First Name</label>
+            <input type="text" class="form-control input" asp-for="FirstName">
+            <span asp-validation-for="FirstName"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="LastName" class="form-label">Last Name</label>
+            <input type="text" class="form-control input" asp-for="LastName">
+            <span asp-validation-for="LastName"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="FirstNameAr" class="form-label">الاسم</label>
+            <input type="text" class="form-control input" asp-for="FirstNameAr">
+            <span asp-validation-for="FirstNameAr"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="LastNameAr" class="form-label">اللقب</label>
+            <input type="text" class="form-control input" asp-for="LastNameAr">
+            <span asp-validation-for="LastNameAr"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="Gender" class="form-label">Gender</label>
+            <input type="text" class="form-control input" asp-for="Gender">
+            <span asp-validation-for="Gender"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="Birthday" class="form-label">Birthday</label>
+            <input type="date" class="form-control input" asp-for="Birthday">
+            <span asp-validation-for="Birthday"></span>
+        </div>
+
+
+
+    </div>
+    <div class=" row shadow-sm g-3 needs-validation  p-3 mb-5 mt-3 bg-white border rounded">
+        <h5>Employments Details</h5>
+        <div class="col-md-6">
+            <label asp-for="Establishment" class="form-label"></label>
+            <input type="text" class="form-control input" asp-for="Establishment">
+            <span asp-validation-for="Establishment"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="Status" class="form-label"></label>
+            <input type="text" class="form-control input" asp-for="Status">
+            <span asp-validation-for="Status"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="Grade" class="form-label"></label>
+            <input type="text" class="form-control input" asp-for="Grade">
+            <span asp-validation-for="Grade"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="Speciality" class="form-label"></label>
+            <input type="text" class="form-control input" asp-for="Speciality">
+            <span asp-validation-for="Speciality"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="Mobile" class="form-label"></label>
+            <input type="text" class="form-control input" asp-for="Mobile">
+            <span asp-validation-for="Mobile"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Diploma" class="form-label"></label>
+            <input type="text" class="form-control input" asp-for="Diploma">
+            <span asp-validation-for="Diploma"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="DipInstitution" class="form-label"></label>
+            <input type="text" class="form-control input" asp-for="DipInstitution">
+            <span asp-validation-for="DipInstitution"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="DipDate" class="form-label"></label>
+            <input type="date" class="form-control input" asp-for="DipDate">
+            <span asp-validation-for="DipDate"></span>
+        </div>
+
+
+
+    </div>
+
+       
+    <button type="submit" class="btn btn-primary w-100">Submit</button>
+</form>
+
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}
+
+

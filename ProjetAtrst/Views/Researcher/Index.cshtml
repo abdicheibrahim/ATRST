@@ -1,0 +1,36 @@
+﻿@using ProjetAtrst.ViewModels.Researcher
+@model List<ResearcherViewModel>
+@{
+    var projectId = ViewBag.ProjectId as int?;
+}
+
+<h2>قائمة الباحثين</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>الاسم</th>
+            <th>الاسم</th>
+            <th>الرتبة</th>
+            <th>التخصص</th>
+            <th>إجراء</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var researcher in Model)
+        {
+            <tr>
+                <td>@researcher.FirstName</td>
+                <td>@researcher.LastName</td>
+                <td>@researcher.Grade</td>
+                <td>@researcher.Speciality</td>
+                <td>
+                    <form asp-controller="Invitation" asp-action="Send" method="post">
+                        <input type="hidden" name="receiverId" value="@researcher.MemberId" />
+                        <input type="hidden" name="projectId" value="@projectId" />
+                        <button type="submit" class="btn btn-sm btn-primary">إرسال دعوة</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

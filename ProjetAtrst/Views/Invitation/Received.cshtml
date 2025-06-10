@@ -1,0 +1,28 @@
+﻿@model List<InvitationRequest>
+
+<h2>الدعوات المستلمة</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>اسم المشروع</th>
+            <th>المرسل</th>
+            <th>الحالة</th>
+            <th>الإجراءات</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var invite in Model)
+        {
+            <tr>
+                <td>@invite.TargetProject.Title</td>
+                <td>@invite.Sender.Researcher.User.FirstName</td>
+                <td>@invite.Status</td>
+                <td>
+                    <a asp-action="Accept" asp-route-id="@invite.Id" class="btn btn-success btn-sm">قبول</a>
+                    <a asp-action="Reject" asp-route-id="@invite.Id" class="btn btn-danger btn-sm">رفض</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
