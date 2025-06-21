@@ -1,49 +1,42 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ProjetAtrst.Interfaces.Repositories;
+﻿using ProjetAtrst.Interfaces.Repositories;
 using ProjetAtrst.Models;
 
 namespace ProjetAtrst.Repositories
 {
-    public class ProjectRepository : GenericRepository<Project>, IProjectRepository
+    public class ProjectRepository :GenericRepository<Project>, IProjectRepository
     {
         public ProjectRepository(ApplicationDbContext context) : base(context) { }
-
-        public async Task<int> CountLedByAsync(string userId)
+        
+        //Verified
+        public async Task<Project?> GetByIdAsync(int id)
         {
-            return await _context.Projects.CountAsync(p => p.LeaderId == userId);
+            return await _dbSet.FindAsync(id);
         }
 
-        public async Task<int> CountMemberInAsync(string userId)
-        {
-            return await _context.ProjectMemberships
-                .CountAsync(m => m.MemberId == userId);
-        }
+        // Not Verified
 
-        public async Task<IEnumerable<Project>> GetLedProjectsAsync(string userId, int takeCount)
+        public async Task<List<Project>> GetAvailableProjectsForJoinAsync(string researcherId)
         {
-            return await _context.Projects
-                .Where(p => p.LeaderId == userId)
-                .OrderByDescending(p => p.LastActivity) // أو حسب آخر تحديث إن وُجد
-                .Take(takeCount)
+            var joinedProjectIds = await _context.ProjectMemberships
+                .Where(pm => pm.ResearcherId == researcherId)
+                .Select(pm => pm.ProjectId)
                 .ToListAsync();
-        }
 
-        public async Task<IEnumerable<Project>> GetMemberProjectsAsync(string userId, int takeCount)
-        {
-            return await _context.ProjectMemberships
-                .Where(m => m.MemberId == userId)
-                .OrderByDescending(m => m.JoinedAt) // تأكد من وجود هذا العمود، أو استخدم أي تاريخ مناسب
-                .Select(m => m.Project)
-                .Take(takeCount)
+            var requestedProjectIds = await _context.JoinRequests
+                .Where(j => j.RequesterId == researcherId)
+                .Select(j => j.ProjectId)
                 .ToListAsync();
-        }
-        public async Task<IEnumerable<Project>> GetOpenProjectsForJoiningAsync(string researcherId)
-        {
+
             return await _context.Projects
-                .Where(p => p.ProjectStatus == ProjectStatus.Open
-                    && p.Leader.Id != researcherId
-                    && !p.ProjectMemberships.Any(m => m.MemberId == researcherId))
-                .Include(p => p.Leader)
+                .Where(p =>
+                    p.ProjectStatus == ProjectStatus.Open &&
+                    p.IsAcceptingJoinRequests &&
+                    !joinedProjectIds.Contains(p.Id) &&
+                    !requestedProjectIds.Contains(p.Id)
+                )
+                .Include(p => p.ProjectMemberships)
+                    .ThenInclude(pm => pm.Researcher)
+                        .ThenInclude(r => r.User)
                 .ToListAsync();
         }
 

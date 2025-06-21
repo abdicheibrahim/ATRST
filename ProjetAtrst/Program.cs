@@ -5,6 +5,7 @@ using ProjetAtrst.Interfaces;
 using ProjetAtrst.Interfaces.Services;
 using ProjetAtrst.Interfaces.Repositories;
 using ProjetAtrst.Services;
+using ProjetAtrst.Helpers;
 namespace ProjetAtrst
 {
     public class Program
@@ -53,21 +54,23 @@ namespace ProjetAtrst
             builder.Services.AddControllersWithViews();
             builder.Services.AddScoped<IResearcherService, ResearcherService>();
             builder.Services.AddScoped<IResearcherRepository, ResearcherRepository>();
-            builder.Services.AddScoped<IUserAccessService, UserAccessService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
-            builder.Services.AddScoped<IProjectRepository,ProjectRepository>();
+            builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
             builder.Services.AddScoped<IProjectService, ProjectService>();
-            builder.Services.AddScoped<IJoinRequestRepository, JoinRequestRepository>();
-            builder.Services.AddScoped<IDashboardService, DashboardService>();
-            builder.Services.AddScoped<IProjectLeaderRepository, ProjectLeaderRepository>();
-            builder.Services.AddScoped<IInvitationRequestService, InvitationRequestService>();
-            builder.Services.AddScoped<IInvitationRequestRepository, InvitationRequestRepository>();
             builder.Services.AddScoped<IProjectMembershipRepository, ProjectMembershipRepository>();
+            //builder.Services.AddScoped<IProjectRequestService, ProjectRequestService>();
+            //builder.Services.AddScoped<IJoinRequestRepository, JoinRequestRepository>();
+            //builder.Services.AddScoped<IInvitationRequestRepository, InvitationRequestRepository>();
+            //builder.Services.AddScoped<IDashboardService, DashboardService>();
+            //builder.Services.AddScoped<IJoinRequestRepository, JoinRequestRepository>();
+            //builder.Services.AddScoped<IInvitationRequestService, InvitationRequestService>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<ProfileCompletionFilter>();
+            builder.Services.AddSingleton<StaticDataLoader>();
 
             var app = builder.Build();
 
@@ -88,7 +91,7 @@ namespace ProjetAtrst
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Dashboard}/{action=Index}/{id?}");
 
             app.Run();
         }

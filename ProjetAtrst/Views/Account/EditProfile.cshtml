@@ -1,0 +1,73 @@
+﻿@using ProjetAtrst.ViewModels.Account
+@model EditProfileViewModel
+
+@{
+    Layout = "_LayoutResearcher";
+}
+
+@{
+    ViewData["Title"] = "Profile";
+}
+
+
+<div class="alert alert-success text-center alert-dismissible fade show" role="alert">
+    Votre profil est<strong> complet.</strong> Vous pouvez le modifier ici.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<form asp-action="EditProfile" method="post">
+    <div class=" row shadow-sm g-3 needs-validation  p-3 mb-5 mt-3 bg-white border rounded">
+        <h5>Personal Details</h5>
+        <div class="col-md-6">
+            <label asp-for="FirstName" class="form-label">First Name</label>
+            <input type="text" class="form-control input" asp-for="FirstName">
+            <span asp-validation-for="FirstName"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="LastName" class="form-label">Last Name</label>
+            <input type="text" class="form-control input" asp-for="LastName">
+            <span asp-validation-for="LastName"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="FirstNameAr" class="form-label">الاسم</label>
+            <input type="text" class="form-control input" asp-for="FirstNameAr">
+            <span asp-validation-for="FirstNameAr"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="LastNameAr" class="form-label">اللقب</label>
+            <input type="text" class="form-control input" asp-for="LastNameAr">
+            <span asp-validation-for="LastNameAr"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="Gender" class="form-label">Gender</label>
+            <input type="text" class="form-control input" asp-for="Gender">
+            <span asp-validation-for="Gender"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="Birthday" class="form-label">Birthday</label>
+            <input type="date" class="form-control input" asp-for="Birthday">
+            <span asp-validation-for="Birthday"></span>
+        </div>
+
+
+
+    </div>
+
+
+
+
+    <button type="submit" class="btn btn-success w-100"><i class="bi bi-pencil-square me-2"></i>Modifier</button>
+</form>
+
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}
+
+

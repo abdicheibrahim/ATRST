@@ -1,8 +1,13 @@
-﻿@{
+﻿@using ProjetAtrst.ViewModels.Account
+@model CompleteProfileViewModel
+
+@{
+    Layout = "_LayoutResearcher";
+}
+
+@{
     ViewData["Title"] = "Profile";
 }
-@using ProjetAtrst.ViewModels.Researcher
-@model CompleteProfileViewModel
 
 @if (Model.IsCompleted)
 {
@@ -67,11 +72,7 @@ else
             <span asp-validation-for="Establishment"></span>
         </div>
 
-        <div class="col-md-6">
-            <label asp-for="Status" class="form-label"></label>
-            <input type="text" class="form-control input" asp-for="Status">
-            <span asp-validation-for="Status"></span>
-        </div>
+       
 
         <div class="col-md-6">
             <label asp-for="Grade" class="form-label"></label>
@@ -111,7 +112,7 @@ else
     </div>
 
        
-    <button type="submit" class="btn btn-primary w-100">Submit</button>
+    <button type="submit" class="btn btn-success w-100">Submit</button>
 </form>
 
 

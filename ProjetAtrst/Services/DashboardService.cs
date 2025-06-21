@@ -1,38 +1,59 @@
-﻿using ProjetAtrst.Interfaces.Services;
-using ProjetAtrst.Interfaces;
-using ProjetAtrst.ViewModels;
+﻿using ProjetAtrst.Interfaces.Repositories;
+using ProjetAtrst.Interfaces.Services;
+using ProjetAtrst.Models;
+using ProjetAtrst.ViewModels.Dashboard;
 
 namespace ProjetAtrst.Services
 {
     public class DashboardService : IDashboardService
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IProjectMembershipRepository _projectMembershipRepo;
 
-        public DashboardService(IUnitOfWork unitOfWork)
+        public DashboardService(IProjectMembershipRepository projectMembershipRepo)
         {
-            _unitOfWork = unitOfWork;
+            _projectMembershipRepo = projectMembershipRepo;
         }
 
-        public async Task<DashboardViewModel> GetDashboardDataAsync(string userId)
+        public async Task<List<MyLeaderProjectsViewModel>> GetMyLeaderProjectsAsync(string researcherId)
         {
-            var user = await _unitOfWork.Users.GetByIdAsync(userId);
-            var researcher = await _unitOfWork.Researchers.GetByUserIdAsync(userId);
+            var memberships = await _projectMembershipRepo.GetProjectsByResearcherWithDetailsAsync(researcherId);
 
-            var projectsLed = await _unitOfWork.Projects.GetLedProjectsAsync(userId, 2);
-            var projectsMember = await _unitOfWork.Projects.GetMemberProjectsAsync(userId, 2);
+            var leaderProjects = memberships
+                .Where(pm => pm.Role == Role.Leader)
+                .Select(pm => new MyLeaderProjectsViewModel
+                {
+                    ProjectId = pm.Project.Id,
+                    ProjectTitle = pm.Project.Title,
+                    MemberCount = pm.Project.ProjectMemberships.Count,
+                    RelatedNotificationsCount =
+                        pm.Project.JoinRequests.Count(r => r.Status == JoinRequestStatus.Pending) +
+                        (pm.Project.SentInvitations?.Count(i => i.Status == InvitationRequestStatus.Pending) ?? 0),
+                    ImageUrl = null // يمكن إضافة صورة لاحقًا
+                })
+                .ToList();
 
-            var model = new DashboardViewModel
-            {
-                UserName = user.FirstName+" "+user.LastName,
-                ProjectsLedCount = await _unitOfWork.Projects.CountLedByAsync(userId),
-                ProjectsMemberCount = await _unitOfWork.Projects.CountMemberInAsync(userId),
-                CanCreateProject = await _unitOfWork.Researchers.CanCreateProjectAsync(researcher.Id),
-                LedProjects = projectsLed.ToList(),
-                MemberProjects = projectsMember.ToList(),
-                PendingJoinRequestsCount = await _unitOfWork.JoinRequests.CountPendingForLeaderAsync(userId)
-            };
+            return leaderProjects;
+        }
 
-            return model;
+        public async Task<List<MyJoinedProjectsViewModel>> GetMyJoinedProjectsAsync(string researcherId)
+        {
+            var memberships = await _projectMembershipRepo.GetProjectsByResearcherWithDetailsAsync(researcherId);
+
+            var joinedProjects = memberships
+                .Where(pm => pm.Role != Role.Leader)
+                .Select(pm => new MyJoinedProjectsViewModel
+                {
+                    ProjectId = pm.Project.Id,
+                    ProjectTitle = pm.Project.Title,
+                    LeaderFullName = pm.Project.ProjectMemberships
+                        .Where(m => m.Role == Role.Leader)
+                        .Select(m => m.Researcher.User.FullName)
+                        .FirstOrDefault() ?? "غير معروف",
+                    ImageUrl = null
+                })
+                .ToList();
+
+            return joinedProjects;
         }
     }
 }

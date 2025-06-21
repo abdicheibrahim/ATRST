@@ -1,0 +1,26 @@
+﻿@{
+    Layout = "_LayoutResearcher";
+}
+@using ProjetAtrst.ViewModels.Project
+@model List<AvailableProjectViewModel>
+<h2>المشاريع المتاحة للانضمام</h2>
+
+<div class="row">
+    @foreach (var project in Model)
+    {
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5>@project.Title</h5>
+                    <p>@project.Description</p>
+                    <p>قائد المشروع: @project.LeaderFullName</p>
+
+                    <form asp-controller="AvailableProjects" asp-action="SendJoinRequest" method="post">
+                        <input type="hidden" name="projectId" value="@project.Id" />
+                        <button class="btn btn-primary">طلب الانضمام</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+</div>

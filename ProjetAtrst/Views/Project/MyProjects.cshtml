@@ -1,0 +1,60 @@
+﻿@using ProjetAtrst.ViewModels.Project;
+@model List<ProjectListViewModel>
+@{
+    Layout = "_LayoutResearcher";
+}
+
+<div class="mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
+        <h2 class="mb-0">Mes projets</h2>
+        <div class="d-flex flex-column flex-sm-row gap-2">
+            <a class="btn btn-outline-success" asp-controller="Project" asp-action="AvailableProjects">
+                <i class="bi bi-person-plus"></i> Rejoindre un projet
+            </a>
+            <a class="btn btn-outline-success" asp-controller="Project" asp-action="Create">
+                <i class="bi bi-plus-circle"></i> Créer un projet
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-striped align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Titre</th>
+                <th>Date de création</th>
+                <th>Statut</th>
+                <th>Dernière activité</th>
+                <th>Rôle</th>
+                <th>Détails</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var project in Model)
+            {
+                <tr>
+                    <td>@project.Title</td>
+                    <td>@project.CreationDate.ToShortDateString()</td>
+                    <td>@project.Status</td>
+                    <td>@project.LastActivity.ToShortDateString()</td>
+                    <td>
+                        @if (project.Role == Role.Leader)
+                        {
+                            <span class="badge bg-success">Chef</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-primary">Membre</span>
+                        }
+                    </td>
+                    <td>
+                        <a class="btn btn-sm btn-outline-success" asp-controller="Project" asp-action="Details" asp-route-id="@project.Id">
+                            Détails
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

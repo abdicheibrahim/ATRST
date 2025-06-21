@@ -11,17 +11,18 @@
     {
         public int Id { get; set; }
 
-        public string RequesterId { get; set; } = default!;
-        public ProjectMember Requester { get; set; } = default!;
+        public string ResearcherId { get; set; }
+        public Researcher Researcher { get; set; }
 
         public int ProjectId { get; set; }
-        public Project Project { get; set; } = default!;
+        public Project Project { get; set; }
 
-        public DateTime RequestedAt { get; set; }
-        public JoinRequestStatus Status { get; set; }
-        
-        public string? ApprovedById { get; set; }
-        public ProjectLeader? ApprovedBy { get; set; }
+        public string Message { get; set; }
+
+        public JoinRequestStatus Status { get; set; } = JoinRequestStatus.Pending;
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
+
 
 }

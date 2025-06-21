@@ -13,11 +13,9 @@
         public int TargetProjectId { get; set; }
         public Project TargetProject { get; set; } = default!;
 
-        public string SenderId { get; set; } = default!;
-        public ProjectLeader Sender { get; set; } = default!;
-
+        
         public string ReceiverId { get; set; } = default!;
-        public ProjectMember Receiver { get; set; } = default!;
+        public Researcher Receiver { get; set; } = default!;
 
         public DateTime SentAt { get; set; } = DateTime.UtcNow;
 

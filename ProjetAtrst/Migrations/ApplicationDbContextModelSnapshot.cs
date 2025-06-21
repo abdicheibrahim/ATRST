@@ -172,7 +172,7 @@ namespace ProjetAtrst.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("Birthday")
+                    b.Property<DateTime>("Birthday")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -193,6 +193,9 @@ namespace ProjetAtrst.Migrations
                     b.Property<string>("FirstNameAr")
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
+
+                    b.Property<string>("FullName")
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Gender")
                         .HasColumnType("longtext");
@@ -228,6 +231,9 @@ namespace ProjetAtrst.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<string>("ProfilePicturePath")
+                        .HasColumnType("longtext");
+
                     b.Property<DateTime>("RegisterDate")
                         .HasColumnType("datetime(6)");
 
@@ -253,16 +259,6 @@ namespace ProjetAtrst.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("ProjetAtrst.Models.Expert", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Experts");
-                });
-
             modelBuilder.Entity("ProjetAtrst.Models.InvitationRequest", b =>
                 {
                     b.Property<int>("Id")
@@ -272,10 +268,6 @@ namespace ProjetAtrst.Migrations
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ReceiverId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("SenderId")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
@@ -292,8 +284,6 @@ namespace ProjetAtrst.Migrations
 
                     b.HasIndex("ReceiverId");
 
-                    b.HasIndex("SenderId");
-
                     b.HasIndex("TargetProjectId");
 
                     b.ToTable("InvitationRequests");
@@ -306,9 +296,6 @@ namespace ProjetAtrst.Migrations
                         .HasColumnType("int");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ApprovedById")
-                        .HasColumnType("varchar(255)");
 
                     b.Property<int>("ProjectId")
                         .HasColumnType("int");
@@ -324,8 +311,6 @@ namespace ProjetAtrst.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ApprovedById");
 
                     b.HasIndex("ProjectId");
 
@@ -386,20 +371,19 @@ namespace ProjetAtrst.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("varchar(500)");
 
+                    b.Property<bool>("IsAcceptingJoinRequests")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<bool>("IsCompleted")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<DateTime>("LastActivity")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("LeaderId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<int>("ProjectStatus")
+                    b.Property<int>("ProjectApprovalStatus")
                         .HasColumnType("int");
 
-                    b.Property<int>("Status")
+                    b.Property<int>("ProjectStatus")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -410,99 +394,12 @@ namespace ProjetAtrst.Migrations
 
                     b.HasIndex("ApprovedByAdminId");
 
-                    b.HasIndex("LeaderId")
-                        .IsUnique();
-
                     b.ToTable("Projects");
-                });
-
-            modelBuilder.Entity("ProjetAtrst.Models.ProjectEvaluation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Comment")
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("EvaluatedOn")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("ExpertId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<bool>("IsAccepted")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ExpertId");
-
-                    b.HasIndex("ProjectId");
-
-                    b.ToTable("ProjectEvaluations");
-                });
-
-            modelBuilder.Entity("ProjetAtrst.Models.ProjectFile", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("FilePath")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UploadedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("UploadedById")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProjectId");
-
-                    b.HasIndex("UploadedById");
-
-                    b.ToTable("ProjectFiles");
-                });
-
-            modelBuilder.Entity("ProjetAtrst.Models.ProjectLeader", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ProjectLeaders");
-                });
-
-            modelBuilder.Entity("ProjetAtrst.Models.ProjectMember", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ProjectMembers");
                 });
 
             modelBuilder.Entity("ProjetAtrst.Models.ProjectMembership", b =>
                 {
-                    b.Property<string>("MemberId")
+                    b.Property<string>("ResearcherId")
                         .HasColumnType("varchar(255)");
 
                     b.Property<int>("ProjectId")
@@ -511,7 +408,10 @@ namespace ProjetAtrst.Migrations
                     b.Property<DateTime>("JoinedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.HasKey("MemberId", "ProjectId");
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
+
+                    b.HasKey("ResearcherId", "ProjectId");
 
                     b.HasIndex("ProjectId");
 
@@ -536,8 +436,8 @@ namespace ProjetAtrst.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Establishment")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Grade")
                         .HasColumnType("longtext");
@@ -551,10 +451,10 @@ namespace ProjetAtrst.Migrations
                     b.Property<string>("Mobile")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Speciality")
-                        .HasColumnType("longtext");
+                    b.Property<int>("ResearcherApprovalStatus")
+                        .HasColumnType("int");
 
-                    b.Property<string>("Status")
+                    b.Property<string>("Speciality")
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
@@ -626,28 +526,11 @@ namespace ProjetAtrst.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ProjetAtrst.Models.Expert", b =>
-                {
-                    b.HasOne("ProjetAtrst.Models.Researcher", "Researcher")
-                        .WithOne("Expert")
-                        .HasForeignKey("ProjetAtrst.Models.Expert", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Researcher");
-                });
-
             modelBuilder.Entity("ProjetAtrst.Models.InvitationRequest", b =>
                 {
-                    b.HasOne("ProjetAtrst.Models.ProjectMember", "Receiver")
+                    b.HasOne("ProjetAtrst.Models.Researcher", "Receiver")
                         .WithMany("ReceivedInvitations")
                         .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ProjetAtrst.Models.ProjectLeader", "Sender")
-                        .WithMany("SentInvitations")
-                        .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -659,31 +542,22 @@ namespace ProjetAtrst.Migrations
 
                     b.Navigation("Receiver");
 
-                    b.Navigation("Sender");
-
                     b.Navigation("TargetProject");
                 });
 
             modelBuilder.Entity("ProjetAtrst.Models.JoinRequest", b =>
                 {
-                    b.HasOne("ProjetAtrst.Models.ProjectLeader", "ApprovedBy")
-                        .WithMany("JoinRequests")
-                        .HasForeignKey("ApprovedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("ProjetAtrst.Models.Project", "Project")
                         .WithMany("JoinRequests")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("ProjetAtrst.Models.ProjectMember", "Requester")
+                    b.HasOne("ProjetAtrst.Models.Researcher", "Requester")
                         .WithMany("SentJoinRequests")
                         .HasForeignKey("RequesterId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("ApprovedBy");
 
                     b.Navigation("Project");
 
@@ -708,94 +582,26 @@ namespace ProjetAtrst.Migrations
                         .HasForeignKey("ApprovedByAdminId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("ProjetAtrst.Models.ProjectLeader", "Leader")
-                        .WithOne("CreatedProject")
-                        .HasForeignKey("ProjetAtrst.Models.Project", "LeaderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("ApprovedByAdmin");
-
-                    b.Navigation("Leader");
-                });
-
-            modelBuilder.Entity("ProjetAtrst.Models.ProjectEvaluation", b =>
-                {
-                    b.HasOne("ProjetAtrst.Models.Expert", "Expert")
-                        .WithMany("Evaluations")
-                        .HasForeignKey("ExpertId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ProjetAtrst.Models.Project", "Project")
-                        .WithMany("Evaluations")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Expert");
-
-                    b.Navigation("Project");
-                });
-
-            modelBuilder.Entity("ProjetAtrst.Models.ProjectFile", b =>
-                {
-                    b.HasOne("ProjetAtrst.Models.Project", "Project")
-                        .WithMany("Files")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ProjetAtrst.Models.ProjectLeader", "UploadedBy")
-                        .WithMany("UploadedFiles")
-                        .HasForeignKey("UploadedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Project");
-
-                    b.Navigation("UploadedBy");
-                });
-
-            modelBuilder.Entity("ProjetAtrst.Models.ProjectLeader", b =>
-                {
-                    b.HasOne("ProjetAtrst.Models.Researcher", "Researcher")
-                        .WithOne("ProjectLeader")
-                        .HasForeignKey("ProjetAtrst.Models.ProjectLeader", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Researcher");
-                });
-
-            modelBuilder.Entity("ProjetAtrst.Models.ProjectMember", b =>
-                {
-                    b.HasOne("ProjetAtrst.Models.Researcher", "Researcher")
-                        .WithOne("ProjectMember")
-                        .HasForeignKey("ProjetAtrst.Models.ProjectMember", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Researcher");
                 });
 
             modelBuilder.Entity("ProjetAtrst.Models.ProjectMembership", b =>
                 {
-                    b.HasOne("ProjetAtrst.Models.ProjectMember", "Member")
-                        .WithMany("ProjectMemberships")
-                        .HasForeignKey("MemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ProjetAtrst.Models.Project", "Project")
                         .WithMany("ProjectMemberships")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Member");
+                    b.HasOne("ProjetAtrst.Models.Researcher", "Researcher")
+                        .WithMany("ProjectMemberships")
+                        .HasForeignKey("ResearcherId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Project");
+
+                    b.Navigation("Researcher");
                 });
 
             modelBuilder.Entity("ProjetAtrst.Models.Researcher", b =>
@@ -830,17 +636,8 @@ namespace ProjetAtrst.Migrations
                     b.Navigation("Researcher");
                 });
 
-            modelBuilder.Entity("ProjetAtrst.Models.Expert", b =>
-                {
-                    b.Navigation("Evaluations");
-                });
-
             modelBuilder.Entity("ProjetAtrst.Models.Project", b =>
                 {
-                    b.Navigation("Evaluations");
-
-                    b.Navigation("Files");
-
                     b.Navigation("JoinRequests");
 
                     b.Navigation("ProjectMemberships");
@@ -848,35 +645,15 @@ namespace ProjetAtrst.Migrations
                     b.Navigation("SentInvitations");
                 });
 
-            modelBuilder.Entity("ProjetAtrst.Models.ProjectLeader", b =>
+            modelBuilder.Entity("ProjetAtrst.Models.Researcher", b =>
                 {
-                    b.Navigation("CreatedProject");
+                    b.Navigation("Notifications");
 
-                    b.Navigation("JoinRequests");
-
-                    b.Navigation("SentInvitations");
-
-                    b.Navigation("UploadedFiles");
-                });
-
-            modelBuilder.Entity("ProjetAtrst.Models.ProjectMember", b =>
-                {
                     b.Navigation("ProjectMemberships");
 
                     b.Navigation("ReceivedInvitations");
 
                     b.Navigation("SentJoinRequests");
-                });
-
-            modelBuilder.Entity("ProjetAtrst.Models.Researcher", b =>
-                {
-                    b.Navigation("Expert");
-
-                    b.Navigation("Notifications");
-
-                    b.Navigation("ProjectLeader");
-
-                    b.Navigation("ProjectMember");
                 });
 #pragma warning restore 612, 618
         }

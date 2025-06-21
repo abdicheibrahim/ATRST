@@ -2,13 +2,9 @@
 
 namespace ProjetAtrst.Interfaces.Repositories
 {
-
-    public interface IInvitationRequestRepository : IGenericRepository<InvitationRequest>
+    public interface IInvitationRequestRepository
     {
-        Task<List<InvitationRequest>> GetPendingReceivedAsync(string memberId);
-        Task<List<InvitationRequest>> GetPendingSentAsync(string leaderId);
-        Task<InvitationRequest?> GetByIdWithDetailsAsync(int id);
-
+        Task<List<InvitationRequest>> GetInvitationsISentAsync(string leaderId);
+        Task<List<InvitationRequest>> GetInvitationsIReceivedAsync(string researcherId);
     }
-
-}   
+}

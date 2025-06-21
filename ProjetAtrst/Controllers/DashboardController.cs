@@ -1,34 +1,40 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using ProjetAtrst.Interfaces.Services;
+using ProjetAtrst.Models;
+using ProjetAtrst.ViewModels.Dashboard;
+using System.Security.Claims;
 
 namespace ProjetAtrst.Controllers
 {
-
     [Authorize]
+    [ServiceFilter(typeof(ProfileCompletionFilter))]
+
     public class DashboardController : Controller
     {
         private readonly IDashboardService _dashboardService;
-        private readonly IUserAccessService _userAccessService;
+       
 
-        public DashboardController(IDashboardService dashboardService, IUserAccessService userAccessService)
+        public DashboardController(IDashboardService dashboardService, UserManager<ApplicationUser> userManager)
         {
             _dashboardService = dashboardService;
-            _userAccessService = userAccessService;
+           
         }
 
         public async Task<IActionResult> Index()
         {
-            var userId = _userAccessService.GetUserId();
-            if (string.IsNullOrEmpty(userId)) return Unauthorized();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var model = await _dashboardService.GetDashboardDataAsync(userId);
-            var accessStatus = await _userAccessService.GetAccessStatusAsync(userId);
+            var leaderProjects = await _dashboardService.GetMyLeaderProjectsAsync(userId);
+            var joinedProjects = await _dashboardService.GetMyJoinedProjectsAsync(userId);
 
-            ViewBag.AccessStatus = accessStatus; // يمكن استخدامه في View
+            var viewModel = new DashboardViewModel
+            {
+                LeaderProjects = leaderProjects,
+                JoinedProjects = joinedProjects
+            };
 
-            return View(model);
+            return View(viewModel);
         }
     }
-
-
 }

@@ -2,17 +2,12 @@
 
 namespace ProjetAtrst.Interfaces.Repositories
 {
-    public interface IProjectRepository:IGenericRepository<Project>
+    public interface IProjectRepository : IGenericRepository<Project>
     {
-     
-       
+        //Task<Project?> GetLeaderProjectAsync(string researcherId);
+        Task<Project?> GetByIdAsync(int id);
+        Task<List<Project>> GetAvailableProjectsForJoinAsync(string researcherId);
 
-        Task<int> CountLedByAsync(string userId);
-        Task<int> CountMemberInAsync(string userId);
-        Task<IEnumerable<Project>> GetLedProjectsAsync(string userId, int takeCount);
-        Task<IEnumerable<Project>> GetMemberProjectsAsync(string userId, int takeCount);
-        Task<IEnumerable<Project>> GetOpenProjectsForJoiningAsync(string researcherId);
-        
 
     }
 }

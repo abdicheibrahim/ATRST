@@ -118,33 +118,33 @@
 
     <!--  Sidebar -->
     <div class="sidebar" id="sidebar">
-        <h6>Profile</h6>
-        <a asp-controller="User" asp-action="EditProfile" class="nav-link @(IsActive("EditProfile"))"><i class="fa-solid fa-user"></i> Profile</a>
-        <a asp-controller="User" asp-action="Education" class="nav-link @(IsActive("Education"))"><i class="fa-solid fa-graduation-cap"></i> Education</a>
-        <a asp-controller="User" asp-action="Employments" class="nav-link @(IsActive("Employments"))"><i class="fa-solid fa-address-card"></i> Employments</a>
+         <h6>Profile</h6>
+        <a asp-controller="Account" asp-action="CompleteProfile" class="nav-link @(IsActive("CompleteProfile"))"><i class="fa-solid fa-user"></i> Profile</a>
+        @* <a asp-controller="User" asp-action="Education" class="nav-link @(IsActive("Education"))"><i class="fa-solid fa-graduation-cap"></i> Education</a> *@
+        @* <a asp-controller="User" asp-action="Employments" class="nav-link @(IsActive("Employments"))"><i class="fa-solid fa-address-card"></i> Employments</a> *@
 
-        <hr />
-        <h6>Team</h6>
-        <a asp-controller="Team" asp-action="Details" class="nav-link @(IsActive("Details"))"><i class="fa-solid fa-gear"></i> Team Details</a>
-        <a asp-controller="Team" asp-action="Users" class="nav-link @(IsActive("Users"))"><i class="fa-solid fa-people-group"></i> Members</a>
-        <a asp-controller="Team" asp-action="JoinRequests" class="nav-link @(IsActive("JoinRequests"))">
-            <i class="fa-solid fa-user-plus"></i> Join Requests <span class="badge bg-warning text-dark ms-4">+2</span>
-        </a>
+        @* <hr /> *@
+        @* <h6>Team</h6> *@
+        @* <a asp-controller="Team" asp-action="Details" class="nav-link @(IsActive("Details"))"><i class="fa-solid fa-gear"></i> Team Details</a> *@
+        @* <a asp-controller="Team" asp-action="Users" class="nav-link @(IsActive("Users"))"><i class="fa-solid fa-people-group"></i> Members</a> *@
+        @* <a asp-controller="Team" asp-action="JoinRequests" class="nav-link @(IsActive("JoinRequests"))"> *@
+        @*     <i class="fa-solid fa-user-plus"></i> Join Requests <span class="badge bg-warning text-dark ms-4">+2</span> *@
+        @* </a> *@
 
-        <hr />
-        <h6>Project</h6>
-        <a asp-controller="Project" asp-action="EditProject" class="nav-link @(IsActive("EditProject"))"><i class="fa-solid fa-diagram-project"></i> Project</a>
-        <a asp-controller="Project" asp-action="Documents" class="nav-link @(IsActive("Documents"))"><i class="fa-solid fa-file-lines"></i> Documents</a>
-        <a asp-controller="Project" asp-action="Partners" class="nav-link @(IsActive("Partners"))"><i class="fa-solid fa-handshake"></i> Partners</a>
-        <a asp-controller="Project" asp-action="WorkPackages" class="nav-link @(IsActive("WorkPackages"))"><i class="fa-solid fa-briefcase"></i> Work Packages</a>
-        <a asp-controller="Project" asp-action="Deliverables" class="nav-link @(IsActive("Deliverables"))"><i class="fa-solid fa-file-signature"></i> Deliverables</a>
-        @* @await Component.InvokeAsync("Sidebar") *@
+        @* <hr /> *@
+         <h6>Project</h6>
+        <a asp-controller="Project" asp-action="Create" class="nav-link @(IsActive("Create"))"><i class="fa-solid fa-diagram-project"></i> Create New Project</a>
+        <a asp-controller="Project" asp-action="MyProjects" class="nav-link @(IsActive("MyProjects"))"><i class="fa-solid fa-file-lines"></i> MyProject</a>
+        @* <a asp-controller="Project" asp-action="Partners" class="nav-link @(IsActive("Partners"))"><i class="fa-solid fa-handshake"></i> Partners</a> *@
+        @* <a asp-controller="Project" asp-action="WorkPackages" class="nav-link @(IsActive("WorkPackages"))"><i class="fa-solid fa-briefcase"></i> Work Packages</a> *@
+        @* <a asp-controller="Project" asp-action="Deliverables" class="nav-link @(IsActive("Deliverables"))"><i class="fa-solid fa-file-signature"></i> Deliverables</a> *@
+           @* @await Component.InvokeAsync("Sidebar")    *@
    </div> 
 
     <!--  Overlay layer when menu is open -->
     <div class="overlay" id="overlay"></div>
     <div class="content ">
-        @* @await Component.InvokeAsync("ApprovalStatus") *@
+          @* @await Component.InvokeAsync("ApprovalStatus")   *@
         @RenderBody()  
    </div>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -153,12 +153,12 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@@yaireo/tagify"></script>
     <script src="~/js/site.js"></script>
-    @functions {
-        private string IsActive(string action)
-        {
-            var currentAction = Context.Request.RouteValues["action"]?.ToString();
-            return currentAction == action ? "active" : "";
-        }
+     @functions { 
+         private string IsActive(string action) 
+         { 
+            var currentAction = Context.Request.RouteValues["action"]?.ToString(); 
+            return currentAction == action ? "active" : ""; 
+         } 
     }
     @RenderSection("Scripts", required: false)
 

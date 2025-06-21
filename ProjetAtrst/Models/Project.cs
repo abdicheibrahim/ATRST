@@ -1,7 +1,7 @@
 ﻿
 namespace ProjetAtrst.Models
 {
-    public enum Status
+    public enum ProjectApprovalStatus
     {
         Pending,
         Accepted,
@@ -21,24 +21,20 @@ namespace ProjetAtrst.Models
        
         public string Title { get; set; }= string.Empty;
 
-        public DateTime CreationDate { get; set; } = DateTime.UtcNow;
-
         [MaxLength(500)]
-        public string Description { get; set; }=string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public DateTime CreationDate { get; set; } = DateTime.UtcNow;
         public DateTime LastActivity { get; set; } = DateTime.UtcNow;
-
-        public string LeaderId { get; set; } = default!;
-        public ProjectLeader Leader { get; set; } = default!;
         public bool IsCompleted { get; set; } = false;
-        public Status Status { get; set; } = Status.Pending;
-        public ProjectStatus ProjectStatus { get; set; } = ProjectStatus.Open;
+        public ProjectApprovalStatus ProjectApprovalStatus { get; set; } = ProjectApprovalStatus.Pending;
+        public ProjectStatus ProjectStatus { get; set; }
+        public bool IsAcceptingJoinRequests { get; set; } = true;
+
+        public ICollection<ProjectMembership> ProjectMemberships { get; set; } = new List<ProjectMembership>();
+        public ICollection<InvitationRequest>? SentInvitations { get; set; }
+        public ICollection<JoinRequest>? JoinRequests { get; set; }
         public string? ApprovedByAdminId { get; set; }
         public Admin? ApprovedByAdmin { get; set; } = default!;
-        public ICollection<ProjectMembership>? ProjectMemberships { get; set; }
-        public ICollection<JoinRequest> JoinRequests { get; set; } = new List<JoinRequest>();
-        public ICollection<ProjectEvaluation> Evaluations { get; set; } = new List<ProjectEvaluation>();
-        public ICollection<ProjectFile> Files { get; set; } = new List<ProjectFile>();
-        public ICollection<InvitationRequest>? SentInvitations { get; set; }
 
     }
 }

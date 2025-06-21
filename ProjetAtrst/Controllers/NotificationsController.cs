@@ -6,6 +6,7 @@ using ProjetAtrst.Interfaces.Services;
 namespace ProjetAtrst.Controllers
 {
     [Authorize]
+    [ServiceFilter(typeof(ProfileCompletionFilter))]
     public class NotificationsController : Controller
     {
         private readonly INotificationService _notificationService;

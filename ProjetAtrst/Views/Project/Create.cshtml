@@ -1,34 +1,28 @@
-﻿
-@model CreateProjectViewModel
-
+﻿@using ProjetAtrst.ViewModels.Project
+@model ProjectCreateViewModel
+@{
+    Layout = "_LayoutResearcher";
+}
 @{
     ViewData["Title"] = "إنشاء مشروع جديد";
 }
 
-<h2>إنشاء مشروع جديد</h2>
+<h2>@ViewData["Title"]</h2>
 
 <form asp-action="Create" method="post">
-    <div class="form-group">
-        <label asp-for="Title"></label>
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label"></label>
         <input asp-for="Title" class="form-control" />
-        <span asp-validation-for="Title" class="text-danger" />
+        <span asp-validation-for="Title" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
-        <label asp-for="Description"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
-        <span asp-validation-for="Description" class="text-danger" />
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
     </div>
 
-  
-
-    <div class="form-group">
-        <label asp-for="ProjectStatus"></label>
-        <input asp-for="ProjectStatus" type="text" class="form-control" />
-        <span asp-validation-for="ProjectStatus" class="text-danger" />
-    </div>
-
-    <button type="submit" class="btn btn-primary">إنشاء المشروع</button>
+    <button type="submit" class="btn btn-primary">تسجيل</button>
 </form>
 
 @section Scripts {

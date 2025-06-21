@@ -1,0 +1,99 @@
+﻿@using ProjetAtrst.ViewModels.Account
+@model EditAccountViewModel
+@{
+    Layout = "_LayoutResearcher";
+}
+
+@{
+    ViewData["Title"] = "Modifier le compte";
+}
+
+<h2 class="mb-4">Modifier les informations du compte</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<form asp-action="EditAccount" method="post" enctype="multipart/form-data">
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="ProfilePicture" class="form-label">Photo de profil</label>
+            <input asp-for="ProfilePicture" type="file" accept=".jpg,.jpeg,.png" class="form-control" onchange="previewImage(event)" />
+            <small class="form-text text-muted">Formats acceptés : JPG, JPEG, PNG - Taille max : 2MB</small>
+            <span id="file-error" class="text-danger d-block" asp-validation-for="ProfilePicture"></span>
+
+            <div class="mt-2">
+                <img id="preview-img"
+                     src="@Model.ExistingProfilePicturePath"
+                     alt="Prévisualisation"
+                     class="img-thumbnail"
+                     style="height: 100px; display:@(string.IsNullOrEmpty(Model.ExistingProfilePicturePath) ? "none" : "block");" />
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label asp-for="CurrentPassword" class="form-label"></label>
+            <input asp-for="CurrentPassword" class="form-control" />
+            <span asp-validation-for="CurrentPassword" class="text-danger"></span>
+        </div>
+        <div class="col-md-4">
+            <label asp-for="NewPassword" class="form-label"></label>
+            <input asp-for="NewPassword" class="form-control" />
+            <span asp-validation-for="NewPassword" class="text-danger"></span>
+        </div>
+        <div class="col-md-4">
+            <label asp-for="ConfirmPassword" class="form-label"></label>
+            <input asp-for="ConfirmPassword" class="form-control" />
+            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+</form>
+
+@section Scripts {
+    <script>
+        function previewImage(event) {
+            const input = event.target;
+            const preview = document.getElementById('preview-img');
+            const errorSpan = document.getElementById('file-error');
+            const maxSize = 2 * 1024 * 1024; // 2MB
+
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+
+                if (file.size > maxSize) {
+                    errorSpan.innerText = "La taille de l'image ne doit pas dépasser 2MB.";
+                    input.value = '';
+                    preview.src = '';
+                    preview.style.display = 'none';
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    errorSpan.innerText = '';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.src = '';
+                preview.style.display = 'none';
+                errorSpan.innerText = '';
+            }
+        }
+    </script>
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,80 +1,87 @@
-﻿@model ProjetAtrst.ViewModels.DashboardViewModel
+﻿@model ProjetAtrst.ViewModels.Dashboard.DashboardViewModel
+
 @{
-    var accessStatus = ViewBag.AccessStatus as ProjetAtrst.ViewModels.UserAccess.UserAccessStatusViewModel;
+    Layout = "_LayoutResearcher";
+}
+
+@{
+    ViewData["Title"] = "الصفحة الرئيسية";
 }
 
 <div class="container mt-4">
-    <h2>مرحبًا، @Model.UserName</h2>
+    <h2 class="mb-4">📘 المشاريع التي أنا قائد فيها</h2>
 
-    <div class="row mt-3">
-        <div class="col-md-6">
-            <div class="card border-success mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">📊 ملخص المشاريع</h5>
-                    <p>عدد المشاريع التي تقودها: <strong>@Model.ProjectsLedCount</strong></p>
-                    <p>عدد المشاريع التي أنت عضو فيها: <strong>@Model.ProjectsMemberCount</strong></p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div class="card border-info mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">🧾 حالتك كباحث</h5>
-                    <p>الملف مكتمل: <strong>@(accessStatus?.IsCompleted == true ? "نعم" : "لا")</strong></p>
-                    <p>تمت الموافقة: <strong>@(accessStatus?.IsApproved == true ? "نعم" : "لا")</strong></p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    @if (Model.CanCreateProject)
+    @if (Model.LeaderProjects.Any())
     {
-        <a href="@Url.Action("Create", "Project")" class="btn btn-primary">➕ إنشاء مشروع جديد</a>
-        <a class="btn btn-success" asp-controller="Project" asp-action="Create">
-            + إنشاء مشروع جديد
-        </a>
-    }
-
-    <a href="@Url.Action("AvailableToJoin", "Project")" class="btn btn-outline-secondary ms-2">🔍 استعراض المشاريع المفتوحة</a>
-    <a class="btn btn-outline-primary" asp-controller="Project" asp-action="OpenProjects">
-        عرض المشاريع المفتوحة
-    </a>
-    <hr />
-
-    @if (Model.RecentProjects != null && Model.RecentProjects.Any())
-    {
-        <h4>📁 مشاريعك الأخيرة</h4>
-        <ul class="list-group">
-            @foreach (var project in Model.RecentProjects)
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            @foreach (var project in Model.LeaderProjects)
             {
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong>@project.Title</strong> - الحالة: @project.Status - آخر تحديث: @project.LastActivity.ToString("dd/MM/yyyy")
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <div class="row g-0">
+                            <div class="col-3 d-flex align-items-center justify-content-center bg-light">
+                                <img src="@project.ImageUrl ?? \" /images/project-placeholder.png\"" class="img-fluid" alt="صورة المشروع" style="max-height: 64px;">
+                            </div>
+                            <div class="col-9">
+                                <div class="card-body">
+                                    <h5 class="card-title">@project.ProjectTitle</h5>
+                                    <p class="card-text mb-1">👥 عدد الأعضاء: <strong>@project.MemberCount</strong></p>
+
+                                    @if (project.RelatedNotificationsCount > 0)
+                                    {
+                                        <p class="card-text text-warning">
+                                            🔔 إشعارات: +@project.RelatedNotificationsCount
+                                        </p>
+                                    }
+                                    else
+                                    {
+                                        <p class="card-text text-muted">لا توجد إشعارات</p>
+                                    }
+
+                                    <a href="@Url.Action("Enter", "ProjectContext", new { projectId = project.ProjectId })" class="stretched-link"></a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </li>
+                </div>
             }
-        </ul>
+        </div>
     }
     else
     {
-        <div class="alert alert-info mt-3">
-            @if (!(accessStatus?.IsLeader == true || accessStatus?.IsMember == true))
+        <p class="text-muted">لا توجد مشاريع تقودها حاليًا.</p>
+    }
+
+    <hr class="my-5">
+
+    <h2 class="mb-4">📒 المشاريع التي أنا عضو فيها</h2>
+
+    @if (Model.JoinedProjects.Any())
+    {
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            @foreach (var project in Model.JoinedProjects)
             {
-                <p>🚀 ابدأ الآن بإنشاء مشروعك الأول أو انضم إلى مشروع مناسب.</p>
-            }
-            else
-            {
-                <p>لا توجد مشاريع حالية لعرضها.</p>
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <div class="row g-0">
+                            <div class="col-3 d-flex align-items-center justify-content-center bg-light">
+                                <img src="@project.ImageUrl ?? \" /images/project-placeholder.png\"" class="img-fluid" alt="صورة المشروع" style="max-height: 64px;">
+                            </div>
+                            <div class="col-9">
+                                <div class="card-body">
+                                    <h5 class="card-title">@project.ProjectTitle</h5>
+                                    <p class="card-text">👤 القائد: <strong>@project.LeaderFullName</strong></p>
+                                    <a href="@Url.Action("Details", "Projects", new { id = project.ProjectId })" class="stretched-link"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             }
         </div>
     }
-
-    @if (Model.ProjectsLedCount > 0 && Model.PendingJoinRequestsCount > 0)
+    else
     {
-        <div class="alert alert-warning mt-4">
-            لديك <strong>@Model.PendingJoinRequestsCount</strong> طلب(ات) انضمام جديدة في مشاريعك.
-            <a href="@Url.Action("JoinRequests", "Leader")" class="btn btn-sm btn-outline-dark ms-2">عرض الطلبات</a>
-        </div>
+        <p class="text-muted">لا توجد مشاريع أنت عضو فيها حاليًا.</p>
     }
 </div>

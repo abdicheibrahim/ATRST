@@ -1,0 +1,197 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@using ProjetAtrst.Interfaces.Services;
+@inject SignInManager<ApplicationUser> _SignInManager;
+@inject INotificationService NotificationService
+@inject UserManager<ApplicationUser> UserManager
+@{
+    var user = await UserManager.GetUserAsync(User);
+    var notifications = user != null ? await NotificationService.GetUnreadNotificationsAsync(user.Id) : new List<Notification>();
+    var count = notifications.Count;
+    var fullName = user?.FullName ?? "Utilisateur";
+    var imagePath = user?.ProfilePicturePath;
+    var initial = !string.IsNullOrEmpty(fullName) ? fullName.Trim()[0].ToString().ToUpper() : "?";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ATRST  @ViewData["title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@yaireo/tagify/dist/tagify.css" />
+    <link href="~/css/site.css" rel="stylesheet" />
+
+</head>
+<body>
+    <!-- Spinner Overlay -->
+    <div id="globalSpinner" class="hidden">
+        <div class="spinner-container">
+            <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2" style="color: #333;">Loading...</p>
+        </div>
+    </div>
+
+    <!--  Top bar -->
+    <div class="topbar d-flex align-items-center justify-content-between px-3 py-2 shadow-sm bg-white border-bottom">
+        <!-- Sidebar toggle (Mobile only) -->
+        <button type="button" class="btn btn-light d-md-none" id="toggleSidebar" title="القائمة">
+            <i class="bi bi-list fs-4"></i>
+        </button>
+
+        <!-- Logo and project title -->
+        <a asp-controller="Home" asp-action="Index" class="d-flex align-items-center text-decoration-none text-dark">
+            <img src="~/images/logo-mini.png" alt="ATRST Logo" class="me-2" style="height: 40px;" />
+            <span class="fw-semibold fs-5 d-none d-sm-inline">ATRST Project</span>
+        </a>
+
+        <div class="d-flex align-items-center gap-3">
+            <!-- Notifications dropdown -->
+            <div class="nav-item dropdown">
+                <a class="nav-link position-relative" data-bs-toggle="dropdown" role="button" aria-expanded="false">
+                    <i class="bi bi-bell fs-5"></i>
+                    @if (count > 0)
+                    {
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            @count
+                        </span>
+                    }
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    @if (count == 0)
+                    {
+                        <li><span class="dropdown-item text-muted">Aucune nouvelle notification</span></li>
+                    }
+                    else
+                    {
+                        @foreach (var notification in notifications.Take(5))
+                        {
+                            <li>
+                                <a class="dropdown-item small" href="@Url.Action("Index", "Notifications")">
+                                    <strong>@notification.Title</strong><br />
+                                    <span class="text-muted">@notification.Message</span>
+                                </a>
+                            </li>
+                        }
+                    }
+                    <li><hr class="dropdown-divider" /></li>
+                    <li><a class="dropdown-item text-center" href="@Url.Action("Index", "Notifications")">Tout voir</a></li>
+                </ul>
+            </div>
+
+            <!-- User dropdown -->
+            <div class="dropdown">
+                <button class="btn dropdown-toggle align-items-center d-flex p-0 border-0" type="button" id="userBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                    @if (!string.IsNullOrEmpty(imagePath))
+                    {
+                        <!-- صورة المستخدم -->
+                        <img src="@Url.Content(imagePath)" alt="User Profile" class="rounded-circle me-2" style="height: 36px; width: 36px;">
+                    }
+                    else
+                    {
+                        <!-- أول حرف من الاسم داخل دائرة -->
+                        <div class="rounded-circle bg-dark text-white d-flex justify-content-center align-items-center me-2"
+                             style="width: 36px; height: 36px; font-weight: bold;">
+                            @initial
+                        </div>
+                    }
+                    <span class="d-none d-md-inline">@fullName</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <a class="dropdown-item" asp-controller="Account" asp-action="CompleteProfile">
+                            <i class="fa-solid fa-user me-2"></i>Personal informations
+                        </a>
+                    </li>
+                    @if (_SignInManager.IsSignedIn(User))
+                    {
+                        <li>
+                            <a class="dropdown-item" asp-controller="Account" asp-action="Logout">
+                                <i class="fa-solid fa-right-from-bracket me-2"></i>Deconnexion
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li>
+                            <a class="dropdown-item" asp-controller="Account" asp-action="Login">
+                                <i class="fa-solid fa-right-to-bracket me-2"></i>Se connecter
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" asp-controller="Account" asp-action="Register">
+                                <i class="fa-solid fa-user-plus me-2"></i>Creer un compte
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+    <!--  Sidebar -->
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-links">
+            <a asp-controller="Dashboard" asp-action="Index" class="nav-link @(IsActive("Dashboard","Index"))">
+                <i class="bi bi-house-door"></i> Accueil
+            </a>
+            <hr />
+            <a asp-controller="Account" asp-action="EditProfile" class="nav-link @(IsActive("Account","EditProfile"))">
+                <i class="bi bi-person"></i>Personal informations
+            </a>
+            <a asp-controller="Researcher" asp-action="EditProfile" class="nav-link @(IsActive("Researcher","EditProfile"))">
+                <i class="bi bi-person-vcard"></i>Professional informations
+            </a>
+            <a asp-controller="Account" asp-action="EditAccount" class="nav-link @(IsActive("Account","EditAccount"))">
+                <i class="bi bi-gear"></i> Parametres du compte
+            </a>
+            <hr />
+            <a asp-controller="Project" asp-action="MyProjects" class="nav-link @(IsActive("Project","MyProjects"))">
+                <i class="bi bi-briefcase"></i> Mes projets
+            </a>
+            <a asp-controller="ProjectRequests" asp-action="Index" class="nav-link @(IsActive("ProjectRequests","Index"))">
+                <i class="bi bi-envelope"></i> Demandes et invitations
+            </a>
+            <hr />
+        </div>
+
+        <!-- Logout link fixed at the bottom -->
+        <a asp-controller="Account" asp-action="Logout" class="nav-link logout-link @(IsActive("Account","Logout"))">
+            <i class="bi bi-box-arrow-right"></i> Deconnexion
+        </a>
+
+    </div>
+
+
+    <!--  Overlay layer when menu is open -->
+    <div class="overlay" id="overlay"></div>
+    <div class="content ">
+        @* @await Component.InvokeAsync("ApprovalStatus")   *@
+        @RenderBody()
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@@yaireo/tagify"></script>
+    <script src="~/js/site.js"></script>
+    @functions {
+        private string IsActive(string controller, string action)
+        {
+            var currentController = Context.Request.RouteValues["controller"]?.ToString();
+            var currentAction = Context.Request.RouteValues["action"]?.ToString();
+
+            return (currentController == controller && currentAction == action) ? "active" : "";
+        }
+    }
+
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>

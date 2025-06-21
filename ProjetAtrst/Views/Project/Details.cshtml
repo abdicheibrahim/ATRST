@@ -1,0 +1,39 @@
+﻿@using ProjetAtrst.ViewModels.Project;
+@model ProjectDetailsViewModel
+
+@{
+    Layout = "_LayoutProject";
+}
+
+<h2>
+    Details du projet
+</h2>
+
+<div class="mb-3">
+    <label class="form-label">Titre</label>
+    <p class="form-control">@Model.Title</p>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Description</label>
+    <p class="form-control">@Model.Description</p>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Date de creation</label>
+    <p class="form-control">@Model.CreationDate.ToShortDateString()</p>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Statut</label>
+    <p class="form-control">@Model.Status</p>
+</div>
+
+@if (Model.Role == Role.Leader)
+{
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary"><i class="bi bi-pencil-square me-2"></i>Modifier</a>
+}
+else
+{
+    <div class="alert alert-info">لا يمكنك تعديل هذا المشروع لأنك لست القائد.</div>
+}

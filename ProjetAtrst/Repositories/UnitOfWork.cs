@@ -12,24 +12,16 @@ namespace ProjetAtrst.Repositories
         public IUserRepository Users {  get; }
         public INotificationRepository Notifications { get; }
         public IProjectRepository Projects { get; }
-        public IJoinRequestRepository JoinRequests { get; }
-        public IProjectLeaderRepository ProjectLeader { get; }
-        public IInvitationRequestRepository InvitationRequest { get; }
-        public IProjectMembershipRepository ProjectMembership { get; }
-
+        public IProjectMembershipRepository ProjectMemberships { get; }
         public UnitOfWork(ApplicationDbContext context, IResearcherRepository researcherRepository, IUserRepository userRepository,
-            INotificationRepository NotificationRepository, IProjectRepository projectsRepository, IJoinRequestRepository joinRequestsRepository,
-            IProjectLeaderRepository ProjectLeaderRepository, IInvitationRequestRepository invitationRequestRepository, IProjectMembershipRepository projectMembershipRepository)
+            INotificationRepository NotificationRepository, IProjectRepository projectRepository, IProjectMembershipRepository IProjectMembershipRepository)
         {
             _context = context;
             Researchers = researcherRepository;
             Users = userRepository;
             Notifications = NotificationRepository;
-            Projects = projectsRepository;
-            JoinRequests = joinRequestsRepository;
-            ProjectLeader = ProjectLeaderRepository;
-            InvitationRequest = invitationRequestRepository;
-            ProjectMembership = projectMembershipRepository;
+            Projects = projectRepository;
+            ProjectMemberships = IProjectMembershipRepository;
         }
 
         public async Task<int> SaveAsync()

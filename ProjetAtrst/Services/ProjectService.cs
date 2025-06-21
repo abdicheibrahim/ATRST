@@ -1,7 +1,8 @@
 ﻿using ProjetAtrst.Interfaces;
-using ProjetAtrst.Models;
-using ProjetAtrst.ViewModels;
 using ProjetAtrst.Interfaces.Services;
+using ProjetAtrst.Models;
+using ProjetAtrst.ViewModels.Project;
+
 namespace ProjetAtrst.Services
 {
     public class ProjectService : IProjectService
@@ -12,50 +13,132 @@ namespace ProjetAtrst.Services
         {
             _unitOfWork = unitOfWork;
         }
-
-        public async Task<bool> CreateProjectAsync(string userId, CreateProjectViewModel model)
+        public async Task CreateProjectAsync(ProjectCreateViewModel model, string researcherId)
         {
-            var researcher = await _unitOfWork.Researchers.GetByUserIdAsync(userId);
-            var leader = await _unitOfWork.ProjectLeader.GetByIdAsync(userId);
-
-            if (researcher == null || !await _unitOfWork.Researchers.CanCreateProjectAsync(researcher.Id))
-                return false;
-
-            if (leader == null)
-            {
-                leader = new ProjectLeader
-                {
-                    Id = userId,
-                    Researcher = researcher
-                };
-                await _unitOfWork.ProjectLeader.AddAsync(leader);
-                //await _unitOfWork.CompleteAsync(); // Save to get LeaderId
-            }
             var project = new Project
             {
                 Title = model.Title,
                 Description = model.Description,
-                ProjectStatus=model.ProjectStatus,
-                CreationDate = DateTime.Now,
-                LeaderId = researcher.Id,
-                LastActivity = DateTime.UtcNow
+                CreationDate = DateTime.UtcNow,
+                LastActivity = DateTime.UtcNow,
+                ProjectApprovalStatus = ProjectApprovalStatus.Pending,
+                ProjectStatus = ProjectStatus.Open,
+                IsCompleted = false,
+                IsAcceptingJoinRequests = true,
+                ProjectMemberships = new List<ProjectMembership>()
             };
 
             await _unitOfWork.Projects.AddAsync(project);
             await _unitOfWork.SaveAsync();
 
+            var membership = new ProjectMembership
+            {
+                ProjectId = project.Id, 
+                ResearcherId = researcherId,
+                Role = Role.Leader,
+                JoinedAt = DateTime.UtcNow
+            };
+
+            await _unitOfWork.ProjectMemberships.AddAsync(membership);
+            await _unitOfWork.SaveAsync();
+        }
+
+        public async Task<List<ProjectListViewModel>> GetProjectsForResearcherAsync(string researcherId)
+        {
+            var memberships = await _unitOfWork.ProjectMemberships
+                .GetAllByResearcherWithProjectsAsync(researcherId);
+
+            return memberships.Select(pm => new ProjectListViewModel
+            {
+                Id = pm.Project.Id,
+                Title = pm.Project.Title,
+                CreationDate = pm.Project.CreationDate,
+                Status = pm.Project.ProjectStatus.ToString(),
+                LastActivity = pm.Project.LastActivity,
+                Role = pm.Role switch
+                {
+                    Role.Leader => Role.Leader,
+                    Role.Member => Role.Member,
+                    _ => Role.Viewer,
+
+                }
+            }).ToList();
+        }
+        public async Task<ProjectDetailsViewModel?> GetProjectDetailsForResearcherAsync(string researcherId, int projectId)
+        {
+            var membership = await _unitOfWork.ProjectMemberships
+                .GetByResearcherAndProjectAsync(researcherId, projectId);
+
+            if (membership == null) return null;
+
+            var project = membership.Project;
+
+            return new ProjectDetailsViewModel
+            {
+                Id = project.Id,
+                Title = project.Title,
+                Description = project.Description,
+                CreationDate = project.CreationDate,
+                Status = project.ProjectStatus.ToString(),
+                Role = membership.Role 
+            };
+        }
+
+       
+        public async Task<ProjectEditViewModel?> GetProjectForEditAsync(string researcherId, int projectId)
+        {
+            var membership = await _unitOfWork.ProjectMemberships
+                .GetByResearcherAndProjectAsync(researcherId, projectId);
+
+            if (membership == null || membership.Role != Role.Leader)
+                return null;
+
+            var project = membership.Project;
+
+            return new ProjectEditViewModel
+            {
+                Id = project.Id,
+                Title = project.Title,
+                Description = project.Description
+            };
+        }
+
+        public async Task<bool> UpdateProjectAsync(string researcherId, ProjectEditViewModel model)
+        {
+            var membership = await _unitOfWork.ProjectMemberships
+                .GetByResearcherAndProjectAsync(researcherId, model.Id);
+
+            if (membership == null || membership.Role != Role.Leader)
+                return false;
+
+            var project = membership.Project;
+            project.Title = model.Title;
+            project.Description = model.Description;
+            project.LastActivity = DateTime.UtcNow;
+
+            await _unitOfWork.SaveAsync();
             return true;
         }
-        public async Task<IEnumerable<Project>> GetOpenProjectsForJoiningAsync(string userId)
-        {
-            var researcher = await _unitOfWork.Researchers.GetByUserIdAsync(userId);
-            if (researcher == null) return Enumerable.Empty<Project>();
 
-            return await _unitOfWork.Projects.GetOpenProjectsForJoiningAsync(researcher.Id);
-        }
-        public async Task<ProjectLeader> GetLeaderByResearcherIdAsync(string userId)
+        //Not Verified
+
+        public async Task<List<AvailableProjectViewModel>> GetAvailableProjectsAsync(string researcherId)
         {
-            return await _unitOfWork.ProjectLeader.GetProjectLeadersByResearcherIdAsync(userId);
+            var projects = await _unitOfWork.Projects.GetAvailableProjectsForJoinAsync(researcherId);
+
+            return projects.Select(p => new AvailableProjectViewModel
+            {
+                Id = p.Id,
+                Title = p.Title,
+                Description = p.Description,
+                CreationDate = p.CreationDate,
+                LeaderFullName = p.ProjectMemberships
+                    .Where(pm => pm.Role == Role.Leader)
+                    .Select(pm => pm.Researcher.User.FullName)
+                    .FirstOrDefault() ?? "غير معروف"
+            }).ToList();
         }
+
+
     }
 }
