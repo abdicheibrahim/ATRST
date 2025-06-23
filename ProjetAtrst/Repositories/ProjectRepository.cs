@@ -22,8 +22,8 @@ namespace ProjetAtrst.Repositories
                 .Select(pm => pm.ProjectId)
                 .ToListAsync();
 
-            var requestedProjectIds = await _context.JoinRequests
-                .Where(j => j.RequesterId == researcherId)
+            var requestedProjectIds = await _context.ProjectRequests
+                .Where(j => j.SenderId == researcherId)
                 .Select(j => j.ProjectId)
                 .ToListAsync();
 
@@ -39,6 +39,9 @@ namespace ProjetAtrst.Repositories
                         .ThenInclude(r => r.User)
                 .ToListAsync();
         }
+
+     
+
 
     }
 }

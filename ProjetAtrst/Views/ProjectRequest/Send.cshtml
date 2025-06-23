@@ -1,0 +1,39 @@
+﻿@using ProjetAtrst.ViewModels.ProjectRequests
+@model ProjectRequestCreateViewModel
+@{
+    ViewData["Title"] = "إرسال طلب أو دعوة";
+    bool isJoin = Model.Type == RequestType.Join;
+}
+
+<h3 class="mb-4">✉️ إرسال @(isJoin ? "طلب انضمام" : "دعوة")</h3>
+
+<form asp-action="Send" method="post">
+    <input type="hidden" asp-for="ProjectId" />
+    <input type="hidden" asp-for="Type" />
+
+    @if (isJoin)
+    {
+        <!-- يتم تمرير القائد مباشرة -->
+        <input type="hidden" asp-for="ReceiverId" />
+    }
+    else
+    {
+        <div class="mb-3">
+            <label asp-for="ReceiverId" class="form-label">الباحث المستهدف</label>
+            <input asp-for="ReceiverId" class="form-control" />
+            <span asp-validation-for="ReceiverId" class="text-danger"></span>
+        </div>
+    }
+
+    <div class="mb-3">
+        <label asp-for="Message" class="form-label">رسالة مرفقة</label>
+        <textarea asp-for="Message" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="Message" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">📨 إرسال</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

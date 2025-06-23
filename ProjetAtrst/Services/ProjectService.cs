@@ -1,4 +1,5 @@
 ﻿using ProjetAtrst.Interfaces;
+using ProjetAtrst.Interfaces.Repositories;
 using ProjetAtrst.Interfaces.Services;
 using ProjetAtrst.Models;
 using ProjetAtrst.ViewModels.Project;
@@ -8,7 +9,7 @@ namespace ProjetAtrst.Services
     public class ProjectService : IProjectService
     {
         private readonly IUnitOfWork _unitOfWork;
-
+        
         public ProjectService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -126,18 +127,31 @@ namespace ProjetAtrst.Services
         {
             var projects = await _unitOfWork.Projects.GetAvailableProjectsForJoinAsync(researcherId);
 
-            return projects.Select(p => new AvailableProjectViewModel
+            return projects.Select(p =>
             {
-                Id = p.Id,
-                Title = p.Title,
-                Description = p.Description,
-                CreationDate = p.CreationDate,
-                LeaderFullName = p.ProjectMemberships
-                    .Where(pm => pm.Role == Role.Leader)
-                    .Select(pm => pm.Researcher.User.FullName)
-                    .FirstOrDefault() ?? "غير معروف"
+                var leaderMembership = p.ProjectMemberships
+                    .FirstOrDefault(pm => pm.Role == Role.Leader);
+
+                return new AvailableProjectViewModel
+                {
+                    Id = p.Id,
+                    Title = p.Title,
+                    Description = p.Description,
+                    CreationDate = p.CreationDate,
+                    LeaderId = leaderMembership?.ResearcherId ?? "غير معروف",
+                    LeaderFullName = leaderMembership?.Researcher?.User?.FullName ?? "غير معروف"
+                };
             }).ToList();
         }
+
+       
+
+      
+        public async Task<bool> IsUserLeaderAsync(string researcherId, int projectId)
+        {
+            return await  _unitOfWork.ProjectMemberships.IsUserLeaderAsync(researcherId, projectId);
+        }
+
 
 
     }

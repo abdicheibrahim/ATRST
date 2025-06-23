@@ -13,6 +13,8 @@ namespace ProjetAtrst.Interfaces.Services
         Task<bool> UpdateProjectAsync(string researcherId, ProjectEditViewModel model);
         //Not Verified
         Task<List<AvailableProjectViewModel>> GetAvailableProjectsAsync(string researcherId);
+        Task<bool> IsUserLeaderAsync(string researcherId, int projectId);
+
         //Task<ProjectEditViewModel?> GetLeaderProjectAsync(string researcherId);
         //Task<bool> UpdateLeaderProjectAsync(ProjectEditViewModel model, string researcherId);
         //  Task<ProjectEditViewModel?> GetProjectForEditAsync(int projectId, string researcherId);

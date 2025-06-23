@@ -3,10 +3,12 @@
 namespace ProjetAtrst.Controllers
 {
     [Authorize]
-    [ServiceFilter(typeof(ProfileCompletionFilter))]
+    [Route("MyProject/{projectId}/[action]")]
     public class ProjectContextController : Controller
     {
-        public IActionResult Index()
+        [AuthorizeProjectLeader]
+
+        public IActionResult Index(int projectId)
         {
             return View();
         }

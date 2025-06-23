@@ -14,17 +14,19 @@ namespace ProjetAtrst.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task CreateNotificationAsync(string userId, string title, string message)
+        public async Task CreateNotificationAsync(string userId, string title, string message, NotificationType type = NotificationType.General, int? relatedId = null)
         {
             var notification = new Notification
             {
                 UserId = userId,
                 Title = title,
-                Message = message
+                Message = message,
+                Type = type,
+                RelatedEntityId = relatedId
             };
 
             _unitOfWork.Notifications.Create(notification);
-            await _unitOfWork.SaveAsync(); // حفظ التغييرات بعد إنشاء الإشعار
+            await _unitOfWork.SaveAsync();
         }
 
         public async Task<List<Notification>> GetUnreadNotificationsAsync(string userId)

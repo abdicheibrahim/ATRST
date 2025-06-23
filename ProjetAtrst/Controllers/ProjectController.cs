@@ -47,6 +47,7 @@ namespace ProjetAtrst.Controllers
             var projects = await _projectService.GetProjectsForResearcherAsync(userId);
             return View(projects);
         }
+
         public async Task<IActionResult> Details(int id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -62,6 +63,7 @@ namespace ProjetAtrst.Controllers
         //Not Verified
 
 
+       // [AuthorizeProjectLeader]
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {

@@ -9,6 +9,8 @@ namespace ProjetAtrst.Interfaces.Repositories
 
         //Not Verified
         Task<List<ProjectMembership>> GetProjectsByResearcherWithDetailsAsync(string researcherId);
+        Task<bool> IsUserLeaderAsync(string researcherId, int projectId);
+
 
     }
 }

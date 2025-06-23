@@ -26,8 +26,7 @@ namespace ProjetAtrst.Services
                     ProjectTitle = pm.Project.Title,
                     MemberCount = pm.Project.ProjectMemberships.Count,
                     RelatedNotificationsCount =
-                        pm.Project.JoinRequests.Count(r => r.Status == JoinRequestStatus.Pending) +
-                        (pm.Project.SentInvitations?.Count(i => i.Status == InvitationRequestStatus.Pending) ?? 0),
+                        pm.Project.ProjectRequests.Count(r => r.Status == RequestStatus.Pending),
                     ImageUrl = null // يمكن إضافة صورة لاحقًا
                 })
                 .ToList();

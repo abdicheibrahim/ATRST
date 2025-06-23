@@ -11,22 +11,22 @@ namespace ProjetAtrst.Date
         public DbSet<Admin> Admins { get; set; }
         public DbSet<Researcher> Researchers { get; set; }
         public DbSet<Project> Projects { get; set; }
-        public DbSet<JoinRequest> JoinRequests { get; set; }
-        public DbSet<InvitationRequest> InvitationRequests { get; set; }
+        public DbSet<ProjectRequest> ProjectRequests { get; set; }
+       
         public DbSet<ProjectMembership> ProjectMemberships { get; set; }
         public DbSet<Notification> Notifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-           
+
 
             //         < --Project-- >
 
-            //   Project -> JoinRequest
-            modelBuilder.Entity<JoinRequest>()
+            //   Project -> ProjectRequests
+            modelBuilder.Entity<ProjectRequest>()
                 .HasOne(r => r.Project)
-                .WithMany(p => p.JoinRequests)
+                .WithMany(p => p.ProjectRequests)
                 .HasForeignKey(r => r.ProjectId)
                 .OnDelete(DeleteBehavior.Restrict);
 
@@ -38,29 +38,16 @@ namespace ProjetAtrst.Date
                 .OnDelete(DeleteBehavior.Restrict);
 
 
-            //   Project -> invitationRequest
-            modelBuilder.Entity<InvitationRequest>()
-                .HasOne(r => r.TargetProject)
-                .WithMany(p => p.SentInvitations)
-                .HasForeignKey(r => r.TargetProjectId)
-                .OnDelete(DeleteBehavior.Restrict);
-
 
             //         < --Researcher-- >
 
-            //  ProjectMember -> JoinRequest
-            modelBuilder.Entity<JoinRequest>()
-                .HasOne(j => j.Requester)
-                .WithMany(r => r.SentJoinRequests)
-                .HasForeignKey(j => j.RequesterId)
+            //  ProjectMember -> ProjectRequests
+            modelBuilder.Entity<ProjectRequest>()
+                .HasOne(j => j.Sender)
+                .WithMany(r => r.ProjectRequests)
+                .HasForeignKey(j => j.SenderId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            //  ProjectMember -> InvitationRequest
-            modelBuilder.Entity<InvitationRequest>()
-                .HasOne(j => j.Receiver)
-                .WithMany(r => r.ReceivedInvitations)
-                .HasForeignKey(j => j.ReceiverId)
-                .OnDelete(DeleteBehavior.Restrict);
 
             //  ProjectMember -> ProjectMembership
             modelBuilder.Entity<ProjectMembership>()

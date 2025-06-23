@@ -1,147 +1,126 @@
-﻿//using ProjetAtrst.Interfaces.Repositories;
-//using ProjetAtrst.ViewModels.ProjectRequests;
-//using ProjetAtrst.Interfaces.Services;
-//using Microsoft.EntityFrameworkCore;
-//using ProjetAtrst.Models;
-//namespace ProjetAtrst.Services
-//{
-//    public class ProjectRequestService : IProjectRequestService
-//    {
-//        private readonly IInvitationRequestRepository _invitationRepository;
-//        private readonly IProjectMembershipRepository _projectMembershipRepository;
-//        private readonly IJoinRequestRepository _joinRequestRepository;
-//        private readonly IResearcherRepository _researcherRepository;
+﻿using ProjetAtrst.Interfaces;
+using ProjetAtrst.Interfaces.Repositories;
+using ProjetAtrst.Interfaces.Services;
+using ProjetAtrst.Models;
+using ProjetAtrst.Repositories;
+using ProjetAtrst.ViewModels.ProjectRequests;
 
-//        public ProjectRequestService(
-//            IJoinRequestRepository joinRequestRepository,
-//            IResearcherRepository researcherRepository,
-//            IInvitationRequestRepository _invitationRepository,
-//            IProjectMembershipRepository projectMembershipRepo
-//            )
-//        {
-//            this._joinRequestRepository = joinRequestRepository;
-//            this._researcherRepository = researcherRepository;
-//            this._invitationRepository = _invitationRepository;
-//            this._projectMembershipRepository = projectMembershipRepo;
-//        }
+public class ProjectRequestService : IProjectRequestService
+{
+    private readonly IProjectRequestRepository _requestRepository;
+    private readonly INotificationService _notificationService;
+    private readonly IUserRepository _userRepository;
+    private readonly IProjectRepository _projectRepository;
+    private readonly IProjectMembershipRepository _projectMembershipRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-//        //public async Task<List<ProjectJoinRequestsGroupViewModel>> GetJoinRequestsGroupedByProjectAsync(string userId)
-//        //{
-//        //    var researcher = await _researcherRepository.GetByIdAsync(userId);
-//        //    if (researcher == null)
-//        //        return new List<ProjectJoinRequestsGroupViewModel>();
+    public ProjectRequestService(
+        IProjectRequestRepository requestRepository,
+        INotificationService notificationService,
+        IUserRepository userRepository,
+        IProjectRepository projectRepository, IProjectMembershipRepository projectMembershipRepository, IUnitOfWork unitOfWork)
+    {
+        _requestRepository = requestRepository;
+        _notificationService = notificationService;
+        _userRepository = userRepository;
+        _projectRepository = projectRepository;
+        _projectMembershipRepository = projectMembershipRepository;
+        _unitOfWork = unitOfWork;
+    }
 
-//        //    var joinRequests = await _joinRequestRepository.GetJoinRequestsToMyProjectsAsync(researcher.Id);
+    public async Task SendRequestAsync(ProjectRequestCreateViewModel model, string senderId)
+    {
+        var request = new ProjectRequest
+        {
+            ProjectId = model.ProjectId,
+            SenderId = senderId,
+            ReceiverId = model.ReceiverId,
+            Message = model.Message,
+            Type = model.Type,
+            Status = RequestStatus.Pending
+        };
 
-//        //    var grouped = joinRequests
-//        //        .GroupBy(j => j.Project)
-//        //        .Select(g => new ProjectJoinRequestsGroupViewModel
-//        //        {
-//        //            ProjectId = g.Key.Id,
-//        //            ProjectTitle = g.Key.Title,
-//        //            JoinRequests = g.Select(r => new JoinRequestItemViewModel
-//        //            {
-//        //                RequestId = r.Id,
-//        //                RequesterId = r.RequesterId,
-//        //                RequesterFullName = $"{r.Requester.User.FirstName} {r.Requester.User.LastName}",
-//        //                RequestedAt = r.RequestedAt,
-//        //                Status = r.Status
-//        //            }).OrderByDescending(r => r.RequestedAt).ToList()
-//        //        })
-//        //        .OrderBy(p => p.ProjectTitle)
-//        //        .ToList();
+        await _requestRepository.CreateAsync(request);
+        await _requestRepository.SaveChangesAsync();
 
-//        //    return grouped;
-//        //}
+        // إرسال إشعار للمستقبل
+        string senderName = (await _userRepository.GetByIdAsync(senderId))?.FullName ?? "مستخدم";
+        string projectTitle = (await _projectRepository.GetByIdAsync(model.ProjectId))?.Title ?? "مشروع";
 
-//        //public async Task<List<InvitationISentViewModel>> GetInvitationsISentAsync(string researcherId)
-//        //{
-//        //    var invitations = await _invitationRepository.GetInvitationsISentAsync(researcherId);
+        string notifTitle = model.Type == RequestType.Join ? "طلب انضمام جديد" : "دعوة جديدة";
+        string notifMessage = model.Type == RequestType.Join
+            ? $"{senderName} طلب الانضمام إلى مشروعك: {projectTitle}"
+            : $"{senderName} دعاك للانضمام إلى مشروع: {projectTitle}";
 
-//        //    return invitations.Select(i => new InvitationISentViewModel
-//        //    {
-//        //        InvitationId = i.Id,
-//        //        ProjectId = i.TargetProjectId,
-//        //        ProjectTitle = i.TargetProject.Title,
-//        //        ReceiverId = i.ReceiverId,
-//        //        ReceiverFullName = i.Receiver.User.FullName,
-//        //        SentAt = i.SentAt,
-//        //        Status = i.Status
-//        //    }).ToList();
-//        //}
+        await _notificationService.CreateNotificationAsync(
+            model.ReceiverId,
+            notifTitle,
+            notifMessage,
+            NotificationType.General,
+            request.Id
+        );
+    }
 
-//        //public async Task<List<JoinRequestISentViewModel>> GetJoinRequestsISentAsync(string researcherId)
-//        //{
-//        //    var requests = await _joinRequestRepository.GetJoinRequestsISentAsync(researcherId);
+    public async Task AcceptRequestAsync(int requestId)
+    {
+        var request = await _requestRepository.GetByIdAsync(requestId);
+        if (request == null || request.Status != RequestStatus.Pending)
+            return;
 
-//        //    return requests.Select(j => new JoinRequestISentViewModel
-//        //    {
-//        //        RequestId = j.Id,
-//        //        ProjectId = j.ProjectId,
-//        //        ProjectTitle = j.Project.Title,
-//        //        RequestedAt = j.RequestedAt,
-//        //        Status = j.Status
-//        //    }).ToList();
-//        //}
+        request.Status = RequestStatus.Accepted;
+        await _requestRepository.SaveChangesAsync();
 
-//        //public async Task<List<InvitationIReceivedViewModel>> GetInvitationsIReceivedAsync(string researcherId)
-//        //{
-//        //    var invitations = await _invitationRepository.GetInvitationsIReceivedAsync(researcherId);
+        // أضف العضو رسميًا إلى المشروع
+        var membership = new ProjectMembership
+        {
+            ProjectId = request.ProjectId,
+            ResearcherId = request.SenderId,
+            Role = Role.Member, // أو أي Enum معرف عندك
+            JoinedAt = DateTime.UtcNow
+        };
+        await _projectMembershipRepository.AddAsync(membership);
+        await _unitOfWork.SaveAsync();
 
-//        //    return invitations.Select(i => new InvitationIReceivedViewModel
-//        //    {
-//        //        InvitationId = i.Id,
-//        //        ProjectId = i.TargetProjectId,
-//        //        ProjectTitle = i.TargetProject.Title,
-//        //        SenderLeaderId = i.TargetProject.ProjectMemberships
-//        //            .FirstOrDefault(pm => pm.Role == Role.Leader)?.ResearcherId ?? string.Empty,
-//        //        SenderLeaderFullName = i.TargetProject.ProjectMemberships
-//        //            .Where(pm => pm.Role == Role.Leader)
-//        //            .Select(pm => pm.Researcher.User.FullName)
-//        //            .FirstOrDefault() ?? "غير معروف",
-//        //        SentAt = i.SentAt,
-//        //        Status = i.Status
-//        //    }).ToList();
-//        //}
+        // إرسال إشعار
+        await _notificationService.CreateNotificationAsync(
+            request.SenderId,
+            "تم قبول الطلب",
+            $"تم قبول طلبك المرتبط بمشروع: {request.Project?.Title}",
+            NotificationType.General,
+            request.Id
+        );
+    }
 
-//        //public async Task<List<ProjectJoinRequestsGroupViewModel>> GetJoinRequestsToMyProjectsGroupedAsync(string leaderId)
-//        //{
-//        //    var groupedRequests = await _joinRequestRepository.GetGroupedJoinRequestsToMyProjectsAsync(leaderId);
 
-//        //    return groupedRequests.Select(g => new ProjectJoinRequestsGroupViewModel
-//        //    {
-//        //        ProjectId = g.Key,
-//        //        ProjectTitle = g.First().Project.Title,
-//        //        JoinRequests = g.Select(j => new JoinRequestItemViewModel
-//        //        {
-//        //            RequestId = j.Id,
-//        //            RequesterId = j.RequesterId,
-//        //            RequesterFullName = j.Requester.User.FullName,
-//        //            RequestedAt = j.RequestedAt,
-//        //            Status = j.Status
-//        //        }).ToList()
-//        //    }).ToList();
-//        //}
+    public async Task RejectRequestAsync(int requestId)
+    {
+        var request = await _requestRepository.GetByIdAsync(requestId);
+        if (request == null || request.Status != RequestStatus.Pending)
+            return;
 
-//        public async Task SendJoinRequestAsync(int projectId, string researcherId)
-//        {
-//            // تحقق أولًا إذا سبق وأرسل طلب لنفس المشروع
-//            var existingRequest = await _joinRequestRepository.GetByProjectAndResearcherAsync(projectId, researcherId);
-//            if (existingRequest != null)
-//                throw new InvalidOperationException("لقد سبق وأرسلت طلبًا لهذا المشروع.");
+        request.Status = RequestStatus.Rejected;
+        await _requestRepository.SaveChangesAsync();
 
-//            // أنشئ الطلب الجديد
-//            var joinRequest = new JoinRequest
-//            {
-//                ProjectId = projectId,
-//                ResearcherId = researcherId,
-//                CreatedAt = DateTime.UtcNow,
-//                Status = JoinRequestStatus.Pending
-//            };
+        await _notificationService.CreateNotificationAsync(
+            request.SenderId,
+            "تم رفض الطلب",
+            $"تم رفض طلبك المرتبط بمشروع: {request.Project?.Title}",
+            NotificationType.General,
+            request.Id
+        );
+    }
 
-//            await _joinRequestRepository.AddAsync(joinRequest);
-//        }
+    public async Task<(IEnumerable<ProjectRequest> Incoming, IEnumerable<ProjectRequest> Sent)> GetRequestsForDashboardAsync(string userId)
+    {
+        var incoming = await _requestRepository.GetByReceiverIdAsync(userId);
+        var sent = await _requestRepository.GetBySenderIdAsync(userId);
+        // return (incoming, sent.Where(r => r.Status == RequestStatus.Pending)); // فقط الطلبات المعلقة
+        return (incoming, sent); // أعد الكل بدون تصفية
+    }
 
-//    }
 
-//}
+    public async Task<IEnumerable<ProjectRequest>> GetOutgoingRequestsAsync(string userId)
+    {
+        return await _requestRepository.GetByUserAndProjectAsync(userId, 0); // get all by sender, ignoring project filter
+    }
+}

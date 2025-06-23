@@ -31,8 +31,7 @@ namespace ProjetAtrst.Models
         public bool IsAcceptingJoinRequests { get; set; } = true;
 
         public ICollection<ProjectMembership> ProjectMemberships { get; set; } = new List<ProjectMembership>();
-        public ICollection<InvitationRequest>? SentInvitations { get; set; }
-        public ICollection<JoinRequest>? JoinRequests { get; set; }
+        public ICollection<ProjectRequest>? ProjectRequests { get; set; }
         public string? ApprovedByAdminId { get; set; }
         public Admin? ApprovedByAdmin { get; set; } = default!;
 

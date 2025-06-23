@@ -61,17 +61,17 @@ namespace ProjetAtrst
             builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
             builder.Services.AddScoped<IProjectService, ProjectService>();
             builder.Services.AddScoped<IProjectMembershipRepository, ProjectMembershipRepository>();
-            //builder.Services.AddScoped<IProjectRequestService, ProjectRequestService>();
-            //builder.Services.AddScoped<IJoinRequestRepository, JoinRequestRepository>();
+            builder.Services.AddScoped<IProjectRequestService, ProjectRequestService>();
+            builder.Services.AddScoped<IProjectRequestRepository, ProjectRequestRepository>();
             //builder.Services.AddScoped<IInvitationRequestRepository, InvitationRequestRepository>();
-            //builder.Services.AddScoped<IDashboardService, DashboardService>();
+            builder.Services.AddScoped<IDashboardService, DashboardService>();
             //builder.Services.AddScoped<IJoinRequestRepository, JoinRequestRepository>();
             //builder.Services.AddScoped<IInvitationRequestService, InvitationRequestService>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<ProfileCompletionFilter>();
+            builder.Services.AddScoped<AuthorizeProjectLeaderAttribute>();
             builder.Services.AddSingleton<StaticDataLoader>();
-
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

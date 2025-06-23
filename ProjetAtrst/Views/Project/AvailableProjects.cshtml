@@ -1,8 +1,6 @@
-﻿@{
-    Layout = "_LayoutResearcher";
-}
-@using ProjetAtrst.ViewModels.Project
+﻿@using ProjetAtrst.ViewModels.Project
 @model List<AvailableProjectViewModel>
+
 <h2>المشاريع المتاحة للانضمام</h2>
 
 <div class="row">
@@ -15,8 +13,11 @@
                     <p>@project.Description</p>
                     <p>قائد المشروع: @project.LeaderFullName</p>
 
-                    <form asp-controller="AvailableProjects" asp-action="SendJoinRequest" method="post">
-                        <input type="hidden" name="projectId" value="@project.Id" />
+                    <form asp-controller="ProjectRequest" asp-action="Send" method="post">
+                        <input type="hidden" name="ProjectId" value="@project.Id" />
+                        <input type="hidden" name="ReceiverId" value="@project.LeaderId" />
+                        <input type="hidden" name="Type" value="Join" />
+                        <input type="hidden" name="Message" value="أرغب بالانضمام إلى المشروع." />
                         <button class="btn btn-primary">طلب الانضمام</button>
                     </form>
                 </div>

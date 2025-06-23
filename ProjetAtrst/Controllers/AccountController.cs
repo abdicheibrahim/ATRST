@@ -150,7 +150,6 @@ namespace ProjetAtrst.Controllers
 
             return View(model);
         }
-
         [HttpPost]
         public async Task<IActionResult> EditAccount(EditAccountViewModel model)
         {
@@ -159,7 +158,7 @@ namespace ProjetAtrst.Controllers
 
             if (!ModelState.IsValid) return View(model);
 
-            // تحقق من الصورة
+            // ✅ تحديث الصورة فقط
             if (model.ProfilePicture != null)
             {
                 var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
@@ -178,7 +177,6 @@ namespace ProjetAtrst.Controllers
                     return View(model);
                 }
 
-                // حذف القديمة
                 if (!string.IsNullOrEmpty(user.ProfilePicturePath))
                 {
                     var oldPath = Path.Combine(_webHostEnvironment.WebRootPath, user.ProfilePicturePath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
@@ -186,7 +184,6 @@ namespace ProjetAtrst.Controllers
                         System.IO.File.Delete(oldPath);
                 }
 
-                // حفظ الجديدة
                 var fileName = $"{Guid.NewGuid()}{extension}";
                 var folderPath = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "profile");
 
@@ -200,7 +197,7 @@ namespace ProjetAtrst.Controllers
                 user.ProfilePicturePath = "/uploads/profile/" + fileName;
             }
 
-            // تعديل البريد
+            // ✅ تحديث البريد فقط
             if (user.Email != model.Email)
             {
                 var result = await _userManager.SetEmailAsync(user, model.Email);
@@ -211,11 +208,17 @@ namespace ProjetAtrst.Controllers
                 }
             }
 
-            // تعديل كلمة السر
-            if (!string.IsNullOrEmpty(model.NewPassword))
+            // ✅ تغيير كلمة السر فقط إذا كتب NewPassword
+            if (!string.IsNullOrWhiteSpace(model.NewPassword))
             {
-                var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
-                if (!result.Succeeded)
+                if (string.IsNullOrWhiteSpace(model.CurrentPassword))
+                {
+                    ModelState.AddModelError("CurrentPassword", "Veuillez saisir le mot de passe actuel pour le modifier.");
+                    return View(model);
+                }
+
+                var changePassResult = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+                if (!changePassResult.Succeeded)
                 {
                     ModelState.AddModelError("", "Mot de passe actuel incorrect ou nouveau mot de passe invalide.");
                     return View(model);
@@ -226,6 +229,7 @@ namespace ProjetAtrst.Controllers
             TempData["Success"] = "Le compte a été mis à jour avec succès.";
             return RedirectToAction("EditAccount");
         }
+
     }
 }
 

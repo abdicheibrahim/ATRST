@@ -1,0 +1,148 @@
+﻿@* @model IEnumerable<ProjectRequest> *@
+@* @{ *@
+@*     ViewData["Title"] = "الطلبات الواردة"; *@
+@* } *@
+
+@* <h3 class="mb-4">📥 الطلبات الواردة</h3> *@
+@* <table class="table table-bordered table-striped"> *@
+@*     <thead> *@
+@*         <tr> *@
+@*             <th>من</th> *@
+@*             <th>نوع الطلب</th> *@
+@*             <th>المشروع</th> *@
+@*             <th>الرسالة</th> *@
+@*             <th>الحالة</th> *@
+@*             <th>الإجراءات</th> *@
+@*         </tr> *@
+@*     </thead> *@
+@*     <tbody> *@
+@*         @foreach (var req in Model) *@
+@*         { *@
+@*             <tr> *@
+@*                 <td>@(req.Sender != null ? req.Sender.User.FullName : "غير معروف")</td>  *@
+@*                 <td>@req.Type.ToString()</td> *@
+@*                 <td>@req.Project?.Title</td> *@
+@*                 <td>@req.Message</td> *@
+@*                 <td>@req.Status.ToString()</td> *@
+@*                 <td> *@
+@*                     @if (req.Status == RequestStatus.Pending) *@
+@*                     { *@
+@*                         <a asp-action="Accept" asp-route-id="@req.Id" class="btn btn-success btn-sm">قبول</a> *@
+@*                         <a asp-action="Reject" asp-route-id="@req.Id" class="btn btn-danger btn-sm">رفض</a> *@
+@*                     } *@
+@*                     else *@
+@*                     { *@
+@*                         <span class="text-muted">تمت المعالجة</span> *@
+@*                     } *@
+@*                 </td> *@
+@*             </tr> *@
+@*         } *@
+@*     </tbody> *@
+@* </table> *@
+ @using ProjetAtrst.ViewModels.ProjectRequests 
+ @model RequestsDashboardViewModel 
+ @{ 
+     ViewData["Title"] = "الطلبات"; 
+ } 
+
+@* <h3 class="mb-4">📥 الطلبات الواردة</h3> *@
+@* <table class="table table-bordered table-striped"> *@
+@*     <thead> *@
+@*         <tr> *@
+@*             <th>من</th> *@
+@*             <th>نوع الطلب</th> *@
+@*             <th>المشروع</th> *@
+@*             <th>الرسالة</th> *@
+@*             <th>الحالة</th> *@
+@*             <th>الإجراءات</th> *@
+@*         </tr> *@
+@*     </thead> *@
+@*     <tbody> *@
+@*         @foreach (var req in Model.IncomingRequests) *@
+@*         { *@
+@*             <tr> *@
+@*                 <td>@(req.Sender != null ? req.Sender.User.FullName : "غير معروف")</td> *@
+@*                 <td>@req.Type.ToString()</td> *@
+@*                 <td>@req.Project?.Title</td> *@
+@*                 <td>@req.Message</td> *@
+@*                 <td>@req.Status.ToString()</td> *@
+@*                 <td> *@
+@*                     @if (req.Status == RequestStatus.Pending) *@
+@*                     { *@
+@*                         <a asp-action="Accept" asp-route-id="@req.Id" class="btn btn-success btn-sm">قبول</a> *@
+@*                         <a asp-action="Reject" asp-route-id="@req.Id" class="btn btn-danger btn-sm">رفض</a> *@
+@*                     } *@
+@*                     else *@
+@*                     { *@
+@*                         <span class="text-muted">تمت المعالجة</span> *@
+@*                     } *@
+@*                 </td> *@
+@*             </tr> *@
+@*         } *@
+@*     </tbody> *@
+@* </table> *@
+
+@* <h3 class="mb-4 mt-5">📤 الطلبات المرسلة (قيد الانتظار)</h3> *@
+@* <table class="table table-bordered table-striped"> *@
+@*     <thead> *@
+@*         <tr> *@
+@*             <th>إلى</th> *@
+@*             <th>نوع الطلب</th> *@
+@*             <th>المشروع</th> *@
+@*             <th>الرسالة</th> *@
+@*             <th>الحالة</th> *@
+@*         </tr> *@
+@*     </thead> *@
+@*     <tbody> *@
+@*         @foreach (var req in Model.SentRequests) *@
+@*         { *@
+@*             <tr> *@
+@*                 <td>@(req.Receiver != null ? req.Receiver.User.FullName : "غير معروف")</td> *@
+@*                 <td>@req.Type.ToString()</td> *@
+@*                 <td>@req.Project?.Title</td> *@
+@*                 <td>@req.Message</td> *@
+@*                 <td> *@
+@*                     <span class="text-warning">قيد الانتظار</span> *@
+@*                 </td> *@
+@*             </tr> *@
+@*         } *@
+@*     </tbody> *@
+@* </table> *@
+
+<h3 class="mb-4 mt-5">📤 الطلبات التي أرسلتها</h3>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>إلى</th>
+            <th>نوع الطلب</th>
+            <th>المشروع</th>
+            <th>الرسالة</th>
+            <th>الحالة</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var req in Model.SentRequests)
+        {
+            <tr>
+                <td>@(req.Receiver != null ? req.Receiver.User.FullName : "غير معروف")</td>
+                <td>@req.Type.ToString()</td>
+                <td>@req.Project?.Title</td>
+                <td>@req.Message</td>
+                <td>
+                    @switch (req.Status)
+                    {
+                        case RequestStatus.Pending:
+                            <span class="badge bg-warning text-dark">قيد الانتظار</span>
+                            break;
+                        case RequestStatus.Accepted:
+                            <span class="badge bg-success">مقبول</span>
+                            break;
+                        case RequestStatus.Rejected:
+                            <span class="badge bg-danger">مرفوض</span>
+                            break;
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

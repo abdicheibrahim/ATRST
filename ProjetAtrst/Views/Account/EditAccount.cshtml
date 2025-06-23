@@ -57,9 +57,18 @@
             <input asp-for="ConfirmPassword" class="form-control" />
             <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
         </div>
+        <small class="form-text text-muted">Laisser vide si vous ne souhaitez pas changer le mot de passe.</small>
+
     </div>
 
-    <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+    @* <button type="submit" class="btn btn-success"><i class="bi bi-pencil-square me-2"></i>Enregistrer les modifications</button> *@
+    
+    <button type="submit" id="submitBtn" class="btn btn-success ">
+        <i class="bi bi-pencil-square me-2"></i>
+        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="spinner"></span>
+        <span id="btnText">Enregistrer les modifications</span>
+    </button>
+
 </form>
 
 @section Scripts {
@@ -96,4 +105,6 @@
         }
     </script>
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/Spinner.js"></script>
+
 }

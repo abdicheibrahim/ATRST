@@ -1,0 +1,29 @@
+﻿@model IEnumerable<ProjectRequest>
+@{
+    ViewData["Title"] = "الطلبات المرسلة";
+}
+
+<h3 class="mb-4">📤 الطلبات المرسلة</h3>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>إلى</th>
+            <th>نوع الطلب</th>
+            <th>المشروع</th>
+            <th>الرسالة</th>
+            <th>الحالة</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var req in Model)
+        {
+            <tr>
+                <td>@req.Receiver?.User.FullName</td>
+                <td>@req.Type.ToString()</td>
+                <td>@req.Project?.Title</td>
+                <td>@req.Message</td>
+                <td>@req.Status.ToString()</td>
+            </tr>
+        }
+    </tbody>
+</table>

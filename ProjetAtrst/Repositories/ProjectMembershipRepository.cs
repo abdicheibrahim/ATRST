@@ -32,11 +32,17 @@ namespace ProjetAtrst.Repositories
                     .ThenInclude(p => p.ProjectMemberships)
                         .ThenInclude(m => m.Researcher)
                             .ThenInclude(r => r.User)
-                .Include(pm => pm.Project.JoinRequests)
-                .Include(pm => pm.Project.SentInvitations)
+                .Include(pm => pm.Project.ProjectRequests)
                 .ToListAsync();
         }
 
+        public async Task<bool> IsUserLeaderAsync(string researcherId, int projectId)
+        {
+            return await _context.ProjectMemberships.AnyAsync(m =>
+                m.ProjectId == projectId &&
+                m.ResearcherId == researcherId &&
+                m.Role == Role.Leader);
+        }
 
 
     }

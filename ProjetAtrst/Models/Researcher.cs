@@ -31,8 +31,7 @@ namespace ProjetAtrst.Models
         public bool IsApprovedByAdmin { get; set; }
         public ICollection<Notification>? Notifications { get; set; }
         public ICollection<ProjectMembership>? ProjectMemberships { get; set; }
-        public ICollection<InvitationRequest>? ReceivedInvitations { get; set; }
-        public ICollection<JoinRequest>? SentJoinRequests { get; set; }
+        public ICollection<ProjectRequest>? ProjectRequests { get; set; }
 
         //future: add a property for the Admin & Files of the researcher
         public string? ApprovedByAdminId { get; set; } 

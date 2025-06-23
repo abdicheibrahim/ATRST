@@ -1,16 +1,15 @@
-﻿//using ProjetAtrst.ViewModels.ProjectRequests;
+﻿using ProjetAtrst.Models;
+using ProjetAtrst.ViewModels.ProjectRequests;
 
-//namespace ProjetAtrst.Interfaces.Services
-//{
-//    public interface IProjectRequestService
-//    {
-//        //Task<List<ProjectJoinRequestsGroupViewModel>> GetJoinRequestsGroupedByProjectAsync(string userId);
-//        //Task<List<InvitationISentViewModel>> GetInvitationsISentAsync(string researcherId);
-//        //Task<List<JoinRequestISentViewModel>> GetJoinRequestsISentAsync(string researcherId);
-//        //Task<List<InvitationIReceivedViewModel>> GetInvitationsIReceivedAsync(string researcherId);
-//        //Task<List<ProjectJoinRequestsGroupViewModel>> GetJoinRequestsToMyProjectsGroupedAsync(string leaderId);
-//        //New 
-//        Task SendJoinRequestAsync(int projectId, string researcherId);
+namespace ProjetAtrst.Interfaces.Services
+{
+    public interface IProjectRequestService
+    {
+        Task SendRequestAsync(ProjectRequestCreateViewModel model, string senderId);
+        Task AcceptRequestAsync(int requestId);
+        Task RejectRequestAsync(int requestId);
+        Task<(IEnumerable<ProjectRequest> Incoming, IEnumerable<ProjectRequest> Sent)> GetRequestsForDashboardAsync(string userId);
 
-//    }
-//}
+        Task<IEnumerable<ProjectRequest>> GetOutgoingRequestsAsync(string userId);
+    }
+}
