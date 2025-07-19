@@ -3,6 +3,7 @@ using ProjetAtrst.Interfaces;
 using ProjetAtrst.Models;
 using ProjetAtrst.ViewModels.Account;
 using Microsoft.AspNetCore.Identity;
+using ProjetAtrst.Helpers;
 
 namespace ProjetAtrst.Services
 {
@@ -11,12 +12,14 @@ namespace ProjetAtrst.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly StaticDataLoader _staticDataLoader;
         public UserService(UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager, IUnitOfWork unitOfWork)
+            SignInManager<ApplicationUser> signInManager, IUnitOfWork unitOfWork, StaticDataLoader staticDataLoader)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _unitOfWork = unitOfWork;
+            _staticDataLoader = staticDataLoader;
         }
         public async Task<bool> LoginAsync(LoginViewModel model)
         {
@@ -49,13 +52,14 @@ namespace ProjetAtrst.Services
             user.RegisterDate = DateTime.UtcNow;
             user.Researcher.Establishment = model.Establishment;
             user.Researcher.Grade = model.Grade;
+            user.Researcher.Statut = model.Statut;
             user.Researcher.Speciality = model.Speciality;
             user.Researcher.Mobile = model.Mobile;
             user.Researcher.Diploma = model.Diploma;
             user.Researcher.DipInstitution = model.DipInstitution;
             user.Researcher.DipDate = model.DipDate;
 
-
+      
 
 
             if (!user.Researcher.IsCompleted)
@@ -65,8 +69,8 @@ namespace ProjetAtrst.Services
                 var notification = new Notification
                 {
                     UserId = userId,
-                    Title = "تم تعديل ملفك الشخصي",
-                    Message = "تم تعديل معلومات حسابك بنجاح، وجاري التحقق منها من طرف الإدارة."
+                    Title = "Votre profil est complété",
+                    Message = "Vos informations de compte sont complétées avec succès et sont en cours de vérification par l'administration."
                 };
                 _unitOfWork.Notifications.Create(notification);
                 await _unitOfWork.SaveAsync();
@@ -77,8 +81,8 @@ namespace ProjetAtrst.Services
                 var notification = new Notification
                 {
                     UserId = userId,
-                    Title = "تم اكمال ملفك الشخصي",
-                    Message = "تم اكمال معلومات حسابك بنجاح، وجاري التحقق منها من طرف الإدارة."
+                    Title = "Votre profil a été modifié.",
+                    Message = "Les informations de votre compte ont été modifiées avec succès et sont actuellement en cours de vérification par l'administration."
                 };
                 _unitOfWork.Notifications.Create(notification);
                 await _unitOfWork.SaveAsync();
@@ -98,11 +102,17 @@ namespace ProjetAtrst.Services
                 LastName = user.LastName,
                 FirstNameAr = user.FirstNameAr,
                 LastNameAr = user.LastNameAr,
+                
                 Gender = user.Gender,
                 Birthday = user.Birthday,
+                EstablishmentsList = _staticDataLoader.LoadEstablishments(),
                 Establishment = user.Researcher.Establishment,
-                //ResearcherApprovalStatus = user.Researcher.ResearcherApprovalStatus,
+                GradesList = _staticDataLoader.LoadGrades(),
                 Grade = user.Researcher.Grade,
+
+                StatutList = _staticDataLoader.LoadStatuts(),
+                Statut = user.Researcher.Statut,
+
                 Speciality = user.Researcher.Speciality,
                 Mobile = user.Researcher.Mobile,
                 Diploma = user.Researcher.Diploma,
@@ -134,8 +144,8 @@ namespace ProjetAtrst.Services
             var notification = new Notification
             {
                 UserId = userId,
-                Title = "تم تعديل ملفك الشخصي",
-                Message = "تم تعديل معلومات حسابك بنجاح، وجاري التحقق منها من طرف الإدارة."
+                Title = "Votre profil a été modifié.",
+                Message = "Les informations de votre compte ont été modifiées avec succès et sont actuellement en cours de vérification par l'administration."
             };
             _unitOfWork.Notifications.Create(notification);
             await _unitOfWork.SaveAsync();

@@ -1,4 +1,4 @@
-﻿@using ProjetAtrst.ViewModels.Account
+@using ProjetAtrst.ViewModels.Account
 @model EditProfileViewModel
 
 @{
@@ -6,7 +6,7 @@
 }
 
 @{
-    ViewData["Title"] = "Profile";
+    ViewData["Title"] = "Profil";
 }
 
 
@@ -17,40 +17,40 @@
 
 <form asp-action="EditProfile" method="post">
     <div class=" row shadow-sm g-3 needs-validation  p-3 mb-5 mt-3 bg-white border rounded">
-        <h5>Personal Details</h5>
+        <h5>Informations personnelles</h5>
         <div class="col-md-6">
-            <label asp-for="FirstName" class="form-label">First Name</label>
-            <input type="text" class="form-control input" asp-for="FirstName">
+            <label asp-for="FirstName" class="form-label">Prénom</label>
+            <input type="text" class="form-control input" asp-for="FirstName" placeholder="Entrez votre prénom">
             <span asp-validation-for="FirstName"></span>
         </div>
 
         <div class="col-md-6">
-            <label asp-for="LastName" class="form-label">Last Name</label>
-            <input type="text" class="form-control input" asp-for="LastName">
+            <label asp-for="LastName" class="form-label">Nom</label>
+            <input type="text" class="form-control input" asp-for="LastName" placeholder="Entrez votre nom">
             <span asp-validation-for="LastName"></span>
         </div>
 
         <div class="col-md-6">
-            <label asp-for="FirstNameAr" class="form-label">الاسم</label>
-            <input type="text" class="form-control input" asp-for="FirstNameAr">
+            <label asp-for="FirstNameAr" class="form-label">Prénom (arabe)</label>
+            <input type="text" class="form-control input" asp-for="FirstNameAr" placeholder="أدخل الاسم">
             <span asp-validation-for="FirstNameAr"></span>
         </div>
 
         <div class="col-md-6">
-            <label asp-for="LastNameAr" class="form-label">اللقب</label>
-            <input type="text" class="form-control input" asp-for="LastNameAr">
+            <label asp-for="LastNameAr" class="form-label">Nom (arabe)</label>
+            <input type="text" class="form-control input" asp-for="LastNameAr" placeholder="أدخل اللقب">
             <span asp-validation-for="LastNameAr"></span>
         </div>
 
         <div class="col-md-6">
-            <label asp-for="Gender" class="form-label">Gender</label>
-            <input type="text" class="form-control input" asp-for="Gender">
+            <label asp-for="Gender" class="form-label">Genre</label>
+            <input type="text" class="form-control input" asp-for="Gender" placeholder="Homme/Femme">
             <span asp-validation-for="Gender"></span>
         </div>
 
         <div class="col-md-6">
-            <label asp-for="Birthday" class="form-label">Birthday</label>
-            <input type="date" class="form-control input" asp-for="Birthday">
+            <label asp-for="Birthday" class="form-label">Date de naissance</label>
+            <input type="date" class="form-control input" asp-for="Birthday" placeholder="JJ/MM/AAAA">
             <span asp-validation-for="Birthday"></span>
         </div>
 

@@ -78,7 +78,6 @@ namespace ProjetAtrst.Services
 
 
 
-
             if (!user.Researcher.IsCompleted)
             {
                 user.Researcher.IsCompleted = true;
@@ -86,8 +85,8 @@ namespace ProjetAtrst.Services
                 var notification = new Notification
                 {
                     UserId = userId,
-                    Title = "تم تعديل ملفك الشخصي",
-                    Message = "تم تعديل معلومات حسابك بنجاح، وجاري التحقق منها من طرف الإدارة."
+                    Title = "Votre profil est complété",
+                    Message = "Vos informations de compte sont complétées avec succès et sont en cours de vérification par l'administration."
                 };
                 _unitOfWork.Notifications.Create(notification);
                 await _unitOfWork.SaveAsync();
@@ -118,7 +117,13 @@ namespace ProjetAtrst.Services
             {
                 EstablishmentsList= _staticDataLoader.LoadEstablishments(),
                 Establishment = user.Researcher.Establishment,
+
+                GradesList = _staticDataLoader.LoadGrades(),
                 Grade = user.Researcher.Grade,
+
+                StatutList = _staticDataLoader.LoadStatuts(),
+                Statut = user.Researcher.Statut,
+
                 Speciality = user.Researcher.Speciality,
                 Mobile = user.Researcher.Mobile,
                 Diploma = user.Researcher.Diploma,
@@ -140,6 +145,22 @@ namespace ProjetAtrst.Services
                    !string.IsNullOrEmpty(user.LastName) &&
                    !string.IsNullOrEmpty(user.FirstNameAr) &&
                    !string.IsNullOrEmpty(user.LastNameAr) ;
+        }
+
+
+        //--------------New Code----------------
+
+        public async Task<List<ResearcherViewModel>> GetAvailableResearchersForInvitationAsync(int projectId)
+        {
+            var researchers = await _unitOfWork.Researchers.GetAvailableResearchersForInvitationAsync(projectId);
+
+            return researchers.Select(r => new ResearcherViewModel
+            {
+                Id = r.Id,
+                FullName = r.User.FullName,
+                Gender=r.User.Gender,
+                ProfilePicturePath=r.User.ProfilePicturePath,
+            }).ToList();
         }
 
     }

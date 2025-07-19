@@ -63,43 +63,43 @@ namespace ProjetAtrst.Controllers
         //Not Verified
 
 
-       // [AuthorizeProjectLeader]
-        [HttpGet]
-        public async Task<IActionResult> Edit(int id)
+
+
+        public async Task<IActionResult> AvailableProjects(int page = 1, int pageSize = 6)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var model = await _projectService.GetProjectForEditAsync(userId, id);
+            var (projects, totalCount) = await _projectService.GetAvailableProjectsAsync(userId, page, pageSize);
 
-            if (model == null)
-                return Forbid();
+            var paginationModel = new PaginationModel
+            {
+                CurrentPage = page,
+                TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize),
+                ActionName = nameof(AvailableProjects)
+            };
 
-            return View(model);
+            ViewBag.PaginationModel = paginationModel;
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                var viewModel = new AvailableProjectsWithPaginationViewModel
+                {
+                    Projects = projects,
+                    Pagination = paginationModel
+                };
+                return PartialView("_AvailableProjectsWithPaginationPartial", viewModel);
+            }
+
+            var fullViewModel = new AvailableProjectsWithPaginationViewModel
+            {
+                Projects = projects,
+                Pagination = paginationModel
+            };
+            return View(fullViewModel);
+
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(ProjectEditViewModel model)
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if (!ModelState.IsValid)
-                return View(model);
-
-            var success = await _projectService.UpdateProjectAsync(userId, model);
-            if (!success)
-                return Forbid();
-
-            TempData["Success"] = "تم تعديل المشروع بنجاح";
-            return RedirectToAction("Details", new { id = model.Id });
-        }
 
 
-        public async Task<IActionResult> AvailableProjects()
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var projects = await _projectService.GetAvailableProjectsAsync(userId);
-            return View(projects);
-        }
+
 
         //[HttpPost]
         //public async Task<IActionResult> SendJoinRequest(int projectId)
@@ -119,8 +119,8 @@ namespace ProjetAtrst.Controllers
         //    return RedirectToAction("Index");
         //}
 
-       
-       
+
+
 
     }
 }

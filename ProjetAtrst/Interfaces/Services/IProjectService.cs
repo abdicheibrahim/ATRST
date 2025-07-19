@@ -1,6 +1,7 @@
-﻿using ProjetAtrst.Models;
+﻿using ProjetAtrst.ViewModels.ProjectRequests;
 using ProjetAtrst.ViewModels.Project;
-
+using ProjetAtrst.ViewModels.ProjectMembership;
+using ProjetAtrst.Models;
 namespace ProjetAtrst.Interfaces.Services
 {
     public interface IProjectService
@@ -12,9 +13,13 @@ namespace ProjetAtrst.Interfaces.Services
         Task<ProjectEditViewModel?> GetProjectForEditAsync(string researcherId, int projectId);
         Task<bool> UpdateProjectAsync(string researcherId, ProjectEditViewModel model);
         //Not Verified
-        Task<List<AvailableProjectViewModel>> GetAvailableProjectsAsync(string researcherId);
+        Task<(List<AvailableProjectViewModel> Projects, int TotalCount)> GetAvailableProjectsAsync(string researcherId, int pageNumber, int pageSize);
         Task<bool> IsUserLeaderAsync(string researcherId, int projectId);
-
+        Task<List<ProjectMemberViewModel>> GetProjectMembersAsync(int projectId);
+        Task<List<ProjectJoinRequestViewModel>> GetJoinRequestsAsync(int projectId);
+        Task<List<ProjectJoinRequestViewModel>> GetInvitationRequestsAsync(int projectId);
+        Task<Project> GetByIdAsync(int id);
+        
         //Task<ProjectEditViewModel?> GetLeaderProjectAsync(string researcherId);
         //Task<bool> UpdateLeaderProjectAsync(ProjectEditViewModel model, string researcherId);
         //  Task<ProjectEditViewModel?> GetProjectForEditAsync(int projectId, string researcherId);

@@ -1,4 +1,5 @@
-﻿using ProjetAtrst.Models;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using ProjetAtrst.Models;
 
 namespace ProjetAtrst.ViewModels.Account
 {
@@ -36,14 +37,17 @@ namespace ProjetAtrst.ViewModels.Account
         [Required(ErrorMessage = "Establishment is required")]
         [Display(Name = "Establishment")]
         public string Establishment { get; set; } = string.Empty;
+        public List<SelectListItem> EstablishmentsList { get; set; } = new();
 
-        //[Required(ErrorMessage = "Status is required")]
-        //[Display(Name = "Status")]
-        //public ResearcherApprovalStatus ResearcherApprovalStatus { get; set; } = ResearcherApprovalStatus.Pending;
+        [Required(ErrorMessage = "Statut is required")]
+        public string? Statut { get; set; }
+        public List<SelectListItem> StatutList { get; set; } = new();
 
         [Required(ErrorMessage = "Grade is required")]
         [Display(Name = "Grade")]
         public string Grade { get; set; } = string.Empty;
+        public List<SelectListItem> GradesList { get; set; } = new();
+
 
         [Required(ErrorMessage = "Speciality is required")]
         [Display(Name = "Speciality")]

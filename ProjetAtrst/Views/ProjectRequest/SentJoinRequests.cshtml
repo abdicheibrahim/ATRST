@@ -1,0 +1,66 @@
+﻿@model IEnumerable<ProjectRequest>
+@{
+    ViewData["Title"] = "📤 الطلبات/الدعوات المرسلة";
+
+}
+
+<h3 class="mb-4">📤 الطلبات المرسلة</h3>
+<table class="table table-bordered">
+    <thead class="table-light">
+        <tr>
+            <th>المرسل</th>
+            <th>المشروع</th>
+            <th>الرسالة</th>
+            <th>الحالة</th>
+            <th>تاريخ الإرسال</th>
+            <th>الخيارات</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var req in Model)
+        {
+            <tr>
+                <td>@req.Sender?.User?.FullName</td>
+                <td>@req.Project?.Title</td>
+                <td>@req.Message</td>
+                <td>
+                    @switch (req.Status)
+                    {
+                        case RequestStatus.Pending:
+                            <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i>معلّق</span>
+                            break;
+                        case RequestStatus.Accepted:
+                            <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>مقبول</span>
+                            break;
+                        case RequestStatus.Rejected:
+                            <span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i>مرفوض</span>
+                            break;
+                    }
+                </td>
+                <td>@req.CreatedAt.ToString("yyyy-MM-dd")</td>
+                <td>
+                    <div class="d-flex gap-1">
+                        <a asp-controller="ProjectRequest" asp-action="Details" asp-route-id="@req.Id" class="btn btn-outline-primary btn-sm" title="تفاصيل">
+                            <i class="bi bi-eye"></i>
+                        </a>
+
+                        @if (req.Status == RequestStatus.Pending)
+                        {
+                            <form asp-controller="ProjectRequest" asp-action="Accept" asp-route-id="@req.Id" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-outline-success btn-sm" title="موافقة">
+                                    <i class="bi bi-check-lg"></i>
+                                </button>
+                            </form>
+
+                            <form asp-controller="ProjectRequest" asp-action="Reject" asp-route-id="@req.Id" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-outline-danger btn-sm" title="رفض">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

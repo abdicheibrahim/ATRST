@@ -1,4 +1,5 @@
-﻿using ProjetAtrst.Interfaces.Repositories;
+﻿using NuGet.Protocol.Plugins;
+using ProjetAtrst.Interfaces.Repositories;
 using ProjetAtrst.Models;
 
 namespace ProjetAtrst.Repositories
@@ -15,7 +16,7 @@ namespace ProjetAtrst.Repositories
 
         // Not Verified
 
-        public async Task<List<Project>> GetAvailableProjectsForJoinAsync(string researcherId)
+        public async Task<(List<Project> Projects, int TotalCount)> GetAvailableProjectsForJoinAsync(string researcherId, int pageNumber, int pageSize)
         {
             var joinedProjectIds = await _context.ProjectMemberships
                 .Where(pm => pm.ResearcherId == researcherId)
@@ -27,7 +28,7 @@ namespace ProjetAtrst.Repositories
                 .Select(j => j.ProjectId)
                 .ToListAsync();
 
-            return await _context.Projects
+            var query = _context.Projects
                 .Where(p =>
                     p.ProjectStatus == ProjectStatus.Open &&
                     p.IsAcceptingJoinRequests &&
@@ -36,11 +37,41 @@ namespace ProjetAtrst.Repositories
                 )
                 .Include(p => p.ProjectMemberships)
                     .ThenInclude(pm => pm.Researcher)
-                        .ThenInclude(r => r.User)
+                        .ThenInclude(r => r.User);
+
+            var totalCount = await query.CountAsync();
+
+            var projects = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+
+            return (projects, totalCount);
         }
 
-     
+
+
+        public async Task<(string ProjectTitle, string LeaderFullName)> GetProjectInfoAsync(int projectId)
+        {
+             var result = await _context.ProjectMemberships
+            .Include(pm => pm.Project)
+            .Include(pm => pm.Researcher)
+            .ThenInclude(r => r.User)
+            .Where(pm => pm.ProjectId == projectId && pm.Role== Role.Leader)
+            .Select(pm => new
+            {
+                ProjectTitle = pm.Project.Title,
+                LeaderFullName = pm.Researcher.User.FullName 
+            })
+            .FirstOrDefaultAsync();
+
+
+            if (result == null)
+                return (null, null);
+
+            return (result.ProjectTitle, result.LeaderFullName);
+        }
+
 
 
     }

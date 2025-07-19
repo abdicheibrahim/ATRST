@@ -2,17 +2,26 @@
 using ProjetAtrst.Interfaces.Repositories;
 using ProjetAtrst.Interfaces.Services;
 using ProjetAtrst.Models;
+using ProjetAtrst.ViewModels.ProjectRequests;
 using ProjetAtrst.ViewModels.Project;
+using ProjetAtrst.ViewModels.ProjectMembership;
+using Microsoft.EntityFrameworkCore;
+using ProjetAtrst.Repositories;
 
 namespace ProjetAtrst.Services
 {
     public class ProjectService : IProjectService
     {
         private readonly IUnitOfWork _unitOfWork;
-        
-        public ProjectService(IUnitOfWork unitOfWork)
+        private readonly IProjectRequestRepository _projectRequestRepository;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
+
+        public ProjectService(IUnitOfWork unitOfWork, IProjectRequestRepository projectRequestRepository, IWebHostEnvironment webHostEnvironment)
         {
             _unitOfWork = unitOfWork;
+            _projectRequestRepository = projectRequestRepository;
+            _webHostEnvironment = webHostEnvironment;
         }
         public async Task CreateProjectAsync(ProjectCreateViewModel model, string researcherId)
         {
@@ -56,6 +65,9 @@ namespace ProjetAtrst.Services
                 CreationDate = pm.Project.CreationDate,
                 Status = pm.Project.ProjectStatus.ToString(),
                 LastActivity = pm.Project.LastActivity,
+                LogoPath = string.IsNullOrEmpty(pm.Project.LogoPath)
+               ? "/images/default-project.png"
+               : pm.Project.LogoPath,
                 Role = pm.Role switch
                 {
                     Role.Leader => Role.Leader,
@@ -63,6 +75,8 @@ namespace ProjetAtrst.Services
                     _ => Role.Viewer,
 
                 }
+
+
             }).ToList();
         }
         public async Task<ProjectDetailsViewModel?> GetProjectDetailsForResearcherAsync(string researcherId, int projectId)
@@ -100,10 +114,15 @@ namespace ProjetAtrst.Services
             {
                 Id = project.Id,
                 Title = project.Title,
-                Description = project.Description
+                Description = project.Description,
+                CurrentLogoPath = string.IsNullOrEmpty(project.LogoPath)
+                ? "/images/default-project.png"
+                : project.LogoPath
+
             };
         }
 
+       
         public async Task<bool> UpdateProjectAsync(string researcherId, ProjectEditViewModel model)
         {
             var membership = await _unitOfWork.ProjectMemberships
@@ -116,21 +135,37 @@ namespace ProjetAtrst.Services
             project.Title = model.Title;
             project.Description = model.Description;
             project.LastActivity = DateTime.UtcNow;
+            project.LogoPath = model.CurrentLogoPath; // احفظ المسار القديم إذا كان موجودًا
+
+            // ✅ معالجة الصورة إذا تم رفعها
+            if (model.LogoFile != null && model.LogoFile.Length > 0)
+            {
+                var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "ProjectImages");
+                Directory.CreateDirectory(uploadsFolder); // تأكد أن المجلد موجود أو يتم إنشاؤه
+
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.LogoFile.FileName);
+                var filePath = Path.Combine(uploadsFolder, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await model.LogoFile.CopyToAsync(stream);
+                }
+
+                // احفظ المسار النسبي الذي يمكن استخدامه في العرض
+                project.LogoPath = "/uploads/ProjectImages/" + fileName;
+            }
 
             await _unitOfWork.SaveAsync();
             return true;
         }
 
-        //Not Verified
-
-        public async Task<List<AvailableProjectViewModel>> GetAvailableProjectsAsync(string researcherId)
+        public async Task<(List<AvailableProjectViewModel> Projects, int TotalCount)> GetAvailableProjectsAsync(string researcherId, int pageNumber, int pageSize)
         {
-            var projects = await _unitOfWork.Projects.GetAvailableProjectsForJoinAsync(researcherId);
+            var (projects, totalCount) = await _unitOfWork.Projects.GetAvailableProjectsForJoinAsync(researcherId, pageNumber, pageSize);
 
-            return projects.Select(p =>
+            var result = projects.Select(p =>
             {
-                var leaderMembership = p.ProjectMemberships
-                    .FirstOrDefault(pm => pm.Role == Role.Leader);
+                var leaderMembership = p.ProjectMemberships.FirstOrDefault(pm => pm.Role == Role.Leader);
 
                 return new AvailableProjectViewModel
                 {
@@ -138,21 +173,68 @@ namespace ProjetAtrst.Services
                     Title = p.Title,
                     Description = p.Description,
                     CreationDate = p.CreationDate,
+                    ImageUrl = p.LogoPath,
                     LeaderId = leaderMembership?.ResearcherId ?? "غير معروف",
                     LeaderFullName = leaderMembership?.Researcher?.User?.FullName ?? "غير معروف"
                 };
             }).ToList();
+
+            return (result, totalCount);
         }
 
-       
 
-      
+
+        public async Task<Project> GetByIdAsync(int id)
+        {
+            return await _unitOfWork.Projects.GetByIdAsync(id);
+        }
+
+
         public async Task<bool> IsUserLeaderAsync(string researcherId, int projectId)
         {
             return await  _unitOfWork.ProjectMemberships.IsUserLeaderAsync(researcherId, projectId);
         }
 
+        public async Task<List<ProjectMemberViewModel>> GetProjectMembersAsync(int projectId)
+        {
+            var memberships = await _unitOfWork.ProjectMemberships.GetMembersByProjectIdAsync(projectId);
 
+            return memberships.Select(m => new ProjectMemberViewModel
+            {
+                Name = m.Researcher.User.FullName,
+                Email = m.Researcher.User.Email,
+                Role = m.Role,
+                JoinedAt = m.JoinedAt
+            }).ToList();
+        }
+
+        public async Task<List<ProjectJoinRequestViewModel>> GetJoinRequestsAsync(int projectId)
+        {
+            var requests = await _projectRequestRepository.GetJoinRequestsByProjectIdAsync(projectId);
+
+            return requests.Select(r => new ProjectJoinRequestViewModel
+            {
+                RequestId = r.Id,
+                SenderId = r.SenderId,
+                SenderName = r.Sender.User.FullName,
+                Status = r.Status,
+                SentAt = r.CreatedAt
+            }).ToList();
+        }  
+        
+        public async Task<List<ProjectJoinRequestViewModel>> GetInvitationRequestsAsync(int projectId)
+        {
+            var requests = await _projectRequestRepository.GetInvitationRequestsByProjectIdAsync(projectId);
+
+            return requests.Select(r => new ProjectJoinRequestViewModel
+            {
+                RequestId = r.Id,
+                SenderId = r.SenderId,
+                SenderName = r.Receiver.User.FullName,
+                Status = r.Status,
+                SentAt = r.CreatedAt
+            }).ToList();
+        }
 
     }
 }

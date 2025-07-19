@@ -1,27 +1,39 @@
-﻿@using ProjetAtrst.ViewModels.Project
-@model List<AvailableProjectViewModel>
+@using ProjetAtrst.ViewModels.Project
+@model AvailableProjectsWithPaginationViewModel
 
 <h2>المشاريع المتاحة للانضمام</h2>
 
-<div class="row">
-    @foreach (var project in Model)
-    {
-        <div class="col-md-6">
-            <div class="card mb-3">
-                <div class="card-body">
-                    <h5>@project.Title</h5>
-                    <p>@project.Description</p>
-                    <p>قائد المشروع: @project.LeaderFullName</p>
-
-                    <form asp-controller="ProjectRequest" asp-action="Send" method="post">
-                        <input type="hidden" name="ProjectId" value="@project.Id" />
-                        <input type="hidden" name="ReceiverId" value="@project.LeaderId" />
-                        <input type="hidden" name="Type" value="Join" />
-                        <input type="hidden" name="Message" value="أرغب بالانضمام إلى المشروع." />
-                        <button class="btn btn-primary">طلب الانضمام</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    }
+<div id="projects-container" >
+    @await Html.PartialAsync("_AvailableProjectsWithPaginationPartial", Model)
 </div>
+
+@section Scripts {
+    <script>
+        function loadPaginatedProjects(page) {
+            showSpinner();
+
+            $.ajax({
+                url: '@Url.Action("AvailableProjects", "Project")',
+                data: { page: page },
+                success: function (result) {
+                    $('#projects-container').html(result);  
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                },
+                complete: function () {
+                    hideSpinner();
+                },
+                error: function () {
+                    alert('Erreur lors du chargement des projets.');
+                }
+            });
+        }
+
+        $(document).on('click', '.pagination-link', function (e) {
+            e.preventDefault();
+            var page = $(this).data('page');
+            if (!$(this).parent().hasClass('disabled') && !$(this).parent().hasClass('active')) {
+                loadPaginatedProjects(page);
+            }
+        });
+    </script>
+}

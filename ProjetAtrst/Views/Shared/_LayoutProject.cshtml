@@ -1,19 +1,13 @@
-﻿@using Microsoft.AspNetCore.Identity;
-@using ProjetAtrst.Interfaces.Services;
-@inject SignInManager<ApplicationUser> _SignInManager;
-@inject INotificationService NotificationService
-@inject UserManager<ApplicationUser> UserManager
 @{
-    var user = await UserManager.GetUserAsync(User);
-    var notifications = user != null ? await NotificationService.GetUnreadNotificationsAsync(user.Id) : new List<Notification>();
-    var count = notifications.Count;
+    Layout = null;
+    var projectId = ViewBag.CurrentProjectId ?? 0;
 }
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>ATRST  @ViewData["title"]</title>
+    <title>ATRST @ViewData["title"]</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -21,159 +15,93 @@
     <link href="~/css/site.css" rel="stylesheet" />
 </head>
 <body>
-    <div id="transition-screen" class="transition-overlay">
-        <div class="spinner-border text-light" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-        <p class="text-light mt-3">جاري الدخول إلى المشروع...</p>
-    </div>
     <!-- Spinner Overlay -->
     <div id="globalSpinner" class="hidden">
         <div class="spinner-container">
             <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
-                <span class="visually-hidden">Loading...</span>
+                <span class="visually-hidden">Chargement...</span>
             </div>
-            <p class="mt-2" style="color: #333;">Loading...</p>
+            <p class="mt-2" style="color: #333;">Chargement...</p>
         </div>
     </div>
 
-    <!--  Top bar -->
+    <!-- Top bar -->
     <div class="topbar d-flex align-items-center justify-content-between px-3 py-2 shadow-sm bg-white border-bottom">
         <!-- Sidebar toggle (Mobile only) -->
-        <button type="button" class="btn btn-light d-md-none" id="toggleSidebar" title="القائمة">
+        <button type="button" class="btn btn-light d-md-none" id="toggleSidebar" title="Menu">
             <i class="bi bi-list fs-4"></i>
         </button>
 
-        <!-- Logo and project title -->
-        
-        <a class="btn btn-primary" asp-controller="Dashboard" asp-action="Index" role="button"><i class="bi bi-arrow-left-circle me-2"></i>Retour</a>
-        <span class="fw-semibold fs-5 d-none d-sm-inline">Projet X</span>
-        <div class="d-flex align-items-center gap-3">
-            <!-- Notifications dropdown -->
-            <div class="nav-item dropdown">
-                <a class="nav-link position-relative" data-bs-toggle="dropdown" role="button" aria-expanded="false">
-                    <i class="bi bi-bell fs-5"></i>
-                    @if (count > 0)
-                    {
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            @count
-                        </span>
-                    }
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    @if (count == 0)
-                    {
-                        <li><span class="dropdown-item text-muted">Aucune nouvelle notification</span></li>
-                    }
-                    else
-                    {
-                        @foreach (var notification in notifications.Take(5))
-                        {
-                            <li>
-                                <a class="dropdown-item small" href="@Url.Action("Index", "Notifications")">
-                                    <strong>@notification.Title</strong><br />
-                                    <span class="text-muted">@notification.Message</span>
-                                </a>
-                            </li>
-                        }
-                    }
-                    <li><hr class="dropdown-divider" /></li>
-                    <li><a class="dropdown-item text-center" href="@Url.Action("Index", "Notifications")">Tout voir</a></li>
-                </ul>
-            </div>
+        <!-- Project Back Button -->
+        <a class="btn btn-primary" asp-controller="Dashboard" asp-action="Index" role="button">
+            <i class="bi bi-arrow-left-circle me-2"></i>Retour
+        </a>
 
-            <!-- User dropdown -->
-            <div class="dropdown">
-                <button class="btn dropdown-toggle p-0 border-0" type="button" id="userBtn" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="~/images/user-image.jpg" alt="User Profile" class="rounded-circle" style="height: 36px; width: 36px;">
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li>
-                        <a class="dropdown-item" asp-controller="Account" asp-action="CompleteProfile">
-                            <i class="fa-solid fa-user me-2"></i>Personal informations
-                        </a>
-                    </li>
-                    @if (_SignInManager.IsSignedIn(User))
-                    {
-                        <li>
-                            <a class="dropdown-item" asp-controller="Account" asp-action="Logout">
-                                <i class="fa-solid fa-right-from-bracket me-2"></i>Deconnexion
-                            </a>
-                        </li>
-                    }
-                    else
-                    {
-                        <li>
-                            <a class="dropdown-item" asp-controller="Account" asp-action="Login">
-                                <i class="fa-solid fa-right-to-bracket me-2"></i>Se connecter
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" asp-controller="Account" asp-action="Register">
-                                <i class="fa-solid fa-user-plus me-2"></i>Creer un compte
-                            </a>
-                        </li>
-                    }
-                </ul>
-            </div>
-        </div>
+        <!-- Composant ViewComponent pour afficher l'utilisateur et les notifications -->
+        @await Component.InvokeAsync("ProjectInfo")
     </div>
 
-
-    <!--  Sidebar -->
+    <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-links">
-            <a asp-controller="ProjectContext" asp-action="Index" class="nav-link @(IsActive("ProjectContext","Index"))"><i class="bi bi-house-door"></i> Accueil</a>
+            <a asp-controller="ProjectContext" asp-action="Index" asp-route-projectId="@projectId"
+               class="nav-link @(IsActive("ProjectContext","Index"))">
+                <i class="bi bi-house-door"></i> Accueil
+            </a>
             <hr />
-            <a asp-controller="ProjectContext" asp-action="Invitation" class="nav-link @(IsActive("ProjectContext","CompleteProfile"))"><i class="bi bi-send-arrow-down"></i>Invitation a rejoindre</a>
-            <a asp-controller="ProjectContext" asp-action="Request" class="nav-link @(IsActive("ProjectContext","CompleteProfile"))"><i class="bi bi-envelope-arrow-down"></i>Demande d'adhesion</a>
-            <a asp-controller="ProjectContext" asp-action="Members" class="nav-link @(IsActive("ProjectContext","CompleteProfile"))"><i class="bi bi-people"></i>Membres</a>
+            <a asp-controller="ProjectContext" asp-action="Invitation" asp-route-projectId="@projectId"
+               class="nav-link @(IsActive("ProjectContext","Invitation"))">
+                <i class="bi bi-send-arrow-down"></i> Invitations à rejoindre
+            </a>
+            <a asp-controller="ProjectContext" asp-action="Requests" asp-route-projectId="@projectId"
+               class="nav-link @(IsActive("ProjectContext","Requests"))">
+                <i class="bi bi-envelope-arrow-down"></i> Demandes d'adhésion
+            </a>
+            <a asp-controller="ProjectContext" asp-action="Members" asp-route-projectId="@projectId"
+               class="nav-link @(IsActive("ProjectContext","Members"))">
+                <i class="bi bi-people"></i> Membres
+            </a>
             <hr />
-            <a asp-controller="ProjectContext" asp-action="Edit" class="nav-link @(IsActive("ProjectContext","Edit"))"><i class="bi bi-pencil-square"></i> Modifier le projet</a>
+            <a asp-controller="ProjectContext" asp-action="Edit" asp-route-projectId="@projectId"
+               class="nav-link @(IsActive("ProjectContext","Edit"))">
+                <i class="bi bi-pencil-square"></i> Modifier le projet
+            </a>
             <hr />
         </div>
+
         <!-- Logout link fixed at the bottom -->
         <a asp-controller="Account" asp-action="Logout" class="nav-link logout-link @(IsActive("Account","Logout"))">
-            <i class="bi bi-box-arrow-right"></i> Deconnexion
+            <i class="bi bi-box-arrow-right"></i> Déconnexion
         </a>
-     
     </div>
 
-    <!--  Overlay layer when menu is open -->
+    <!-- Overlay layer when menu is open -->
     <div class="overlay" id="overlay"></div>
-    <div class="content ">
-     
-        <div class="alert alert-success text-center alert-dismissible fade show" role="alert">
-            Bienvenue<strong> Ibrahim Abdiche,</strong> vous etes dans votre projet X. Vous pouvez revenir en cliquant sur retour.
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+
+    <div class="content">
+        @* <div class="alert alert-success text-center alert-dismissible fade show" role="alert"> *@
+        @*     Bienvenue dans votre projet. Vous pouvez revenir en cliquant sur le bouton de retour. *@
+        @*     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> *@
+        @* </div> *@
         @RenderBody()
     </div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@@yaireo/tagify"></script>
     <script src="~/js/site.js"></script>
+
     @functions {
         private string IsActive(string controller, string action)
         {
             var currentController = Context.Request.RouteValues["controller"]?.ToString();
             var currentAction = Context.Request.RouteValues["action"]?.ToString();
-
             return (currentController == controller && currentAction == action) ? "active" : "";
         }
     }
 
     @RenderSection("Scripts", required: false)
-    <script>
-        // عند تحميل الصفحة
-        window.addEventListener('load', function () {
-            setTimeout(() => {
-                document.getElementById('transition-screen').style.display = 'none';
-                document.getElementById('main-content').classList.remove('d-none');
-            }, 1200); // مدة التأثير
-        });
-    </script>
 </body>
 </html>

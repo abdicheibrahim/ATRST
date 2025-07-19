@@ -5,6 +5,10 @@ using ProjetAtrst.Models;
 using ProjetAtrst.Interfaces;
 using ProjetAtrst.ViewModels.ProjectRequests;
 using System.Security.Claims;
+using ProjetAtrst.Services;
+using ProjetAtrst.ViewModels.Project;
+using Microsoft.EntityFrameworkCore;
+using ProjetAtrst.Enums;
 
 namespace ProjetAtrst.Controllers
 {
@@ -32,13 +36,23 @@ namespace ProjetAtrst.Controllers
 
             return View(viewModel);
         }
-
-
         public async Task<IActionResult> Outgoing()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var requests = await _requestService.GetOutgoingRequestsAsync(userId);
             return View(requests);
+        }
+
+    
+        [HttpGet]
+        public async Task<IActionResult> Send(int projectId, string receiverId, RequestType type)
+        {
+            var model = await _requestService.PrepareRequestModelAsync(projectId, receiverId, type);
+
+            if (model == null)
+                return NotFound("المشروع غير موجود.");
+
+            return View(model);
         }
 
         [HttpPost]
@@ -50,8 +64,12 @@ namespace ProjetAtrst.Controllers
 
             var senderId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             await _requestService.SendRequestAsync(model, senderId);
-            TempData["Success"] = "تم إرسال الطلب بنجاح.";
-            return RedirectToAction("Project", "AvailableProjects");
+
+            TempData["Success"] = model.Type == RequestType.Join ?
+                "تم إرسال طلب الانضمام بنجاح." :
+                "تم إرسال الدعوة بنجاح.";
+
+            return RedirectToAction("Index", "ProjectContext"); // أو SendInvitations
         }
 
         public async Task<IActionResult> Accept(int id)
@@ -63,12 +81,33 @@ namespace ProjetAtrst.Controllers
 
         public async Task<IActionResult> Reject(int id)
         {
-            await _requestService.RejectRequestAsync(id);
+            await _requestService.RejectRequestAsync(id, RejectionType.JoinRequest);
+
             TempData["Warning"] = "تم رفض الطلب.";
             return RedirectToAction("Incoming");
         }
 
+        public async Task<IActionResult> Details(int id)
+        {
+            var request = await _requestService.GetByIdWithRelationsAsync(id);
+            if (request == null) return NotFound();
 
+            return View(request);
+        }
+
+        public async Task<IActionResult> SentJoinRequests()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var requests = await _requestService.GetSentJoinRequestsAsync(userId);
+            return View(requests);
+        }
+
+        public async Task<IActionResult> SentInvitations()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var invitations = await _requestService.GetSentInvitationsAsync(userId);
+            return View(invitations);
+        }
     }
 
 }

@@ -1,16 +1,152 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ProjetAtrst.Controllers;
+using ProjetAtrst.Enums;
+using ProjetAtrst.Interfaces.Services;
+using ProjetAtrst.Models;
+using ProjetAtrst.ViewModels.Project;
+using System.Security.Claims;
 
-namespace ProjetAtrst.Controllers
+public class ProjectContextController : ProjectContextBaseController
 {
-    [Authorize]
-    [Route("MyProject/{projectId}/[action]")]
-    public class ProjectContextController : Controller
+    private readonly IProjectService _projectService;
+    private readonly IProjectRequestService _requestService;
+    private readonly IResearcherService _researcherService;
+    public ProjectContextController(IProjectService projectService, IProjectRequestService requestService, IResearcherService researcherService)
     {
-        [AuthorizeProjectLeader]
-
-        public IActionResult Index(int projectId)
-        {
-            return View();
-        }
+        _projectService = projectService;
+        _requestService = requestService;
+        _researcherService = researcherService;
     }
+
+    public IActionResult Enter(int projectId)
+    {
+        HttpContext.Session.SetInt32("CurrentProjectId", projectId);
+        return RedirectToAction("Index");
+    }
+
+    public async Task< IActionResult> Index()
+    {
+        var projectId = HttpContext.Session.GetInt32("CurrentProjectId");
+        if (projectId == null)
+            return RedirectToAction("Index"); 
+
+        var project = await _projectService.GetByIdAsync(projectId.Value);
+        if (project == null) return NotFound();
+
+        ViewBag.CurrentProject = project;
+        ViewBag.CurrentProjectId = projectId;
+        return View();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Edit()
+    {
+        var projectId = (int?)ViewBag.CurrentProjectId;
+        if (projectId == null) return RedirectToAction("Index");
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var model = await _projectService.GetProjectForEditAsync(userId, projectId.Value);
+
+        if (model == null)
+            return Forbid();
+
+        return View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(ProjectEditViewModel model)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (!ModelState.IsValid)
+            return View(model);
+
+        var success = await _projectService.UpdateProjectAsync(userId, model);
+        if (!success)
+            return Forbid();
+
+        TempData["Success"] = "تم تعديل المشروع بنجاح";
+        return RedirectToAction("Index");
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Members()
+    {
+        var projectId = HttpContext.Session.GetInt32("CurrentProjectId");
+        if (projectId == null)
+            return RedirectToAction("Index");
+
+        var members = await _projectService.GetProjectMembersAsync(projectId.Value);
+        return View(members);
+    }
+    [HttpGet]
+    public async Task<IActionResult> Requests()
+    {
+        var projectId = HttpContext.Session.GetInt32("CurrentProjectId");
+        if (projectId == null)
+            return RedirectToAction("Index");
+
+        var requests = await _projectService.GetJoinRequestsAsync(projectId.Value);
+        return View(requests);
+    }
+    
+    [HttpGet]
+    public async Task<IActionResult> Invitation()
+    {
+        var projectId = HttpContext.Session.GetInt32("CurrentProjectId");
+        if (projectId == null)
+            return RedirectToAction("Index");
+      
+        ViewBag.CurrentProjectId = projectId.Value;
+        var requests = await _projectService.GetInvitationRequestsAsync(projectId.Value);
+        return View(requests);
+    }
+    [HttpPost]
+    public async Task<IActionResult> AcceptRequest(int requestId)
+    {
+        var projectId = HttpContext.Session.GetInt32("CurrentProjectId");
+        if (projectId == null)
+            return RedirectToAction("Index");
+
+        await _requestService.AcceptRequestAsync(requestId); 
+        TempData["Success"] = "تم قبول الطلب.";
+        return RedirectToAction("Requests");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> RejectRequest(int requestId)
+    {
+        await _requestService.RejectRequestAsync(requestId, RejectionType.Invitation);
+
+        TempData["Warning"] = "تم رفض الطلب.";
+        return RedirectToAction("Requests");
+    }
+
+    //-------------------- Update Project Context --------------------
+
+    [HttpGet]
+    public async Task<IActionResult> SendInvitations()
+    {
+        var projectId = HttpContext.Session.GetInt32("CurrentProjectId");
+        if (projectId == null)
+            return RedirectToAction("Index");
+
+        var candidates = await _researcherService.GetAvailableResearchersForInvitationAsync(projectId.Value);
+        ViewBag.CurrentProjectId = projectId.Value;
+        return View(candidates);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> SendInvitation(string researcherId)
+    {
+        var projectId = HttpContext.Session.GetInt32("CurrentProjectId");
+        if (projectId == null)
+            return RedirectToAction("Index");
+
+        await _requestService.SendInvitationAsync(projectId.Value, researcherId);
+        TempData["Success"] = "تم إرسال الدعوة بنجاح.";
+        return RedirectToAction("SendInvitations");
+    }
+
 }

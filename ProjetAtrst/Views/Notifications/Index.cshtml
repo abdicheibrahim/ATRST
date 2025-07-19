@@ -2,16 +2,16 @@
 @{
     Layout = "_LayoutResearcher";
 }
-<h3>الإشعارات</h3>
+<h3>Notifications</h3>
 
 <table class="table table-bordered">
     <thead>
         <tr>
-            <th>العنوان</th>
-            <th>الرسالة</th>
-            <th>التاريخ</th>
-            <th>الحالة</th>
-            <th>إجراء</th>
+            <th>Titre</th>
+            <th>Message</th>
+            <th>Date</th>
+            <th>État</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -24,11 +24,11 @@
                 <td>
                     @if (n.IsRead)
                     {
-                        <span class="text-success">مقروء</span>
+                        <span class="text-success">Lu</span>
                     }
                     else
                     {
-                        <span class="text-danger">جديد</span>
+                        <span class="text-danger">Nouveau</span>
                     }
                 </td>
                 <td>
@@ -36,7 +36,7 @@
                     {
                         <form asp-action="MarkAsRead" method="post">
                             <input type="hidden" name="id" value="@n.Id" />
-                            <button type="submit" class="btn btn-sm btn-primary">وضع كمقروء</button>
+                            <button type="submit" class="btn btn-sm btn-primary">Marquer comme lu</button>
                         </form>
                     }
                 </td>

@@ -11,6 +11,7 @@ namespace ProjetAtrst.Interfaces.Repositories
         Task<List<ProjectMembership>> GetProjectsByResearcherWithDetailsAsync(string researcherId);
         Task<bool> IsUserLeaderAsync(string researcherId, int projectId);
 
+        Task<List<ProjectMembership>> GetMembersByProjectIdAsync(int projectId);
 
     }
 }

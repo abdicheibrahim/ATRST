@@ -1,4 +1,4 @@
-﻿@using ProjetAtrst.ViewModels.Project;
+@using ProjetAtrst.ViewModels.Project;
 @model List<ProjectListViewModel>
 @{
     Layout = "_LayoutResearcher";
@@ -22,6 +22,7 @@
     <table class="table table-bordered table-striped align-middle">
         <thead class="table-light">
             <tr>
+                <th>Image</th> <!-- ✅ العمود الجديد -->
                 <th>Titre</th>
                 <th>Date de création</th>
                 <th>Statut</th>
@@ -33,7 +34,16 @@
         <tbody>
             @foreach (var project in Model)
             {
+                var logo = string.IsNullOrEmpty(project.LogoPath)
+                ? Url.Content("~/images/default-project.png")
+                : Url.Content(project.LogoPath);
+
                 <tr>
+                    <td>
+                        <img src="@logo"
+                             alt="Logo"
+                             style="height: 50px; width: 50px; object-fit: cover; border-radius: 6px;" />
+                    </td>
                     <td>@project.Title</td>
                     <td>@project.CreationDate.ToShortDateString()</td>
                     <td>@project.Status</td>
@@ -49,12 +59,28 @@
                         }
                     </td>
                     <td>
-                        <a class="btn btn-sm btn-outline-success" asp-controller="Project" asp-action="Details" asp-route-id="@project.Id">
-                            Détails
-                        </a>
+                        @if (project.Role == Role.Leader)
+                        {
+                            <a class="btn btn-sm btn-outline-primary"
+                               asp-controller="ProjectContext"
+                               asp-action="Enter"
+                               asp-route-projectId="@project.Id">
+                                Entrer
+                            </a>
+                        }
+                        else
+                        {
+                            <a class="btn btn-sm btn-outline-success"
+                               asp-controller="Project"
+                               asp-action="Details"
+                               asp-route-id="@project.Id">
+                                Détails
+                            </a>
+                        }
                     </td>
                 </tr>
             }
         </tbody>
+
     </table>
 </div>

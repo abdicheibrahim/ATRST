@@ -1,4 +1,4 @@
-﻿@using Microsoft.AspNetCore.Identity;
+@using Microsoft.AspNetCore.Identity;
 @using ProjetAtrst.Interfaces.Services;
 @inject SignInManager<ApplicationUser> _SignInManager;
 @inject INotificationService NotificationService
@@ -6,10 +6,10 @@
 @{
     var user = await UserManager.GetUserAsync(User);
     var notifications = user != null ? await NotificationService.GetUnreadNotificationsAsync(user.Id) : new List<Notification>();
-    var count = notifications.Count;
-    var fullName = user?.FullName ?? "Utilisateur";
-    var imagePath = user?.ProfilePicturePath;
-    var initial = !string.IsNullOrEmpty(fullName) ? fullName.Trim()[0].ToString().ToUpper() : "?";
+    // var count = notifications.Count;
+    // var fullName = user?.FullName ?? "Utilisateur";
+    // var imagePath = user?.ProfilePicturePath;
+    // var initial = !string.IsNullOrEmpty(fullName) ? fullName.Trim()[0].ToString().ToUpper() : "?";
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -48,8 +48,9 @@
             <img src="~/images/logo-mini.png" alt="ATRST Logo" class="me-2" style="height: 40px;" />
             <span class="fw-semibold fs-5 d-none d-sm-inline">ATRST Project</span>
         </a>
+        @await Component.InvokeAsync("UserInfo")
 
-        <div class="d-flex align-items-center gap-3">
+      @* <div class="d-flex align-items-center gap-3">
             <!-- Notifications dropdown -->
             <div class="nav-item dropdown">
                 <a class="nav-link position-relative" data-bs-toggle="dropdown" role="button" aria-expanded="false">
@@ -130,7 +131,7 @@
                     }
                 </ul>
             </div>
-        </div>
+        </div>*@ 
     </div>
 
 
@@ -155,9 +156,13 @@
             <a asp-controller="Project" asp-action="MyProjects" class="nav-link @(IsActive("Project","MyProjects"))">
                 <i class="bi bi-briefcase"></i> Mes projets
             </a>
-            <a asp-controller="ProjectRequest" asp-action="Incoming" class="nav-link @(IsActive("ProjectRequests","Index"))">
-                <i class="bi bi-envelope"></i> Demandes et invitations
+            <a asp-controller="ProjectRequest" asp-action="SentInvitations" class="nav-link @(IsActive("ProjectRequest","SentInvitations"))">
+                <i class="bi bi-envelope-arrow-down"></i> Invitation à rejoindre
             </a>
+            <a asp-controller="ProjectRequest" asp-action="SentJoinRequests" class="nav-link @(IsActive("ProjectRequest","SentJoinRequests"))">
+                <i class="bi bi-envelope-arrow-up"></i> Demande d'adhésion
+            </a>
+           
             <hr />
         </div>
 

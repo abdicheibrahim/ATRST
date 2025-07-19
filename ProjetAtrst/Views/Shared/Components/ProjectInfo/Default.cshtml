@@ -1,0 +1,41 @@
+@using ProjetAtrst.ViewModels.ViewComponent;
+@model ProjectInfoViewModel
+
+@{
+    var title = Model?.Title ?? "Mon projet";
+    var projectId = Model?.ProjectId ?? 0;
+    var logoPath = string.IsNullOrEmpty(Model?.LogoPath)
+        ? Url.Content("~/images/default-project.png")
+        : Url.Content(Model.LogoPath);
+    var initial = !string.IsNullOrEmpty(title)
+        ? title.Trim()[0].ToString().ToUpper()
+        : "?";
+}
+
+<span class="fw-semibold fs-5 d-none d-sm-inline">Projet @title</span>
+
+<!-- Vous pouvez utiliser ce code dans le Layout -->
+<div class="dropdown">
+    <button class="btn dropdown-toggle align-items-center d-flex p-0 border-0" type="button" id="projectBtn" data-bs-toggle="dropdown" aria-expanded="false">
+        @if (!string.IsNullOrEmpty(Model?.LogoPath))
+        {
+            <img src="@logoPath" alt="Logo du projet" class="rounded-circle me-2" style="height: 36px; width: 36px;" />
+        }
+        else
+        {
+            <div class="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center me-2"
+                 style="width: 36px; height: 36px; font-weight: bold;">
+                @initial
+            </div>
+        }
+
+        <span class="d-none d-md-inline">@title</span>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+            <a class="dropdown-item" asp-controller="ProjectContext" asp-action="Edit" asp-route-projectId="@projectId">
+                <i class="bi bi-pencil-square me-2"></i> Modifier le projet
+            </a>
+        </li>
+    </ul>
+</div>

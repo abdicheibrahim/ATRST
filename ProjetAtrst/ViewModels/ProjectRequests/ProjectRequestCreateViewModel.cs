@@ -15,5 +15,9 @@ namespace ProjetAtrst.ViewModels.ProjectRequests
         public string ReceiverId { get; set; }
 
         public RequestType Type { get; set; } // Join أو Invitation
+
+        public string? ProjectTitle { get; set; }
+        public string? LeaderFullName { get; set; }
     }
 }
+

@@ -27,7 +27,7 @@ namespace ProjetAtrst.Services
                     MemberCount = pm.Project.ProjectMemberships.Count,
                     RelatedNotificationsCount =
                         pm.Project.ProjectRequests.Count(r => r.Status == RequestStatus.Pending),
-                    ImageUrl = null // يمكن إضافة صورة لاحقًا
+                    ImageUrl = pm.Project.LogoPath
                 })
                 .ToList();
 
@@ -44,11 +44,12 @@ namespace ProjetAtrst.Services
                 {
                     ProjectId = pm.Project.Id,
                     ProjectTitle = pm.Project.Title,
+                    ImageUrl = pm.Project.LogoPath,
                     LeaderFullName = pm.Project.ProjectMemberships
                         .Where(m => m.Role == Role.Leader)
                         .Select(m => m.Researcher.User.FullName)
                         .FirstOrDefault() ?? "غير معروف",
-                    ImageUrl = null
+                    
                 })
                 .ToList();
 

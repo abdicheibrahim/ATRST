@@ -1,0 +1,31 @@
+﻿@using ProjetAtrst.ViewModels.Project
+@model AvailableProjectsWithPaginationViewModel
+
+<div id="projects-list" class="row row-cols-1 row-cols-md-2 g-4">
+    @foreach (var project in Model.Projects)
+    {
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">@project.Title</h5>
+                    <p>@project.Description</p>
+                    <p>Chef de projet: @project.LeaderFullName</p>
+                    <a asp-controller="ProjectRequest"
+                       asp-action="Send"
+                       asp-route-projectId="@project.Id"
+                       asp-route-receiverId="@project.LeaderId"
+                       asp-route-type="Join"
+                       class="btn btn-success">
+                        Demander à rejoindre
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div id="pagination-container" class="fixed-bottom">
+    @await Html.PartialAsync("_PaginationPartial", Model.Pagination)
+</div>
+
+

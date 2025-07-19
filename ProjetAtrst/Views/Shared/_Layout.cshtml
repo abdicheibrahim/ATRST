@@ -1,4 +1,4 @@
-﻿@using Microsoft.AspNetCore.Identity;
+@using Microsoft.AspNetCore.Identity;
 @using ProjetAtrst.Interfaces.Services;
 @inject SignInManager<ApplicationUser> _SignInManager;
 @inject INotificationService NotificationService
@@ -25,16 +25,16 @@
     <div id="globalSpinner" class="hidden">
         <div class="spinner-container">
             <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
-                <span class="visually-hidden">Loading...</span>
+                <span class="visually-hidden">Chargement...</span>
             </div>
-            <p class="mt-2" style="color: #333;">Loading...</p>
+            <p class="mt-2" style="color: #333;">Chargement...</p>
         </div>
     </div>
 
     <!--  Top bar -->
     <div class="topbar d-flex align-items-center justify-content-between px-3 py-2 shadow-sm bg-white border-bottom">
         <!-- Sidebar toggle (Mobile only) -->
-        <button type="button" class="btn btn-light d-md-none" id="toggleSidebar" title="القائمة">
+        <button type="button" class="btn btn-light d-md-none" id="toggleSidebar" title="Menu">
             <i class="bi bi-list fs-4"></i>
         </button>
 
@@ -59,7 +59,7 @@
                 <ul class="dropdown-menu dropdown-menu-end">
                     @if (count == 0)
                     {
-                        <li><span class="dropdown-item text-muted">لا توجد إشعارات جديدة</span></li>
+                        <li><span class="dropdown-item text-muted">Aucune nouvelle notification</span></li>
                     }
                     else
                     {
@@ -74,7 +74,7 @@
                         }
                     }
                     <li><hr class="dropdown-divider" /></li>
-                    <li><a class="dropdown-item text-center" href="@Url.Action("Index", "Notifications")">عرض الكل</a></li>
+                    <li><a class="dropdown-item text-center" href="@Url.Action("Index", "Notifications")">Voir tout</a></li>
                 </ul>
             </div>
 
@@ -86,14 +86,14 @@
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li>
                         <a class="dropdown-item" asp-controller="Account" asp-action="CompleteProfile">
-                            <i class="fa-solid fa-user me-2"></i>الملف الشخصي
+                            <i class="fa-solid fa-user me-2"></i>Profil
                         </a>
                     </li>
                     @if (_SignInManager.IsSignedIn(User))
                     {
                         <li>
                             <a class="dropdown-item" asp-controller="Account" asp-action="Logout">
-                                <i class="fa-solid fa-right-from-bracket me-2"></i>تسجيل الخروج
+                                <i class="fa-solid fa-right-from-bracket me-2"></i>Déconnexion
                             </a>
                         </li>
                     }
@@ -101,12 +101,12 @@
                     {
                         <li>
                             <a class="dropdown-item" asp-controller="Account" asp-action="Login">
-                                <i class="fa-solid fa-right-to-bracket me-2"></i>تسجيل الدخول
+                                <i class="fa-solid fa-right-to-bracket me-2"></i>Connexion
                             </a>
                         </li>
                         <li>
                             <a class="dropdown-item" asp-controller="Account" asp-action="Register">
-                                <i class="fa-solid fa-user-plus me-2"></i>إنشاء حساب
+                                <i class="fa-solid fa-user-plus me-2"></i>Créer un compte
                             </a>
                         </li>
                     }
@@ -118,8 +118,8 @@
 
     <!--  Sidebar -->
     <div class="sidebar" id="sidebar">
-         <h6>Profile</h6>
-        <a asp-controller="Account" asp-action="CompleteProfile" class="nav-link @(IsActive("CompleteProfile"))"><i class="fa-solid fa-user"></i> Profile</a>
+         <h6>Profil</h6>
+        <a asp-controller="Account" asp-action="CompleteProfile" class="nav-link @(IsActive("CompleteProfile"))"><i class="fa-solid fa-user"></i> Profil</a>
         @* <a asp-controller="User" asp-action="Education" class="nav-link @(IsActive("Education"))"><i class="fa-solid fa-graduation-cap"></i> Education</a> *@
         @* <a asp-controller="User" asp-action="Employments" class="nav-link @(IsActive("Employments"))"><i class="fa-solid fa-address-card"></i> Employments</a> *@
 
@@ -132,9 +132,10 @@
         @* </a> *@
 
         @* <hr /> *@
-         <h6>Project</h6>
-        <a asp-controller="Project" asp-action="Create" class="nav-link @(IsActive("Create"))"><i class="fa-solid fa-diagram-project"></i> Create New Project</a>
-        <a asp-controller="Project" asp-action="MyProjects" class="nav-link @(IsActive("MyProjects"))"><i class="fa-solid fa-file-lines"></i> MyProject</a>
+         <h6>Projet</h6>
+        <a asp-controller="Project" asp-action="Create" class="nav-link @(IsActive("Create"))"><i class="fa-solid fa-diagram-project"></i> Créer un nouveau projet</a>
+        <a asp-controller="Project" asp-action="MyProjects" class="nav-link @(IsActive("MyProjects"))"><i class="fa-solid fa-file-lines"></i> Mes projets</a>
+oller="Project" asp-action="MyProjects" class="nav-link @(IsActive("MyProjects"))"><i class="fa-solid fa-file-lines"></i> MyProject</a>
         @* <a asp-controller="Project" asp-action="Partners" class="nav-link @(IsActive("Partners"))"><i class="fa-solid fa-handshake"></i> Partners</a> *@
         @* <a asp-controller="Project" asp-action="WorkPackages" class="nav-link @(IsActive("WorkPackages"))"><i class="fa-solid fa-briefcase"></i> Work Packages</a> *@
         @* <a asp-controller="Project" asp-action="Deliverables" class="nav-link @(IsActive("Deliverables"))"><i class="fa-solid fa-file-signature"></i> Deliverables</a> *@

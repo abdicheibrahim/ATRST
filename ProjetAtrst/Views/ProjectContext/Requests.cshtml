@@ -1,0 +1,73 @@
+@using ProjetAtrst.ViewModels.ProjectRequests
+@model List<ProjectJoinRequestViewModel>
+@{
+    ViewData["Title"] = "Demandes d'adhésion";
+}
+@{
+    Layout = "_LayoutProject";
+}
+<h3>Demandes d'adhésion</h3>
+
+<table class="table table-bordered">
+    <thead class="table-light">
+        <tr>
+            <th><i class="bi bi-person me-1"></i>Expéditeur</th>
+            <th><i class="bi bi-info-circle me-1"></i>Statut</th>
+            <th><i class="bi bi-calendar3 me-1"></i>Date</th>
+            <th><i class="bi bi-gear me-1"></i>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var req in Model)
+        {
+            <tr>
+                <td>@req.SenderName</td>
+                <td>
+                    @switch (req.Status)
+                    {
+                        case RequestStatus.Pending:
+                            <span class="badge bg-warning text-dark">
+                                <i class="bi bi-hourglass-split me-1"></i>En attente
+                            </span>
+                            break;
+                        case RequestStatus.Accepted:
+                            <span class="badge bg-success">
+                                <i class="bi bi-check-circle me-1"></i>Accepté
+                            </span>
+                            break;
+                        case RequestStatus.Rejected:
+                            <span class="badge bg-danger">
+                                <i class="bi bi-x-circle me-1"></i>Rejeté
+                            </span>
+                            break;
+                    }
+                </td>
+                <td>@req.SentAt.ToString("yyyy-MM-dd")</td>
+               <td>
+                    @if (req.Status == RequestStatus.Pending)
+                    {
+                        <div class="d-flex gap-2">
+                            <form method="post" asp-action="AcceptRequest" asp-controller="ProjectContext" class="mb-0">
+                                <input type="hidden" name="requestId" value="@req.RequestId" />
+                                <button type="submit" class="btn btn-sm btn-success">
+                                    <i class="bi bi-check-lg"></i> Accepter
+                                </button>
+                            </form>
+                            <form method="post" asp-action="RejectRequest" asp-controller="ProjectContext" class="mb-0">
+                                <input type="hidden" name="requestId" value="@req.RequestId" />
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    <i class="bi bi-x-lg"></i> Rejeter
+                                </button>
+                            </form>
+                        </div>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Aucune action requise</span>
+                    }
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>

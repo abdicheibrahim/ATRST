@@ -8,7 +8,7 @@
         public string LeaderFullName { get; set; }
         public DateTime CreationDate { get; set; }
         public string LeaderId { get; set; } // ← أضف هذا
-
+        public string? ImageUrl { get; set; }
     }
 
 }

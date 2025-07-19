@@ -1,15 +1,15 @@
-﻿@model ProjetAtrst.ViewModels.Dashboard.DashboardViewModel
+@model ProjetAtrst.ViewModels.Dashboard.DashboardViewModel
 
 @{
     Layout = "_LayoutResearcher";
 }
 
 @{
-    ViewData["Title"] = "الصفحة الرئيسية";
+    ViewData["Title"] = "Page d'accueil ";
 }
 
 <div class="container mt-4">
-    <h2 class="mb-4">📘 المشاريع التي أنا قائد فيها</h2>
+    <h2 class="mb-4"> Projets que je dirige 📘</h2>
 
     @if (Model.LeaderProjects.Any())
     {
@@ -19,23 +19,33 @@
                 <div class="col">
                     <div class="card h-100 shadow-sm">
                         <div class="row g-0">
-                            <div class="col-3 d-flex align-items-center justify-content-center bg-light">
-                                <img src="@project.ImageUrl ?? \" /images/project-placeholder.png\"" class="img-fluid" alt="صورة المشروع" style="max-height: 64px;">
+                            <div class="col-3 d-flex align-items-center justify-content-center bg-light" style="min-height: 64px;">
+                                @if (!string.IsNullOrEmpty(project.ImageUrl))
+                                {
+                                    <img src="@project.ImageUrl" class="img-fluid" alt="Image du projet" style="max-height: 64px;">
+                                }
+                                else
+                                {
+                                    <div class="d-flex align-items-center justify-content-center rounded-circle bg-dark text-white" style="width: 64px; height: 64px; font-size: 24px;">
+                                        @project.ProjectTitle?.Trim().FirstOrDefault().ToString().ToUpper()
+                                    </div>
+                                }
                             </div>
+
                             <div class="col-9">
                                 <div class="card-body">
                                     <h5 class="card-title">@project.ProjectTitle</h5>
-                                    <p class="card-text mb-1">👥 عدد الأعضاء: <strong>@project.MemberCount</strong></p>
+                                    <p class="card-text mb-1">👥 Nombre de membres: <strong>@project.MemberCount</strong></p>
 
                                     @if (project.RelatedNotificationsCount > 0)
                                     {
                                         <p class="card-text text-warning">
-                                            🔔 إشعارات: +@project.RelatedNotificationsCount
+                                            🔔 Notifications: +@project.RelatedNotificationsCount
                                         </p>
                                     }
                                     else
                                     {
-                                        <p class="card-text text-muted">لا توجد إشعارات</p>
+                                        <p class="card-text text-muted">Aucune notification</p>
                                     }
 
                                     <a href="@Url.Action("Enter", "ProjectContext", new { projectId = project.ProjectId })" class="stretched-link"></a>
@@ -49,12 +59,12 @@
     }
     else
     {
-        <p class="text-muted">لا توجد مشاريع تقودها حاليًا.</p>
+        <p class="text-muted">Il n'y a aucun projet en cours de réalisation actuellement.</p>
     }
 
     <hr class="my-5">
 
-    <h2 class="mb-4">📒 المشاريع التي أنا عضو فيها</h2>
+    <h2 class="mb-4"> Projets dont je suis membre 📒</h2>
 
     @if (Model.JoinedProjects.Any())
     {
@@ -64,14 +74,24 @@
                 <div class="col">
                     <div class="card h-100 shadow-sm">
                         <div class="row g-0">
-                            <div class="col-3 d-flex align-items-center justify-content-center bg-light">
-                                <img src="@project.ImageUrl ?? \" /images/project-placeholder.png\"" class="img-fluid" alt="صورة المشروع" style="max-height: 64px;">
+                            <div class="col-3 d-flex align-items-center justify-content-center bg-light" style="min-height: 64px;">
+                                @if (!string.IsNullOrEmpty(project.ImageUrl))
+                                {
+                                    <img src="@project.ImageUrl" class="img-fluid" alt="Image du projet" style="max-height: 64px;">
+                                }
+                                else
+                                {
+                                    <div class="d-flex align-items-center justify-content-center rounded-circle bg-dark text-white" style="width: 64px; height: 64px; font-size: 24px;">
+                                        @project.ProjectTitle?.Trim().FirstOrDefault().ToString().ToUpper()
+                                    </div>
+                                }
                             </div>
+
                             <div class="col-9">
                                 <div class="card-body">
                                     <h5 class="card-title">@project.ProjectTitle</h5>
-                                    <p class="card-text">👤 القائد: <strong>@project.LeaderFullName</strong></p>
-                                    <a href="@Url.Action("Details", "Projects", new { id = project.ProjectId })" class="stretched-link"></a>
+                                    <p class="card-text"> 👤 Le leader: <strong>@project.LeaderFullName</strong></p>
+                                    <a href="@Url.Action("Details", "Project", new { id = project.ProjectId })" class="stretched-link"></a>
                                 </div>
                             </div>
                         </div>
@@ -82,6 +102,6 @@
     }
     else
     {
-        <p class="text-muted">لا توجد مشاريع أنت عضو فيها حاليًا.</p>
+        <p class="text-muted">Il n'y a aucun projet dont vous êtes actuellement membre.</p>
     }
 </div>

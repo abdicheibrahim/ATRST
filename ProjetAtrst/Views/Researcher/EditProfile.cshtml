@@ -1,4 +1,4 @@
-﻿@using ProjetAtrst.ViewModels.Researcher
+@using ProjetAtrst.ViewModels.Researcher
 @model EditResearcherProfileViewModel
 
 @{
@@ -6,54 +6,68 @@
 }
 
 @{
-    ViewData["Title"] = "Profile";
+    ViewData["Title"] = "Profil";
 }
-
+@* @if (TempData["Success"] != null) *@
+@* { *@
+@*     <div class="alert alert-success">@TempData["Success"]</div> *@
+@* } *@
 <div class="alert alert-success text-center alert-dismissible fade show" role="alert">
     Votre profil est<strong> complet.</strong> Vous pouvez le modifier ici.
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
 </div>
 <form asp-action="EditProfile" method="post">
    
     <div class=" row shadow-sm g-3 needs-validation  p-3 mb-5 mt-3 bg-white border rounded">
-        <h5>Employments Details</h5>
+        <h5>Détails professionnels</h5>
         <div class="col-md-6">
-            <label asp-for="Establishment" class="form-label">Establishment</label>
+            <label asp-for="Establishment" class="form-label">Établissement</label>
             <select asp-for="Establishment" asp-items="Model.EstablishmentsList" class="form-select" id="establishmentSelect"></select>
             <span asp-validation-for="Establishment" class="text-danger"></span>
 
-            <input type="text" id="customEstablishment" name="Establishment" class="form-control mt-2 d-none" placeholder="أدخل اسم المؤسسة يدوياً" />
+            <input type="text" id="customEstablishment" name="Establishment" class="form-control mt-2 d-none" placeholder="Entrez le nom de l'établissement manuellement" />
         </div>
+        
+        <div class="col-md-6">
+            <label asp-for="Grade" class="form-label">Grade</label>
+            <select asp-for="Grade" asp-items="Model.GradesList" class="form-select" id="gradeSelect"></select>
+            <span asp-validation-for="Grade" class="text-danger"></span>
+
+             <input type="text" id="customGrade" name="Grade" class="form-control mt-2 d-none" placeholder="Entrez le grade manuellement" /> 
+        </div>
+        
+        <div class="col-md-6">
+            <label asp-for="Statut" class="form-label">Statut</label>
+            <select asp-for="Statut" asp-items="Model.StatutList" class="form-select" id="statutSelect"></select>
+            <span asp-validation-for="Statut" class="text-danger"></span>
+
+             <input type="text" id="customStatut" name="Statut" class="form-control mt-2 d-none" placeholder="Entrez le statut manuellement" /> 
+        </div>
+        @* </div> *@
 
         <div class="col-md-6">
-            <label asp-for="Grade" class="form-label"></label>
-            <input type="text" class="form-control input" asp-for="Grade">
-            <span asp-validation-for="Grade"></span>
-        </div>
-
-        <div class="col-md-6">
-            <label asp-for="Speciality" class="form-label"></label>
+            <label asp-for="Speciality" class="form-label">Spécialité</label>
             <input type="text" class="form-control input" asp-for="Speciality">
             <span asp-validation-for="Speciality"></span>
         </div>
 
         <div class="col-md-6">
-            <label asp-for="Mobile" class="form-label"></label>
+            <label asp-for="Mobile" class="form-label">Téléphone mobile</label>
             <input type="text" class="form-control input" asp-for="Mobile">
             <span asp-validation-for="Mobile"></span>
         </div>
         <div class="col-md-6">
-            <label asp-for="Diploma" class="form-label"></label>
+            <label asp-for="Diploma" class="form-label">Diplôme</label>
             <input type="text" class="form-control input" asp-for="Diploma">
             <span asp-validation-for="Diploma"></span>
         </div>
         <div class="col-md-6">
-            <label asp-for="DipInstitution" class="form-label"></label>
+            <label asp-for="DipInstitution" class="form-label">Établissement du diplôme</label>
             <input type="text" class="form-control input" asp-for="DipInstitution">
             <span asp-validation-for="DipInstitution"></span>
         </div>
         <div class="col-md-6">
-            <label asp-for="DipDate" class="form-label"></label>
+            <label asp-for="DipDate" class="form-label">Date d'obtention</label>
             <input type="date" class="form-control input" asp-for="DipDate">
             <span asp-validation-for="DipDate"></span>
         </div>
@@ -96,7 +110,7 @@
                 matcher: customMatcher
             });
 
-            // ✅ عند الفتح، ركّز المؤشر في مربع البحث تلقائيًا
+            // Se concentrer automatiquement sur le champ de recherche lors de l'ouverture
             $('#establishmentSelect').on('select2:open', function () {
                 setTimeout(function () {
                     document.querySelector('.select2-container--open .select2-search__field').focus();

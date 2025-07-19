@@ -1,0 +1,75 @@
+@using ProjetAtrst.ViewModels.ViewComponent
+@model UserInfoViewModel
+
+@{
+    var count = Model?.Notifications?.Count ?? 0;
+    var fullName = Model?.FullName ?? "Utilisateur";
+    var imagePath = Model?.ProfilePicturePath;
+    var initial = !string.IsNullOrEmpty(fullName) ? fullName.Trim()[0].ToString().ToUpper() : "?";
+}
+
+<!-- Vous pouvez déplacer ce code où vous voulez dans le Layout -->
+<div class="d-flex align-items-center gap-3">
+    <!-- Notifications -->
+    <div class="nav-item dropdown">
+        <a class="nav-link position-relative" data-bs-toggle="dropdown" role="button" aria-expanded="false">
+            <i class="bi bi-bell fs-5"></i>
+            @if (count > 0)
+            {
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    @count
+                </span>
+            }
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end">
+            @if (count == 0)
+            {
+                <li><span class="dropdown-item text-muted">Aucune nouvelle notification</span></li>
+            }
+            else
+            {
+                @foreach (var notification in Model.Notifications.Take(5))
+                {
+                    <li>
+                        <a class="dropdown-item small" href="@Url.Action("Index", "Notifications")">
+                            <strong>@notification.Title</strong><br />
+                            <span class="text-muted">@notification.Message</span>
+                        </a>
+                    </li>
+                }
+            }
+            <li><hr class="dropdown-divider" /></li>
+            <li><a class="dropdown-item text-center" href="@Url.Action("Index", "Notifications")">Tout voir</a></li>
+        </ul>
+    </div>
+
+    <!-- User info -->
+    <div class="dropdown">
+        <button class="btn dropdown-toggle align-items-center d-flex p-0 border-0" type="button" id="userBtn" data-bs-toggle="dropdown" aria-expanded="false">
+            @if (!string.IsNullOrEmpty(imagePath))
+            {
+                <img src="@Url.Content(imagePath)" alt="Profil utilisateur" class="rounded-circle me-2" style="height: 36px; width: 36px;">
+            }
+            else
+            {
+                <div class="rounded-circle bg-dark text-white d-flex justify-content-center align-items-center me-2"
+                     style="width: 36px; height: 36px; font-weight: bold;">
+                    @initial
+                </div>
+            }
+            <span class="d-none d-md-inline">@fullName</span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+                <a class="dropdown-item" asp-controller="Account" asp-action="CompleteProfile">
+                    <i class="fa-solid fa-user me-2"></i>Informations personnelles
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item" asp-controller="Account" asp-action="Logout">
+                    <i class="fa-solid fa-right-from-bracket me-2"></i>Déconnexion
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

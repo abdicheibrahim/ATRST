@@ -6,7 +6,9 @@ namespace ProjetAtrst.Interfaces.Repositories
     {
         //Task<Project?> GetLeaderProjectAsync(string researcherId);
         Task<Project?> GetByIdAsync(int id);
-        Task<List<Project>> GetAvailableProjectsForJoinAsync(string researcherId);
+        Task<(List<Project> Projects, int TotalCount)> GetAvailableProjectsForJoinAsync(string researcherId, int pageNumber, int pageSize);
+
+        Task<(string ProjectTitle, string LeaderFullName)> GetProjectInfoAsync(int projectId);
 
 
     }

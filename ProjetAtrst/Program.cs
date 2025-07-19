@@ -49,8 +49,6 @@ namespace ProjetAtrst
             })
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-
-
             builder.Services.AddControllersWithViews();
             builder.Services.AddScoped<IResearcherService, ResearcherService>();
             builder.Services.AddScoped<IResearcherRepository, ResearcherRepository>();
@@ -72,6 +70,8 @@ namespace ProjetAtrst
             builder.Services.AddScoped<ProfileCompletionFilter>();
             builder.Services.AddScoped<AuthorizeProjectLeaderAttribute>();
             builder.Services.AddSingleton<StaticDataLoader>();
+            builder.Services.AddSession();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -84,6 +84,7 @@ namespace ProjetAtrst
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseSession();
 
             app.UseRouting();
             app.UseAuthentication();

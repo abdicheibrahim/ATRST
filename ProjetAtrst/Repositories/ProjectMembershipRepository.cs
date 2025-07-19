@@ -44,6 +44,14 @@ namespace ProjetAtrst.Repositories
                 m.Role == Role.Leader);
         }
 
+        public async Task<List<ProjectMembership>> GetMembersByProjectIdAsync(int projectId)
+        {
+            return await _context.ProjectMemberships
+                .Include(pm => pm.Researcher)
+                .ThenInclude(r => r.User)
+                .Where(pm => pm.ProjectId == projectId)
+                .ToListAsync();
+        }
 
     }
 }

@@ -1,39 +1,107 @@
-﻿@using ProjetAtrst.ViewModels.Project;
+@using ProjetAtrst.ViewModels.Project
 @model ProjectDetailsViewModel
-
 @{
-    Layout = "_LayoutProject";
+    ViewData["Title"] = "Détails du projet";
 }
 
-<h2>
-    Details du projet
-</h2>
-
-<div class="mb-3">
-    <label class="form-label">Titre</label>
-    <p class="form-control">@Model.Title</p>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-info-circle me-2"></i>@ViewData["Title"]</h2>
+    <a href="javascript:history.back()" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Retour
+    </a>
 </div>
 
-<div class="mb-3">
-    <label class="form-label">Description</label>
-    <p class="form-control">@Model.Description</p>
+<div class="card shadow-sm mb-4">
+    <div class="border-1 p-3">
+        <div class="row">
+            <div class="col-md-12 mb-3">
+                <div class="form-group">
+                    <label class="form-label fw-bold text-muted small mb-1">
+                        <i class="bi bi-card-heading me-2"></i>Titre du projet
+                    </label>
+                    <div class="p-3 bg-light rounded">
+                        <h4 class="mb-0">@Model.Title</h4>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12 mb-3">
+                <div class="form-group">
+                    <label class="form-label fw-bold text-muted small mb-1">
+                        <i class="bi bi-text-paragraph me-2"></i>Description
+                    </label>
+                    <div class="p-3 bg-light rounded">
+                        @if (!string.IsNullOrEmpty(Model.Description))
+                        {
+                            <p class="mb-0">@Model.Description</p>
+                        }
+                        else
+                        {
+                            <p class="text-muted fst-italic mb-0">Aucune description fournie</p>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <div class="form-group">
+                    <label class="form-label fw-bold text-muted small mb-1">
+                        <i class="bi bi-calendar3 me-2"></i>Date de création
+                    </label>
+                    <div class="p-3 bg-light rounded">
+                        @Model.CreationDate.ToString("dd MMMM yyyy", new System.Globalization.CultureInfo("fr-FR"))
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <div class="form-group">
+                    <label class="form-label fw-bold text-muted small mb-1">
+                        <i class="bi bi-info-circle me-2"></i>Statut
+                    </label>
+                    <div class="p-3">
+                        @if (Model.Status == "Actif")
+                        {
+                            <span class="badge bg-success">
+                                <i class="bi bi-check-circle me-1"></i>Actif
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">
+                                <i class="bi bi-pause-circle me-1"></i>@Model.Status
+                            </span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="mb-3">
-    <label class="form-label">Date de creation</label>
-    <p class="form-control">@Model.CreationDate.ToShortDateString()</p>
+<div class="d-flex justify-content-between align-items-center">
+    @if (Model.Role == Role.Leader)
+    {
+        <div>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary me-2">
+                <i class="bi bi-pencil-square me-2"></i>Modifier le projet
+            </a>
+            <a asp-controller="ProjectContext" asp-action="Members" asp-route-id="@Model.Id" class="btn btn-outline-secondary">
+                <i class="bi bi-people me-2"></i>Voir les membres
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info d-flex align-items-center w-100" role="alert">
+            <i class="bi bi-info-circle-fill me-2"></i>
+            <div>
+                Vous ne pouvez pas modifier ce projet car vous n'êtes pas le chef de projet.
+            </div>
+        </div>
+    }
+    
+    <a asp-action="Index" class="btn btn-link text-decoration-none">
+        <i class="bi bi-arrow-return-left me-1"></i> Retour à la liste
+    </a>
 </div>
-
-<div class="mb-3">
-    <label class="form-label">Statut</label>
-    <p class="form-control">@Model.Status</p>
-</div>
-
-@if (Model.Role == Role.Leader)
-{
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary"><i class="bi bi-pencil-square me-2"></i>Modifier</a>
-}
-else
-{
-    <div class="alert alert-info">لا يمكنك تعديل هذا المشروع لأنك لست القائد.</div>
-}

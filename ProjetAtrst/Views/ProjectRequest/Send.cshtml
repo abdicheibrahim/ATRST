@@ -1,4 +1,5 @@
-﻿@using ProjetAtrst.ViewModels.ProjectRequests
+
+@using ProjetAtrst.ViewModels.ProjectRequests
 @model ProjectRequestCreateViewModel
 @{
     ViewData["Title"] = "إرسال طلب أو دعوة";
@@ -7,8 +8,14 @@
 
 <h3 class="mb-4">✉️ إرسال @(isJoin ? "طلب انضمام" : "دعوة")</h3>
 
+<div class="alert alert-info">
+    <strong>المشروع:</strong> @Model.ProjectTitle <br />
+    <strong>@(isJoin ? "القائد" : "الباحث"):</strong> @Model.LeaderFullName
+</div>
+
 <form asp-action="Send" method="post">
     <input type="hidden" asp-for="ProjectId" />
+    <input type="hidden" asp-for="ReceiverId" />
     <input type="hidden" asp-for="Type" />
 
     @if (isJoin)
@@ -19,9 +26,9 @@
     else
     {
         <div class="mb-3">
-            <label asp-for="ReceiverId" class="form-label">الباحث المستهدف</label>
-            <input asp-for="ReceiverId" class="form-control" />
-            <span asp-validation-for="ReceiverId" class="text-danger"></span>
+            @* <label  asp-for="ReceiverId" class="form-label">الباحث المستهدف</label> *@
+            <input type="hidden" asp-for="ReceiverId" class="form-control" />
+            @* <span asp-validation-for="ReceiverId" class="text-danger"></span> *@
         </div>
     }
 

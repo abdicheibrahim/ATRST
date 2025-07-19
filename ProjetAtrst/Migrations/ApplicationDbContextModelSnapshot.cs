@@ -326,6 +326,9 @@ namespace ProjetAtrst.Migrations
                     b.Property<DateTime>("LastActivity")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<string>("LogoPath")
+                        .HasColumnType("longtext");
+
                     b.Property<int>("ProjectApprovalStatus")
                         .HasColumnType("int");
 
@@ -444,6 +447,9 @@ namespace ProjetAtrst.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Speciality")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Statut")
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");

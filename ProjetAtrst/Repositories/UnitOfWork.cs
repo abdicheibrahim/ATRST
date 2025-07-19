@@ -13,15 +13,17 @@ namespace ProjetAtrst.Repositories
         public INotificationRepository Notifications { get; }
         public IProjectRepository Projects { get; }
         public IProjectMembershipRepository ProjectMemberships { get; }
+        public IProjectRequestRepository ProjectRequest { get; }
         public UnitOfWork(ApplicationDbContext context, IResearcherRepository researcherRepository, IUserRepository userRepository,
-            INotificationRepository NotificationRepository, IProjectRepository projectRepository, IProjectMembershipRepository IProjectMembershipRepository)
+            INotificationRepository NotificationRepository, IProjectRepository projectRepository, IProjectMembershipRepository ProjectMembershipRepository , IProjectRequestRepository ProjectRequestRepository)
         {
             _context = context;
             Researchers = researcherRepository;
             Users = userRepository;
             Notifications = NotificationRepository;
             Projects = projectRepository;
-            ProjectMemberships = IProjectMembershipRepository;
+            ProjectMemberships = ProjectMembershipRepository;
+            ProjectRequest = ProjectRequestRepository;
         }
 
         public async Task<int> SaveAsync()

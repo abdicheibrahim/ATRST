@@ -10,6 +10,12 @@ namespace ProjetAtrst.Interfaces.Repositories
         Task<IEnumerable<ProjectRequest>> GetBySenderIdAsync(string senderId);
         Task<IEnumerable<ProjectRequest>> GetByProjectIdAsync(int projectId);
         Task<IEnumerable<ProjectRequest>> GetByUserAndProjectAsync(string userId, int? projectId = null);
+        Task<List<ProjectRequest>> GetJoinRequestsByProjectIdAsync(int projectId);
+        Task<ProjectRequest> GetByIdWithRelationsAsync(int Id);
+        Task<List<ProjectRequest>> GetInvitationRequestsByProjectIdAsync(int projectId);
+        // Task<List<ProjectRequest>> GetInvitationRequestsByResearcherIdAsync(string researcherId);
+        Task<List<ProjectRequest>> GetJoinRequestsBySenderAsync(string researcherId);
+        Task<List<ProjectRequest>> GetInvitationsByLeaderAsync(string leaderId);
         Task SaveChangesAsync();
     }
 }

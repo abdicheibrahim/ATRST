@@ -11,6 +11,7 @@ namespace ProjetAtrst.Interfaces
         IUserRepository Users { get; }
         INotificationRepository Notifications { get; }
         IProjectMembershipRepository ProjectMemberships { get; }
-            Task<int> SaveAsync();
+        IProjectRequestRepository ProjectRequest { get; }
+        Task<int> SaveAsync();
     }
 }

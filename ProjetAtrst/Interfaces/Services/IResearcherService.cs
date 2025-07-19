@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using ProjetAtrst.ViewModels.Account;
 using ProjetAtrst.ViewModels.Researcher;
-using System.Security.Claims;
 
 namespace ProjetAtrst.Interfaces.Services
 {
@@ -13,5 +12,8 @@ namespace ProjetAtrst.Interfaces.Services
 
         Task EditProfileResearcherViewModelAsync(string userId, EditResearcherProfileViewModel model);
         Task<bool> IsProfileCompleteAsync(string userId);
+
+        Task<List<ResearcherViewModel>> GetAvailableResearchersForInvitationAsync(int projectId);
+
     }
 }

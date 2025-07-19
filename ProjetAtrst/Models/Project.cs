@@ -23,6 +23,8 @@ namespace ProjetAtrst.Models
 
         [MaxLength(500)]
         public string Description { get; set; } = string.Empty;
+        public string? LogoPath { get; set; }
+
         public DateTime CreationDate { get; set; } = DateTime.UtcNow;
         public DateTime LastActivity { get; set; } = DateTime.UtcNow;
         public bool IsCompleted { get; set; } = false;

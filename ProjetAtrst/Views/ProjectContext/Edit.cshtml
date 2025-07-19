@@ -1,0 +1,74 @@
+@using ProjetAtrst.ViewModels.Project
+@model ProjectEditViewModel
+@{
+    Layout = "_LayoutProject";
+    ViewData["Title"] = "Modifier le projet";
+}
+
+<h2><i class="bi bi-pencil-square me-2"></i>Modifier le projet</h2>
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <!-- Afficher l'image actuelle -->
+    @if (!string.IsNullOrEmpty(Model.CurrentLogoPath))
+    {
+        <div class="mb-3">
+            <label class="form-label">Image actuelle :</label><br />
+            <img id="previewImage" src="@Url.Content(Model.CurrentLogoPath)" alt="Logo du projet" class="img-thumbnail" style="height:100px; border-radius:8px;" />
+        </div>
+    }
+    else
+    {
+        <div class="mb-3">
+            <label class="form-label">Aperçu :</label><br />
+            <img id="previewImage" src="~/images/uploads/ProjectImages/default-project.png" alt="Aperçu par défaut" class="img-thumbnail" style="height:100px; border-radius:8px;" />
+        </div>
+    }
+
+    <!-- Téléverser une nouvelle image -->
+    <div class="mb-4">
+        <label asp-for="LogoFile" class="form-label">Mettre à jour l'image du projet</label>
+        <input asp-for="LogoFile" type="file" class="form-control" onchange="previewSelectedImage(event)" accept="image/*" />
+        <div class="form-text">Formats acceptés : JPG, PNG, GIF. Taille maximale : 5 Mo</div>
+        <span asp-validation-for="LogoFile" class="text-danger"></span>
+    </div>
+
+    <input type="hidden" asp-for="Id" />
+    <div class="d-flex justify-content-between mt-4">
+        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Retour
+        </a>
+        <button type="submit" class="btn btn-success">
+            <i class="bi bi-check-lg"></i> Enregistrer les modifications
+        </button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function previewSelectedImage(event) {
+            const input = event.target;
+            const preview = document.getElementById('previewImage');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+}
+

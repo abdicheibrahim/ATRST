@@ -99,7 +99,7 @@ namespace ProjetAtrst.Controllers
 
             await _userService.CompleteProfileAsync(userId, model);
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Dashboard");
         }
         [Authorize]
         [ServiceFilter(typeof(ProfileCompletionFilter))]
@@ -135,7 +135,8 @@ namespace ProjetAtrst.Controllers
             return RedirectToAction("EditProfile");
         }
 
-        // new
+
+        [ServiceFilter(typeof(ProfileCompletionFilter))]
         [HttpGet]
         public async Task<IActionResult> EditAccount()
         {

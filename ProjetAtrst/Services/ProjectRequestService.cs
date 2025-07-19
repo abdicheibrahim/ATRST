@@ -1,9 +1,11 @@
-﻿using ProjetAtrst.Interfaces;
+using ProjetAtrst.Enums;
+using ProjetAtrst.Interfaces;
 using ProjetAtrst.Interfaces.Repositories;
 using ProjetAtrst.Interfaces.Services;
 using ProjetAtrst.Models;
 using ProjetAtrst.Repositories;
 using ProjetAtrst.ViewModels.ProjectRequests;
+using System.Text;
 
 public class ProjectRequestService : IProjectRequestService
 {
@@ -27,30 +29,37 @@ public class ProjectRequestService : IProjectRequestService
         _projectMembershipRepository = projectMembershipRepository;
         _unitOfWork = unitOfWork;
     }
-
     public async Task SendRequestAsync(ProjectRequestCreateViewModel model, string senderId)
     {
         var request = new ProjectRequest
         {
             ProjectId = model.ProjectId,
-            SenderId = senderId,
             ReceiverId = model.ReceiverId,
+            SenderId = senderId,
             Message = model.Message,
             Type = model.Type,
-            Status = RequestStatus.Pending
+            Status = RequestStatus.Pending,
+            CreatedAt = DateTime.UtcNow
         };
 
-        await _requestRepository.CreateAsync(request);
-        await _requestRepository.SaveChangesAsync();
+        await _unitOfWork.ProjectRequest.CreateAsync(request);
+        await _unitOfWork.SaveAsync();
 
-        // إرسال إشعار للمستقبل
-        string senderName = (await _userRepository.GetByIdAsync(senderId))?.FullName ?? "مستخدم";
-        string projectTitle = (await _projectRepository.GetByIdAsync(model.ProjectId))?.Title ?? "مشروع";
+        // إرسال إشعار للمستلم
+      
+        string senderName = (await _userRepository.GetByIdAsync(senderId))?.FullName ?? "Utilisateur";
+        string projectTitle = (await _projectRepository.GetByIdAsync(model.ProjectId))?.Title ?? "Projet";
 
-        string notifTitle = model.Type == RequestType.Join ? "طلب انضمام جديد" : "دعوة جديدة";
+
+
+      
+        string notifTitle = model.Type == RequestType.Join
+            ? "Nouvelle demande d'adhésion"
+            : "Nouvelle invitation";
+
         string notifMessage = model.Type == RequestType.Join
-            ? $"{senderName} طلب الانضمام إلى مشروعك: {projectTitle}"
-            : $"{senderName} دعاك للانضمام إلى مشروع: {projectTitle}";
+            ? $"{senderName} a demandé à rejoindre votre projet : {projectTitle}"
+            : $"{senderName} vous a invité à rejoindre le projet : {projectTitle}";
 
         await _notificationService.CreateNotificationAsync(
             model.ReceiverId,
@@ -84,15 +93,33 @@ public class ProjectRequestService : IProjectRequestService
         // إرسال إشعار
         await _notificationService.CreateNotificationAsync(
             request.SenderId,
-            "تم قبول الطلب",
-            $"تم قبول طلبك المرتبط بمشروع: {request.Project?.Title}",
+            "Demande acceptée",
+            $"Votre demande concernant le projet a été acceptée : {request.Project?.Title}",
             NotificationType.General,
             request.Id
         );
     }
 
 
-    public async Task RejectRequestAsync(int requestId)
+    //public async Task RejectRequestAsync(int requestId)
+    //{
+    //    var request = await _requestRepository.GetByIdAsync(requestId);
+    //    if (request == null || request.Status != RequestStatus.Pending)
+    //        return;
+
+    //    request.Status = RequestStatus.Rejected;
+    //    await _requestRepository.SaveChangesAsync();
+
+    //    await _notificationService.CreateNotificationAsync(
+    //        request.SenderId,
+    //        "تم رفض الطلب",
+    //        $"تم رفض طلبك المرتبط بمشروع: {request.Project?.Title}",
+    //        NotificationType.General,
+    //        request.Id
+    //    );
+    //}
+
+    public async Task RejectRequestAsync(int requestId, RejectionType rejectionType)
     {
         var request = await _requestRepository.GetByIdAsync(requestId);
         if (request == null || request.Status != RequestStatus.Pending)
@@ -101,14 +128,33 @@ public class ProjectRequestService : IProjectRequestService
         request.Status = RequestStatus.Rejected;
         await _requestRepository.SaveChangesAsync();
 
+        var (title, message) = GetRejectionNotificationContent(request, rejectionType);
+
         await _notificationService.CreateNotificationAsync(
             request.SenderId,
-            "تم رفض الطلب",
-            $"تم رفض طلبك المرتبط بمشروع: {request.Project?.Title}",
+            title,
+            message,
             NotificationType.General,
             request.Id
         );
     }
+
+    private (string Title, string Message) GetRejectionNotificationContent(ProjectRequest request, RejectionType type)
+    {
+        return type switch
+        {
+            RejectionType.JoinRequest => (
+                "تم رفض الطلب",
+                $"تم رفض طلبك المرتبط بمشروع: {request.Project?.Title}"
+            ),
+            RejectionType.Invitation => (
+                "تم إلغاء الدعوة",
+                $"تم إلغاء الدعوة التي أرسلتها للانضمام إلى المشروع: {request.Project?.Title}"
+            ),
+            _ => ("", "")
+        };
+    }
+
 
     public async Task<(IEnumerable<ProjectRequest> Incoming, IEnumerable<ProjectRequest> Sent)> GetRequestsForDashboardAsync(string userId)
     {
@@ -118,9 +164,79 @@ public class ProjectRequestService : IProjectRequestService
         return (incoming, sent); // أعد الكل بدون تصفية
     }
 
-
     public async Task<IEnumerable<ProjectRequest>> GetOutgoingRequestsAsync(string userId)
     {
-        return await _requestRepository.GetByUserAndProjectAsync(userId, 0); // get all by sender, ignoring project filter
+        return await _requestRepository.GetBySenderIdAsync(userId); 
     }
+    public async Task<ProjectRequest> GetByIdWithRelationsAsync(int userId)
+    {
+        return await _requestRepository.GetByIdWithRelationsAsync(userId); // get all by sender, ignoring project filter
+    }
+
+    //public async Task<ProjectRequestCreateViewModel> PrepareRequestModelAsync(int projectId, string receiverId, RequestType type)
+    //{
+    //    var (title, leaderName) = await _projectRepository.GetProjectInfoAsync(projectId);
+
+    //    if (title == null)
+    //        return null;
+
+    //    return new ProjectRequestCreateViewModel
+    //    {
+    //        ProjectId = projectId,
+    //        ReceiverId = receiverId,
+    //        Type = type,
+    //        ProjectTitle = title,
+    //        LeaderFullName = leaderName
+    //    };
+    //}
+    public async Task<ProjectRequestCreateViewModel> PrepareRequestModelAsync(int projectId, string receiverId, RequestType type)
+    {
+        var (title, leaderName) = await _projectRepository.GetProjectInfoAsync(projectId);
+
+        if (title == null)
+            return null;
+
+        string receiverName = null;
+        if (type == RequestType.Invitation)
+        {
+            var user = await _unitOfWork.Users.GetUserWithResearcherAsync(receiverId);
+            receiverName = user != null ? user.FullName  : "Anonymous";
+        }
+
+        return new ProjectRequestCreateViewModel
+        {
+            ProjectId = projectId,
+            ReceiverId = receiverId,
+            Type = type,
+            ProjectTitle = title,
+            LeaderFullName = type == RequestType.Join ? leaderName : receiverName
+        };
+    }
+
+
+    public async Task<List<ProjectRequest>> GetSentJoinRequestsAsync(string researcherId)
+    {
+        return await _requestRepository.GetJoinRequestsBySenderAsync(researcherId);
+    }
+  
+
+    public async Task<List<ProjectRequest>> GetSentInvitationsAsync(string leaderId)
+    {
+        return await _requestRepository.GetInvitationsByLeaderAsync(leaderId);
+    }
+
+    public async Task SendInvitationAsync(int projectId, string researcherId)
+   {
+        var invitation = new ProjectRequest
+        {
+            ProjectId = projectId,
+            ReceiverId = researcherId,
+            Status = RequestStatus.Pending,
+            Type = RequestType.Invitation,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        await _unitOfWork.ProjectRequest.CreateAsync (invitation);
+    }
+
 }

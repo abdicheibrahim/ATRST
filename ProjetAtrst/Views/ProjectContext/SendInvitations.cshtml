@@ -1,0 +1,55 @@
+﻿@using ProjetAtrst.ViewModels.Researcher
+@model List<ResearcherViewModel>
+@{
+    ViewData["Title"] = "Envoyer des invitations";
+    Layout = "_LayoutProject";
+}
+
+<h2>Liste des chercheurs disponibles</h2>
+
+<table class="table table-bordered">
+    <thead class="table-light">
+        <tr>
+            <th>Image</th>
+            <th>Nom complet</th>
+            <th>Gender</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var researcher in Model)
+        {
+            var logo = string.IsNullOrEmpty(researcher.ProfilePicturePath)
+            ? Url.Content("~/images/default-project.png")
+            : Url.Content(researcher.ProfilePicturePath);
+
+            <tr>
+                <td>
+                    <img src="@logo"
+                         alt="Logo"
+                         style="height: 50px; width: 50px; object-fit: cover; border-radius: 6px;" />
+                </td>
+                <td>@researcher.FullName</td>
+                <td>@researcher.Gender</td>
+
+                <td>
+                    @* <form asp-action="SendInvitation" method="post" class="d-inline"> *@
+                    @*     <input type="hidden" name="researcherId" value="@researcher.Id" /> *@
+                    @*     <button type="submit" class="btn btn-outline-primary btn-sm"> *@
+                    @*         <i class="bi bi-send"></i> Inviter *@
+                    @*     </button> *@
+                    @* </form> *@
+                    <a asp-controller="ProjectRequest"
+                       asp-action="Send"
+                       asp-route-projectId="@ViewBag.CurrentProjectId"
+                       asp-route-receiverId="@researcher.Id"
+                       asp-route-type="Invitation"
+                       class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-send"></i> Inviter
+                    </a>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
