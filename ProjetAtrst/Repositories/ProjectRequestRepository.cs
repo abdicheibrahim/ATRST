@@ -107,20 +107,31 @@ namespace ProjetAtrst.Repositories
                 .ToListAsync();
         }
 
-        public async Task<List<ProjectRequest>> GetInvitationsByLeaderAsync(string leaderId)
-        {
-            var projectIds = await _context.ProjectMemberships
-                .Where(pm => pm.ResearcherId == leaderId && pm.Role == Role.Leader)
-                .Select(pm => pm.ProjectId)
-                .ToListAsync();
+        //-----------------update------------------------
+        //public async Task<List<ProjectRequest>> GetInvitationsByLeaderAsync(string leaderId)
+        //{
+        //    var projectIds = await _context.ProjectMemberships
+        //        .Where(pm => pm.ResearcherId == leaderId && pm.Role == Role.Leader)
+        //        .Select(pm => pm.ProjectId)
+        //        .ToListAsync();
 
+        //    return await _context.ProjectRequests
+        //        .Include(r => r.Receiver).ThenInclude(u => u.User)
+        //        .Include(r => r.Project)
+        //        .Where(r => r.Type == RequestType.Invitation && projectIds.Contains(r.ProjectId))
+        //        .OrderByDescending(r => r.CreatedAt)
+        //        .ToListAsync();
+        //}
+        public async Task<List<ProjectRequest>> GetInvitationsForUserAsync(string userId)
+        {
             return await _context.ProjectRequests
-                .Include(r => r.Receiver).ThenInclude(u => u.User)
+                .Include(r => r.Sender).ThenInclude(u => u.User) // القائد الذي أرسل الدعوة
                 .Include(r => r.Project)
-                .Where(r => r.Type == RequestType.Invitation && projectIds.Contains(r.ProjectId))
+                .Where(r => r.Type == RequestType.Invitation && r.ReceiverId == userId)
                 .OrderByDescending(r => r.CreatedAt)
                 .ToListAsync();
         }
+        //------------------------------------------------
         public async Task<ProjectRequest> GetByIdWithRelationsAsync(int Id)
         {
             return await _context.ProjectRequests

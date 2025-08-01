@@ -3,37 +3,34 @@
 
 <h2>المشاريع المتاحة للانضمام</h2>
 
-<div id="projects-container" >
-    @await Html.PartialAsync("_AvailableProjectsWithPaginationPartial", Model)
+<div id="projects-list" class="row row-cols-1 row-cols-md-2 g-4">
+    @foreach (var project in Model.Projects)
+    {
+        <div class="col">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5>@project.Title</h5>
+                    <p>@project.Description</p>
+                    <p>Chef de projet: @project.LeaderFullName</p>
+                    <a asp-controller="ProjectRequest"
+                       asp-action="Send"
+                       asp-route-projectId="@project.Id"
+                       asp-route-receiverId="@project.LeaderId"
+                       asp-route-type="Join"
+                       class="btn btn-success">
+                        Demander à rejoindre
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div id="pagination-container" class="mt-3 fixed-bottom bg-white shadow p-2">
+    @* This will be replaced dynamically *@
+    
 </div>
 
 @section Scripts {
-    <script>
-        function loadPaginatedProjects(page) {
-            showSpinner();
-
-            $.ajax({
-                url: '@Url.Action("AvailableProjects", "Project")',
-                data: { page: page },
-                success: function (result) {
-                    $('#projects-container').html(result);  
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                },
-                complete: function () {
-                    hideSpinner();
-                },
-                error: function () {
-                    alert('Erreur lors du chargement des projets.');
-                }
-            });
-        }
-
-        $(document).on('click', '.pagination-link', function (e) {
-            e.preventDefault();
-            var page = $(this).data('page');
-            if (!$(this).parent().hasClass('disabled') && !$(this).parent().hasClass('active')) {
-                loadPaginatedProjects(page);
-            }
-        });
-    </script>
+    <script src="~/js/available-projects.js"></script>
 }

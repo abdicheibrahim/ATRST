@@ -159,7 +159,7 @@ namespace ProjetAtrst.Controllers
 
             if (!ModelState.IsValid) return View(model);
 
-            // ✅ تحديث الصورة فقط
+            // تحديث الصورة فقط
             if (model.ProfilePicture != null)
             {
                 var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };

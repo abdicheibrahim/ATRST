@@ -69,7 +69,7 @@ namespace ProjetAtrst.Controllers
                 "تم إرسال طلب الانضمام بنجاح." :
                 "تم إرسال الدعوة بنجاح.";
 
-            return RedirectToAction("Index", "ProjectContext"); // أو SendInvitations
+            return RedirectToAction("SentJoinRequests", "ProjectRequest"); // أو SendInvitations
         }
 
         public async Task<IActionResult> Accept(int id)
@@ -105,7 +105,7 @@ namespace ProjetAtrst.Controllers
         public async Task<IActionResult> SentInvitations()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var invitations = await _requestService.GetSentInvitationsAsync(userId);
+            var invitations = await _requestService.GetMyInvitationsAsync(userId);
             return View(invitations);
         }
     }

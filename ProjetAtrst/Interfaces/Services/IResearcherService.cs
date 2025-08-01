@@ -13,7 +13,8 @@ namespace ProjetAtrst.Interfaces.Services
         Task EditProfileResearcherViewModelAsync(string userId, EditResearcherProfileViewModel model);
         Task<bool> IsProfileCompleteAsync(string userId);
 
-        Task<List<ResearcherViewModel>> GetAvailableResearchersForInvitationAsync(int projectId);
+        Task<(List<ResearcherViewModel> Researchers, int TotalCount)> GetAvailableResearchersForInvitationAsync(int projectId, int page, int pageSize);
+
 
     }
 }

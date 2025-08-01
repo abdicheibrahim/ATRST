@@ -1,10 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ProjetAtrst.Interfaces.Services;
 using ProjetAtrst.Models;
-using ProjetAtrst.Services;
 using ProjetAtrst.ViewModels.Project;
-using ProjetAtrst.ViewModels.ProjectRequests;
 using System.Security.Claims;
 
 namespace ProjetAtrst.Controllers
@@ -59,12 +56,6 @@ namespace ProjetAtrst.Controllers
             return View(model);
         }
 
-
-        //Not Verified
-
-
-
-
         public async Task<IActionResult> AvailableProjects(int page = 1, int pageSize = 6)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -77,48 +68,22 @@ namespace ProjetAtrst.Controllers
                 ActionName = nameof(AvailableProjects)
             };
 
-            ViewBag.PaginationModel = paginationModel;
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
-                var viewModel = new AvailableProjectsWithPaginationViewModel
+                return Json(new
                 {
-                    Projects = projects,
-                    Pagination = paginationModel
-                };
-                return PartialView("_AvailableProjectsWithPaginationPartial", viewModel);
+                    projects = projects,
+                    pagination = paginationModel
+                });
             }
 
-            var fullViewModel = new AvailableProjectsWithPaginationViewModel
+            var viewModel = new AvailableProjectsWithPaginationViewModel
             {
                 Projects = projects,
                 Pagination = paginationModel
             };
-            return View(fullViewModel);
-
+            return View(viewModel);
         }
-
-
-
-
-
-        //[HttpPost]
-        //public async Task<IActionResult> SendJoinRequest(int projectId)
-        //{
-        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        //    try
-        //    {
-        //        await _projectRequestService.SendJoinRequestAsync(projectId, userId);
-        //        TempData["Success"] = "تم إرسال طلب الانضمام بنجاح.";
-        //    }
-        //    catch (InvalidOperationException ex)
-        //    {
-        //        TempData["Error"] = ex.Message;
-        //    }
-
-        //    return RedirectToAction("Index");
-        //}
-
 
 
 

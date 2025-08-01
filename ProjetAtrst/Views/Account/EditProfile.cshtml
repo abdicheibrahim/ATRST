@@ -72,7 +72,35 @@
 {
     <partial name="_ValidationScriptsPartial" />
     <script src="~/js/Spinner.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const arabicOnly = /^[\u0621-\u064A\s]+$/;
 
+            const firstNameArInput = document.getElementById("FirstNameAr");
+            const lastNameArInput = document.getElementById("LastNameAr");
+
+            function validateArabicInput(inputElement) {
+                const value = inputElement.value.trim();
+                const validationMessage = inputElement.nextElementSibling;
+
+                if (value.length > 0 && !arabicOnly.test(value)) {
+                    validationMessage.textContent = "يُسمح فقط بالحروف العربية والمسافات.";
+                    inputElement.classList.add("is-invalid");
+                } else {
+                    validationMessage.textContent = "";
+                    inputElement.classList.remove("is-invalid");
+                }
+            }
+
+            firstNameArInput?.addEventListener("input", function () {
+                validateArabicInput(firstNameArInput);
+            });
+
+            lastNameArInput?.addEventListener("input", function () {
+                validateArabicInput(lastNameArInput);
+            });
+        });
+    </script>
 }
 
 

@@ -4,6 +4,7 @@ using ProjetAtrst.Enums;
 using ProjetAtrst.Interfaces.Services;
 using ProjetAtrst.Models;
 using ProjetAtrst.ViewModels.Project;
+using ProjetAtrst.ViewModels.Researcher;
 using System.Security.Claims;
 
 public class ProjectContextController : ProjectContextBaseController
@@ -125,17 +126,48 @@ public class ProjectContextController : ProjectContextBaseController
 
     //-------------------- Update Project Context --------------------
 
+    //[HttpGet]
+    //public async Task<IActionResult> SendInvitations()
+    //{
+    //    var projectId = HttpContext.Session.GetInt32("CurrentProjectId");
+    //    if (projectId == null)
+    //        return RedirectToAction("Index");
+
+    //    var candidates = await _researcherService.GetAvailableResearchersForInvitationAsync(projectId.Value);
+    //    ViewBag.CurrentProjectId = projectId.Value;
+    //    return View(candidates);
+    //}
+
     [HttpGet]
-    public async Task<IActionResult> SendInvitations()
+    public async Task<IActionResult> SendInvitations(int page = 1, int pageSize = 6)
     {
         var projectId = HttpContext.Session.GetInt32("CurrentProjectId");
         if (projectId == null)
             return RedirectToAction("Index");
 
-        var candidates = await _researcherService.GetAvailableResearchersForInvitationAsync(projectId.Value);
-        ViewBag.CurrentProjectId = projectId.Value;
-        return View(candidates);
+        var (researchers, totalCount) = await _researcherService.GetAvailableResearchersForInvitationAsync(projectId.Value, page, pageSize);
+
+        var paginationModel = new PaginationModel
+        {
+            CurrentPage = page,
+            TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize)
+        };
+
+        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+        {
+            return Json(new { researchers, pagination = paginationModel });
+        }
+
+        var viewModel = new SendInvitationViewModel
+        {
+            Researchers = researchers,
+            Pagination = paginationModel,
+            CurrentProjectId = projectId.Value
+        };
+        return View(viewModel);
     }
+
+
 
     [HttpPost]
     public async Task<IActionResult> SendInvitation(string researcherId)

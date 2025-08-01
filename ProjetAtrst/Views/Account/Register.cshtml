@@ -20,6 +20,7 @@
     <div class="register-container">
         <img src="~/images/logo-mini.png" alt="ATRST Logo" class="logo" />
         <form method="post"  asp-action="Register">
+            <div asp-validation-summary="All" class="text-danger"></div>
             <div class="mb-3">
                 <label asp-for="Email" class="form-label">Adresse email</label>
                 <input asp-for="Email" type="email" class="form-control" placeholder="Entrez votre adresse email" />
@@ -28,15 +29,36 @@
 
             <div class="mb-3">
                 <label asp-for="Password" class="form-label">Mot de passe</label>
-                <input type="password" class="form-control" asp-for="Password" placeholder="Créez un mot de passe" />
+                <div class="input-group">
+                    <input type="password" class="form-control" asp-for="Password" placeholder="Créez un mot de passe" id="passwordInput" />
+                    <button type="button" class="btn btn-outline-secondary" onclick="togglePasswordVisibility('passwordInput', 'toggleIcon1')" tabindex="-1">
+                        <i class="bi bi-eye" id="toggleIcon1"></i>
+                    </button>
+                </div>
                 <span asp-validation-for="Password" class="text-danger"></span>
+                 <small id="passwordRules" class="form-text text-muted mt-1">
+                     Le mot de passe doit contenir au moins :
+                    <ul class="mb-0">
+                            <li>8 caractères</li>
+                            <li>Une lettre majuscule (A-Z)</li>
+                            <li>Une lettre minuscule (a-z)</li>
+                            <li>Un caractère spécial (!@@#...)</li>
+                    </ul>
+                 </small>
             </div>
+
 
             <div class="mb-3">
                 <label asp-for="ConfirmPassword" class="form-label">Confirmez le mot de passe</label>
-                <input type="password" class="form-control" asp-for="ConfirmPassword" placeholder="Confirmez votre mot de passe" />
-                <span asp-validation-for="ConfirmPassword"></span>
+                <div class="input-group">
+                    <input type="password" class="form-control" asp-for="ConfirmPassword" placeholder="Confirmez le mot de passe" id="confirmPasswordInput" />
+                    <button type="button" class="btn btn-outline-secondary" onclick="togglePasswordVisibility('confirmPasswordInput', 'toggleIcon2')" tabindex="-1">
+                        <i class="bi bi-eye" id="toggleIcon2"></i>
+                    </button>
+                </div>
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
+
 
             <button type="submit" id="submitBtn" class="btn btn-success w-100">
                 <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="spinner"></span>
@@ -52,6 +74,39 @@
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/Spinner.js"></script>
-    
+    <script>
+        function togglePasswordVisibility(inputId, iconId) {
+            const passwordInput = document.getElementById(inputId);
+            const toggleIcon = document.getElementById(iconId);
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('bi-eye');
+                toggleIcon.classList.add('bi-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('bi-eye-slash');
+                toggleIcon.classList.add('bi-eye');
+            }
+        }
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const passwordInput = document.getElementById("passwordInput");
+            const passwordRules = document.getElementById("passwordRules");
+
+            passwordRules.style.display = "none"; // إخفاء افتراضي
+
+            passwordInput.addEventListener("focus", function () {
+                passwordRules.style.display = "block";
+            });
+
+            passwordInput.addEventListener("blur", function () {
+                // إذا أردت إبقاء الرسالة ظاهرة، احذف هذا السطر
+                passwordRules.style.display = "none";
+            });
+        });
+    </script>
+
 </body>
 </html>

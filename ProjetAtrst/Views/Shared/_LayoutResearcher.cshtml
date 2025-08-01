@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@yaireo/tagify/dist/tagify.css" />
     <link href="~/css/site.css" rel="stylesheet" />
+    @RenderSection("Styles", required: false)
 
 </head>
 <body>
@@ -50,88 +51,6 @@
         </a>
         @await Component.InvokeAsync("UserInfo")
 
-      @* <div class="d-flex align-items-center gap-3">
-            <!-- Notifications dropdown -->
-            <div class="nav-item dropdown">
-                <a class="nav-link position-relative" data-bs-toggle="dropdown" role="button" aria-expanded="false">
-                    <i class="bi bi-bell fs-5"></i>
-                    @if (count > 0)
-                    {
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            @count
-                        </span>
-                    }
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    @if (count == 0)
-                    {
-                        <li><span class="dropdown-item text-muted">Aucune nouvelle notification</span></li>
-                    }
-                    else
-                    {
-                        @foreach (var notification in notifications.Take(5))
-                        {
-                            <li>
-                                <a class="dropdown-item small" href="@Url.Action("Index", "Notifications")">
-                                    <strong>@notification.Title</strong><br />
-                                    <span class="text-muted">@notification.Message</span>
-                                </a>
-                            </li>
-                        }
-                    }
-                    <li><hr class="dropdown-divider" /></li>
-                    <li><a class="dropdown-item text-center" href="@Url.Action("Index", "Notifications")">Tout voir</a></li>
-                </ul>
-            </div>
-
-            <!-- User dropdown -->
-            <div class="dropdown">
-                <button class="btn dropdown-toggle align-items-center d-flex p-0 border-0" type="button" id="userBtn" data-bs-toggle="dropdown" aria-expanded="false">
-                    @if (!string.IsNullOrEmpty(imagePath))
-                    {
-                        <!-- صورة المستخدم -->
-                        <img src="@Url.Content(imagePath)" alt="User Profile" class="rounded-circle me-2" style="height: 36px; width: 36px;">
-                    }
-                    else
-                    {
-                        <!-- أول حرف من الاسم داخل دائرة -->
-                        <div class="rounded-circle bg-dark text-white d-flex justify-content-center align-items-center me-2"
-                             style="width: 36px; height: 36px; font-weight: bold;">
-                            @initial
-                        </div>
-                    }
-                    <span class="d-none d-md-inline">@fullName</span>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li>
-                        <a class="dropdown-item" asp-controller="Account" asp-action="CompleteProfile">
-                            <i class="fa-solid fa-user me-2"></i>Personal informations
-                        </a>
-                    </li>
-                    @if (_SignInManager.IsSignedIn(User))
-                    {
-                        <li>
-                            <a class="dropdown-item" asp-controller="Account" asp-action="Logout">
-                                <i class="fa-solid fa-right-from-bracket me-2"></i>Deconnexion
-                            </a>
-                        </li>
-                    }
-                    else
-                    {
-                        <li>
-                            <a class="dropdown-item" asp-controller="Account" asp-action="Login">
-                                <i class="fa-solid fa-right-to-bracket me-2"></i>Se connecter
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" asp-controller="Account" asp-action="Register">
-                                <i class="fa-solid fa-user-plus me-2"></i>Creer un compte
-                            </a>
-                        </li>
-                    }
-                </ul>
-            </div>
-        </div>*@ 
     </div>
 
 

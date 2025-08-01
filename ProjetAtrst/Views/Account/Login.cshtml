@@ -27,9 +27,15 @@
 
             <div class="mb-3">
                 <label asp-for="Password" class="form-label">Mot de passe</label>
-                <input type="Password" class="form-control" asp-for="Password" placeholder="Entrez votre mot de passe" />
+                <div class="input-group">
+                    <input type="password" class="form-control" asp-for="Password" placeholder="Entrez votre mot de passe" id="passwordInput" />
+                    <button type="button" class="btn btn-outline-secondary" onclick="togglePasswordVisibility()" tabindex="-1">
+                        <i class="bi bi-eye" id="toggleIcon"></i>
+                    </button>
+                </div>
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
+
 
             <div class="mb-3 form-check ">
                 <input type="checkbox" class="form-check-input" asp-for="RememberMe">
@@ -46,6 +52,22 @@
     </div>
     <partial name="_ValidationScriptsPartial"/>
     <script src="~/js/Spinner.js"></script>
+    <script>
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('passwordInput');
+            const toggleIcon = document.getElementById('toggleIcon');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('bi-eye');
+                toggleIcon.classList.add('bi-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('bi-eye-slash');
+                toggleIcon.classList.add('bi-eye');
+            }
+        }
+    </script>
 
 </body>
 </html>

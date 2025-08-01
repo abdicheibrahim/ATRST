@@ -1,19 +1,19 @@
 ﻿@model IEnumerable<ProjectRequest>
 @{
-    ViewData["Title"] = "📤 الطلبات/الدعوات المرسلة";
+    ViewData["Title"] = "Demandes/Invitations envoyées 📤";
 
 }
 
-<h3 class="mb-4">📤 الطلبات المرسلة</h3>
+<h3 class="mb-4">Requêtes envoyées 📤</h3>
 <table class="table table-bordered">
     <thead class="table-light">
         <tr>
-            <th>المرسل</th>
-            <th>المشروع</th>
-            <th>الرسالة</th>
-            <th>الحالة</th>
-            <th>تاريخ الإرسال</th>
-            <th>الخيارات</th>
+            <th>Expéditeur</th>
+            <th>Projet</th>
+            <th>Message</th>
+            <th>Statut</th>
+            <th>Date d'envoi</th>
+            <th>Options</th>
         </tr>
     </thead>
     <tbody>
@@ -27,33 +27,33 @@
                     @switch (req.Status)
                     {
                         case RequestStatus.Pending:
-                            <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i>معلّق</span>
+                            <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i>Suspendu</span>
                             break;
                         case RequestStatus.Accepted:
-                            <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>مقبول</span>
+                            <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Accepté</span>
                             break;
                         case RequestStatus.Rejected:
-                            <span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i>مرفوض</span>
+                            <span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i>Rejeté</span>
                             break;
                     }
                 </td>
                 <td>@req.CreatedAt.ToString("yyyy-MM-dd")</td>
                 <td>
                     <div class="d-flex gap-1">
-                        <a asp-controller="ProjectRequest" asp-action="Details" asp-route-id="@req.Id" class="btn btn-outline-primary btn-sm" title="تفاصيل">
+                        <a asp-controller="ProjectRequest" asp-action="Details" asp-route-id="@req.Id" class="btn btn-outline-primary btn-sm" title="Détails">
                             <i class="bi bi-eye"></i>
                         </a>
 
                         @if (req.Status == RequestStatus.Pending)
                         {
                             <form asp-controller="ProjectRequest" asp-action="Accept" asp-route-id="@req.Id" method="post" class="d-inline">
-                                <button type="submit" class="btn btn-outline-success btn-sm" title="موافقة">
+                                <button type="submit" class="btn btn-outline-success btn-sm" title="Accepter">
                                     <i class="bi bi-check-lg"></i>
                                 </button>
                             </form>
 
                             <form asp-controller="ProjectRequest" asp-action="Reject" asp-route-id="@req.Id" method="post" class="d-inline">
-                                <button type="submit" class="btn btn-outline-danger btn-sm" title="رفض">
+                                <button type="submit" class="btn btn-outline-danger btn-sm" title="Reject">
                                     <i class="bi bi-x-lg"></i>
                                 </button>
                             </form>

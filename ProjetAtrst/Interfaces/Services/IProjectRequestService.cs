@@ -16,8 +16,8 @@ namespace ProjetAtrst.Interfaces.Services
         Task<ProjectRequestCreateViewModel> PrepareRequestModelAsync(int projectId, string receiverId, RequestType type);
 
         Task<List<ProjectRequest>> GetSentJoinRequestsAsync(string researcherId);
-        Task<List<ProjectRequest>> GetSentInvitationsAsync(string leaderId);
-
+        //Task<List<ProjectRequest>> GetSentInvitationsAsync(string leaderId);
+        Task<List<ProjectRequest>> GetMyInvitationsAsync(string userId);
         Task SendInvitationAsync(int projectId, string researcherId);
 
     }

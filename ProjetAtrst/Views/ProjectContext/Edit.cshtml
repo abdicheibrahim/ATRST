@@ -16,7 +16,7 @@
 
     <div class="mb-3">
         <label asp-for="Description" class="form-label"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
+        <textarea asp-for="Description" class="form-control" id="Description"></textarea>
         <span asp-validation-for="Description" class="text-danger"></span>
     </div>
 
@@ -69,6 +69,32 @@
                 reader.readAsDataURL(input.files[0]);
             }
         }
+    </script>
+    <!-- Summernote CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.css" rel="stylesheet">
+
+    <!-- Summernote JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#Description').summernote({
+            height: 300,
+            lang: 'fr-FR', // أو 'ar-AR'
+            placeholder: 'Entrez la description du projet ici...',
+            toolbar: [
+
+                ['font', ['bold', 'italic', 'underline', 'clear']],
+                    ['fontsize', ['fontsize']],
+        ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['insert', ['link']],
+                ['view', ['codeview']]
+            ],
+
+        });
+
+        });
     </script>
 }
 

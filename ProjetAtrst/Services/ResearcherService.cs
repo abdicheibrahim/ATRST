@@ -150,18 +150,23 @@ namespace ProjetAtrst.Services
 
         //--------------New Code----------------
 
-        public async Task<List<ResearcherViewModel>> GetAvailableResearchersForInvitationAsync(int projectId)
-        {
-            var researchers = await _unitOfWork.Researchers.GetAvailableResearchersForInvitationAsync(projectId);
 
-            return researchers.Select(r => new ResearcherViewModel
+        public async Task<(List<ResearcherViewModel> Researchers, int TotalCount)> GetAvailableResearchersForInvitationAsync(int projectId, int page, int pageSize)
+        {
+            var excludedIds = await _unitOfWork.Researchers.GetInvitedOrMembersIdsAsync(projectId);
+
+            var totalCount = await _unitOfWork.Researchers.GetAvailableResearchersCountAsync(excludedIds);
+            var researchers = await _unitOfWork.Researchers.GetAvailableResearchersAsync(excludedIds, page, pageSize);
+
+            var mapped = researchers.Select(r => new ResearcherViewModel
             {
                 Id = r.Id,
                 FullName = r.User.FullName,
-                Gender=r.User.Gender,
-                ProfilePicturePath=r.User.ProfilePicturePath,
+                Gender = r.User.Gender,
+                ProfilePicturePath = r.User.ProfilePicturePath
             }).ToList();
-        }
 
+            return (mapped, totalCount);
+        }
     }
 }

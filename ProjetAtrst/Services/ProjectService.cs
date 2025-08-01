@@ -32,7 +32,7 @@ namespace ProjetAtrst.Services
                 CreationDate = DateTime.UtcNow,
                 LastActivity = DateTime.UtcNow,
                 ProjectApprovalStatus = ProjectApprovalStatus.Pending,
-                ProjectStatus = ProjectStatus.Open,
+                ProjectStatus = model.ProjectStatus,
                 IsCompleted = false,
                 IsAcceptingJoinRequests = true,
                 ProjectMemberships = new List<ProjectMembership>()

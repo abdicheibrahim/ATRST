@@ -1,4 +1,6 @@
-﻿namespace ProjetAtrst.ViewModels.Project
+﻿
+
+namespace ProjetAtrst.ViewModels.Project
 {
     public class ProjectCreateViewModel
     {
@@ -9,5 +11,7 @@
         [Required]
         [MaxLength(500)]
         public string Description { get; set; } = string.Empty;
+        [Required]
+        public ProjectStatus ProjectStatus { get; set; }
     }
 }

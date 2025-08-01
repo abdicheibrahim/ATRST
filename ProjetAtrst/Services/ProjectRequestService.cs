@@ -220,9 +220,13 @@ public class ProjectRequestService : IProjectRequestService
     }
   
 
-    public async Task<List<ProjectRequest>> GetSentInvitationsAsync(string leaderId)
+    //public async Task<List<ProjectRequest>> GetSentInvitationsAsync(string leaderId)
+    //{
+    //    return await _requestRepository.GetInvitationsByLeaderAsync(leaderId);
+    //}
+    public Task<List<ProjectRequest>> GetMyInvitationsAsync(string userId)
     {
-        return await _requestRepository.GetInvitationsByLeaderAsync(leaderId);
+        return _unitOfWork.ProjectRequest.GetInvitationsForUserAsync(userId);
     }
 
     public async Task SendInvitationAsync(int projectId, string researcherId)
@@ -239,4 +243,5 @@ public class ProjectRequestService : IProjectRequestService
         await _unitOfWork.ProjectRequest.CreateAsync (invitation);
     }
 
+ 
 }

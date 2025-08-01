@@ -1,4 +1,6 @@
-﻿namespace ProjetAtrst.ViewModels.Account
+﻿using ProjetAtrst.ValidationAttributes;
+
+namespace ProjetAtrst.ViewModels.Account
 {
     public class EditAccountViewModel
     {
@@ -22,6 +24,7 @@
 
 
         [Display(Name = "Photo de profil")]
+        [AllowedExtensions(new string[] { ".jpg", ".jpeg", ".png" }, ErrorMessage = "Formats acceptés : JPG, JPEG, PNG ")]
         public IFormFile? ProfilePicture { get; set; }
 
         public string? ExistingProfilePicturePath { get; set; }

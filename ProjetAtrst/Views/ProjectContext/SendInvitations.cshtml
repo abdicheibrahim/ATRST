@@ -1,55 +1,42 @@
 ﻿@using ProjetAtrst.ViewModels.Researcher
-@model List<ResearcherViewModel>
-@{
-    ViewData["Title"] = "Envoyer des invitations";
-    Layout = "_LayoutProject";
-}
-
+@model SendInvitationViewModel
 <h2>Liste des chercheurs disponibles</h2>
 
-<table class="table table-bordered">
-    <thead class="table-light">
-        <tr>
-            <th>Image</th>
-            <th>Nom complet</th>
-            <th>Gender</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var researcher in Model)
-        {
-            var logo = string.IsNullOrEmpty(researcher.ProfilePicturePath)
-            ? Url.Content("~/images/default-project.png")
-            : Url.Content(researcher.ProfilePicturePath);
+<div id="researchers-list" class="row row-cols-1 row-cols-md-2 g-4">
+    @foreach (var researcher in Model.Researchers)
+    {
+        var logo = string.IsNullOrEmpty(researcher.ProfilePicturePath)
+        ? Url.Content("~/images/default-project.png")
+        : Url.Content(researcher.ProfilePicturePath);
 
-            <tr>
-                <td>
-                    <img src="@logo"
-                         alt="Logo"
-                         style="height: 50px; width: 50px; object-fit: cover; border-radius: 6px;" />
-                </td>
-                <td>@researcher.FullName</td>
-                <td>@researcher.Gender</td>
-
-                <td>
-                    @* <form asp-action="SendInvitation" method="post" class="d-inline"> *@
-                    @*     <input type="hidden" name="researcherId" value="@researcher.Id" /> *@
-                    @*     <button type="submit" class="btn btn-outline-primary btn-sm"> *@
-                    @*         <i class="bi bi-send"></i> Inviter *@
-                    @*     </button> *@
-                    @* </form> *@
+        <div class="col">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <img src="@logo" alt="Logo" style="height:50px; width:50px; object-fit:cover; border-radius:6px;" />
+                    <h5>@researcher.FullName</h5>
+                    <p>Gender: @researcher.Gender</p>
                     <a asp-controller="ProjectRequest"
                        asp-action="Send"
-                       asp-route-projectId="@ViewBag.CurrentProjectId"
+                       asp-route-projectId="@Model.CurrentProjectId"
                        asp-route-receiverId="@researcher.Id"
                        asp-route-type="Invitation"
                        class="btn btn-outline-primary btn-sm">
                         <i class="bi bi-send"></i> Inviter
                     </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
 
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div id="pagination-container" class="mt-3 fixed-bottom bg-white shadow p-2 ">
+    @* Filled dynamically *@
+</div>
+
+@section Scripts {
+    <script>
+        const CURRENT_PROJECT_ID = @Model.CurrentProjectId;
+    </script>
+    <script src="~/js/send-invitations.js"></script>
+}
+

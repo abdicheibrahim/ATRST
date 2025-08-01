@@ -6,11 +6,11 @@
     bool isJoin = Model.Type == RequestType.Join;
 }
 
-<h3 class="mb-4">✉️ إرسال @(isJoin ? "طلب انضمام" : "دعوة")</h3>
+<h3 class="mb-4">✉️ envoyer @(isJoin ? "Demande d'adhésion" : "Invitation")</h3>
 
-<div class="alert alert-info">
+<div class="alert alert-success">
     <strong>المشروع:</strong> @Model.ProjectTitle <br />
-    <strong>@(isJoin ? "القائد" : "الباحث"):</strong> @Model.LeaderFullName
+    <strong>@(isJoin ? "Le leader" : "Le chercheur"):</strong> @Model.LeaderFullName
 </div>
 
 <form asp-action="Send" method="post">
@@ -18,29 +18,61 @@
     <input type="hidden" asp-for="ReceiverId" />
     <input type="hidden" asp-for="Type" />
 
-    @if (isJoin)
-    {
-        <!-- يتم تمرير القائد مباشرة -->
-        <input type="hidden" asp-for="ReceiverId" />
-    }
-    else
-    {
-        <div class="mb-3">
-            @* <label  asp-for="ReceiverId" class="form-label">الباحث المستهدف</label> *@
-            <input type="hidden" asp-for="ReceiverId" class="form-control" />
-            @* <span asp-validation-for="ReceiverId" class="text-danger"></span> *@
-        </div>
-    }
+    @* @if (isJoin) *@
+    @* { *@
+    @*     <!-- يتم تمرير القائد مباشرة --> *@
+    @*     <input type="hidden" asp-for="ReceiverId" /> *@
+    @* } *@
+    @* else *@
+    @* { *@
+    @*     <div class="mb-3"> *@
+    @*         @* <label  asp-for="ReceiverId" class="form-label">الباحث المستهدف</label> *@ 
+    @*         <input type="hidden" asp-for="ReceiverId" class="form-control" /> *@
+    @*         @* <span asp-validation-for="ReceiverId" class="text-danger"></span> *@ 
+    @*     </div> *@
+    @* } *@
 
     <div class="mb-3">
-        <label asp-for="Message" class="form-label">رسالة مرفقة</label>
-        <textarea asp-for="Message" class="form-control" rows="4"></textarea>
+        <label asp-for="Message" class="form-label">Message ci-joint</label>
+        <textarea asp-for="Message" class="form-control" id="Description" rows="4"></textarea>
         <span asp-validation-for="Message" class="text-danger"></span>
     </div>
 
-    <button type="submit" class="btn btn-primary">📨 إرسال</button>
+    <button type="submit" class="btn btn-success"> envoyer 📨</button>
 </form>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <!-- Summernote CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.css" rel="stylesheet">
+
+    <!-- Summernote JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#Description').summernote({
+            height: 300,
+            lang: 'fr-FR', // أو 'ar-AR'
+            placeholder: 'Entrez le Message ici...',
+            toolbar: [
+              
+                ['font', ['bold', 'italic', 'underline', 'clear']],
+                ['fontsize', ['fontsize']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['height', ['height']],
+                ['table', ['table']],
+                ['insert', ['link', 'picture', 'video']],
+                ['view', ['fullscreen', 'codeview', 'help']]
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['insert', ['link']],
+                ['view', ['codeview']]
+            ],
+
+        });
+
+        });
+    </script>
 }
