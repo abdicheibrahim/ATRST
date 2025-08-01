@@ -1,73 +1,71 @@
-# 📦 Système de Gestion de la Recherche Scientifique
+# 📦 Scientific Research Management System
 
 ## 📝 Description
-Application web pour la gestion des projets de recherche scientifique, développée avec **ASP.NET Core MVC**, **Entity Framework Core**, et une **architecture en couches** (Repository, Service, MVC).
+A web application for managing scientific research projects, developed using **ASP.NET Core MVC**, **Entity Framework Core**, and a **layered architecture** (Repository, Service, MVC).
 
 ---
 
-## 🚀 Fonctionnalités principales
-- Authentification et gestion des rôles : **Admin**, **Expert**, **Chercheur**, **Leader**, **Membre**
-- Création et gestion de projets par les **Leaders**
-- **Demandes d’adhésion** / **Invitations** entre chercheurs
-- **Validation scientifique** par les Experts
-- **Approbation administrative** des projets
-- Interface **multilingue** : 🇫🇷 Français, 🇬🇧 Anglais, 🇩🇿 Arabe
+## 🚀 Main Features
+- Authentication and role management: **Admin**, **Expert**, **Researcher**, **Leader**, **Member**
+- Project creation and management by **Leaders**
+- **Join requests** / **Invitations** between researchers
+- **Scientific validation** by Experts
+- **Administrative approval** of projects
+- **Multilingual interface**: 🇫🇷 French, 🇬🇧 English, 🇩🇿 Arabic
 
 ---
 
-## 🛠️ Technologies utilisées
+## 🛠️ Technologies Used
 
-| Domaine         | Technologies                                                                 |
-|-----------------|-------------------------------------------------------------------------------|
-| Backend         | ASP.NET Core MVC, C#                                                         |
-| Base de données | MySQL, Entity Framework Core                                                 |
-| Authentification| ASP.NET Core Identity                                                        |
-| Frontend        | HTML, CSS, Bootstrap 5                                                       |
-| Architecture    | Repository Pattern, Service Layer, Specification Pattern                     |
-| Outils          | Git, GitHub                                                                  |
-
----
-
-
-
-## 🔐 Authentification & Sécurité
-- Authentification via **ASP.NET Identity**
-- Gestion des **rôles et des accès**
-- Sécurisation des routes (avec `[Authorize]`)
-- Validation **côté serveur** et **côté client**
+| Area            | Technologies                                                                 |
+|------------------|-------------------------------------------------------------------------------|
+| Backend          | ASP.NET Core MVC, C#                                                         |
+| Database         | MySQL, Entity Framework Core                                                 |
+| Authentication   | ASP.NET Core Identity                                                        |
+| Frontend         | HTML, CSS, Bootstrap 5                                                       |
+| Architecture     | Repository Pattern, Service Layer, Specification Pattern                    |
+| Tools            | Git, GitHub                                                                  |
 
 ---
 
-## 📦 Base de données
-- **Migrations** via EF Core
-- Relations principales :
-  - Un **Chercheur** peut être **Leader** ou **Membre**, pas les deux
-  - Un **Projet** peut avoir plusieurs membres
-  - Les **Experts** valident les projets
-- Tables :
+## 🔐 Authentication & Security
+- Authentication using **ASP.NET Identity**
+- Role and access **management**
+- Route protection using `[Authorize]`
+- **Server-side** and **client-side** validation
+
+---
+
+## 📦 Database
+- **Migrations** managed via EF Core
+- Main relationships:
+  - A **Researcher** can be either a **Leader** or a **Member**, not both
+  - A **Project** can have multiple members
+  - **Experts** validate the projects
+- Main tables:
   - Projects, Researchers, Experts, Memberships, Invitations
 
 ---
 
-## 🌍 Internationalisation
-Support des langues :
-- 🇫🇷 Français (par défaut)
-- 🇬🇧 Anglais
-- 🇩🇿 Arabe
+## 🌍 Internationalization
+Language support:
+- 🇫🇷 French (default)
+- 🇬🇧 English
+- 🇩🇿 Arabic
 
-**Sélection dynamique** via cookie ou paramètre dans l’URL.
-
----
-
-## 📸 Captures d’écran *(optionnel)*
-
-
+**Dynamic selection** via cookie or URL parameter.
 
 ---
 
-## 👨‍💻 Auteur
+## 📸 Screenshots *(optional)*
+
+> Add screenshots of the dashboard, project creation page, etc.
+
+---
+
+## 👨‍💻 Author
 
 **Abdiche Ibrahim**  
-Développeur .NET Full Stack  
+Full Stack .NET Developer  
 📧 [abdicheibrahim@gmail.com](mailto:abdicheibrahim@gmail.com)  
-📍 Algérie  
+📍 Algeria
