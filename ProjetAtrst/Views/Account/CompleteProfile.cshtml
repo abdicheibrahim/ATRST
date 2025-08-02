@@ -117,6 +117,25 @@ else
             <input type="date" class="form-control input" asp-for="DipDate">
             <span asp-validation-for="DipDate"></span>
         </div>
+        <div class="row shadow-sm g-3 needs-validation p-3 mb-5 mt-3 bg-white border rounded">
+            <h5>Contribution sociale/économique (facultatif)</h5>
+
+            <div class="col-md-12">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="partnerToggle" asp-for="WantsToContributeAsPartner" />
+                    <label class="form-check-label" for="partnerToggle">
+                        @Html.DisplayNameFor(m => m.WantsToContributeAsPartner)
+                    </label>
+                </div>
+            </div>
+
+            <div class="col-md-12" id="partnerContribution" style="display: none;">
+                <label asp-for="SocioEconomicContributions" class="form-label"></label>
+                <textarea asp-for="SocioEconomicContributions" class="form-control" rows="4" placeholder="Décrivez ici vos contributions sociales ou économiques..."></textarea>
+                <span asp-validation-for="SocioEconomicContributions" class="text-danger"></span>
+            </div>
+        </div>
+
     </div>
 
     <button type="submit" id="submitBtn" class="btn btn-success w-100">
@@ -213,5 +232,26 @@ else
             });
         });
     </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const checkbox = document.getElementById("partnerToggle");
+            const contributionDiv = document.getElementById("partnerContribution");
+
+            function toggleContributionField() {
+                if (checkbox.checked) {
+                    contributionDiv.style.display = "block";
+                } else {
+                    contributionDiv.style.display = "none";
+                }
+            }
+
+            checkbox.addEventListener("change", toggleContributionField);
+
+            // Show if already checked (important when returning with validation errors)
+            toggleContributionField();
+        });
+    </script>
+
 
 }

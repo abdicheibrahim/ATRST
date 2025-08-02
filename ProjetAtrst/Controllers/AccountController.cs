@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using ProjetAtrst.Models;
+using ProjetAtrst.Helpers;
 using ProjetAtrst.Interfaces.Services;
+using ProjetAtrst.Models;
 using ProjetAtrst.ViewModels.Account;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Hosting;
 using System.Linq;
+using System.Security.Claims;
+using ProjetAtrst.Helpers;
 
 namespace ProjetAtrst.Controllers
 {
@@ -15,13 +17,15 @@ namespace ProjetAtrst.Controllers
         private readonly IUserService _userService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly StaticDataLoader _staticDataLoader ;
 
-        public AccountController(IResearcherService researcherService, IUserService userService, UserManager<ApplicationUser> userManager, IWebHostEnvironment webHostEnvironment)
+        public AccountController(IResearcherService researcherService, IUserService userService, UserManager<ApplicationUser> userManager, IWebHostEnvironment webHostEnvironment, StaticDataLoader staticDataLoader)
         {
             _researcherService = researcherService;
             _userService = userService;
             _webHostEnvironment = webHostEnvironment;
             _userManager = userManager;
+            _staticDataLoader = staticDataLoader;
         }
 
 
@@ -81,17 +85,23 @@ namespace ProjetAtrst.Controllers
 
             var model = await _userService.GetCompleteProfileViewModelAsync(userId);
             if (model == null)
-                return NotFound(); // or Redirect
+                return NotFound();
 
             return View(model);
         }
-        
+
         // POST: /Account/CompleteProfile
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> CompleteProfile(CompleteProfileViewModel model)
         {
             if (!ModelState.IsValid)
+            {
+                model.EstablishmentsList = _staticDataLoader.LoadEstablishments();
+                model.GradesList = _staticDataLoader.LoadGrades();
+                model.StatutList = _staticDataLoader.LoadStatuts();
                 return View(model);
+            }
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null)
@@ -101,6 +111,7 @@ namespace ProjetAtrst.Controllers
 
             return RedirectToAction("Index", "Dashboard");
         }
+
         [Authorize]
         [ServiceFilter(typeof(ProfileCompletionFilter))]
         // GET: /Account/CompleteProfile

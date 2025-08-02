@@ -21,7 +21,7 @@ namespace ProjetAtrst.Models
         public string? Gender { get; set; } = default!;
         public DateTime RegisterDate { get; set; } = DateTime.UtcNow;
         public DateTime Birthday { get; set; }
-
+        public string? Mobile { get; set; }
         public string? ProfilePicturePath { get; set; }
 
     }

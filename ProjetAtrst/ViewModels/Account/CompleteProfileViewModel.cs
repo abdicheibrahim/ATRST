@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using ProjetAtrst.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace ProjetAtrst.ViewModels.Account
 {
@@ -14,6 +15,7 @@ namespace ProjetAtrst.ViewModels.Account
         [Required(ErrorMessage = "Last Name is required")]
         [Display(Name = "Last Name")]
         public string LastName { get; set; } = string.Empty;
+
         [Required(ErrorMessage = "الاسم مطلوب")]
         [MaxLength(50, ErrorMessage = "الاسم يجب أن لا يتجاوز 50 حرفًا")]
         [RegularExpression(@"^[\u0621-\u064A\s]+$", ErrorMessage = "الاسم يجب أن يحتوي على حروف عربية ومسافات فقط")]
@@ -49,7 +51,6 @@ namespace ProjetAtrst.ViewModels.Account
         public string Grade { get; set; } = string.Empty;
         public List<SelectListItem> GradesList { get; set; } = new();
 
-
         [Required(ErrorMessage = "Speciality is required")]
         [Display(Name = "Speciality")]
         public string Speciality { get; set; } = string.Empty;
@@ -70,11 +71,20 @@ namespace ProjetAtrst.ViewModels.Account
         [DataType(DataType.Date)]
         [Display(Name = "Diploma Date")]
         public DateTime DipDate { get; set; }
+
         public bool IsLeader { get; set; } = false;
         public bool IsMember { get; set; } = false;
-        // Read-only properties for display
+
         public bool IsCompleted { get; set; }
         public bool IsApprovedByAdmin { get; set; }
         public DateTime RegisterDate { get; set; } = DateTime.UtcNow;
+
+        // ✅ جديد:
+        [Display(Name = "Souhaitez-vous contribuer en tant que partenaire social/économique ?")]
+        public bool WantsToContributeAsPartner { get; set; } = false;
+
+        [Display(Name = "Contributions économiques et sociales")]
+        [DataType(DataType.MultilineText)]
+        public string? SocioEconomicContributions { get; set; }
     }
 }

@@ -54,12 +54,14 @@ namespace ProjetAtrst.Services
             user.Researcher.Grade = model.Grade;
             user.Researcher.Statut = model.Statut;
             user.Researcher.Speciality = model.Speciality;
-            user.Researcher.Mobile = model.Mobile;
+            user.Mobile = model.Mobile;
             user.Researcher.Diploma = model.Diploma;
             user.Researcher.DipInstitution = model.DipInstitution;
             user.Researcher.DipDate = model.DipDate;
+            user.Researcher.WantsToContributeAsPartner = model.WantsToContributeAsPartner;
+            user.Researcher.SocioEconomicContributions = model.SocioEconomicContributions;
 
-      
+
 
 
             if (!user.Researcher.IsCompleted)
@@ -114,10 +116,12 @@ namespace ProjetAtrst.Services
                 Statut = user.Researcher.Statut,
 
                 Speciality = user.Researcher.Speciality,
-                Mobile = user.Researcher.Mobile,
+                Mobile = user.Mobile,
                 Diploma = user.Researcher.Diploma,
                 DipInstitution = user.Researcher.DipInstitution,
                 DipDate = user.Researcher.DipDate,
+                WantsToContributeAsPartner = user.Researcher.WantsToContributeAsPartner,
+                SocioEconomicContributions = user.Researcher.SocioEconomicContributions,
                 IsCompleted = user.Researcher.IsCompleted
             };
         }

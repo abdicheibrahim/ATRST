@@ -71,7 +71,7 @@ namespace ProjetAtrst.Services
             user.Researcher.Establishment = model.Establishment;
             user.Researcher.Grade = model.Grade;
             user.Researcher.Speciality = model.Speciality;
-            user.Researcher.Mobile = model.Mobile;
+            user.Mobile = model.Mobile;
             user.Researcher.Diploma = model.Diploma;
             user.Researcher.DipInstitution = model.DipInstitution;
             user.Researcher.DipDate = model.DipDate;
@@ -125,7 +125,7 @@ namespace ProjetAtrst.Services
                 Statut = user.Researcher.Statut,
 
                 Speciality = user.Researcher.Speciality,
-                Mobile = user.Researcher.Mobile,
+                Mobile = user.Mobile,
                 Diploma = user.Researcher.Diploma,
                 DipInstitution = user.Researcher.DipInstitution,
                 DipDate = user.Researcher.DipDate,
