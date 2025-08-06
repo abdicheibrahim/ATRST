@@ -39,37 +39,34 @@ public class ProjectContextController : ProjectContextBaseController
         return View();
     }
 
+
     [HttpGet]
     public async Task<IActionResult> Edit()
     {
         var projectId = (int?)ViewBag.CurrentProjectId;
         if (projectId == null) return RedirectToAction("Index");
-
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null) return Forbid();
         var model = await _projectService.GetProjectForEditAsync(userId, projectId.Value);
-
-        if (model == null)
-            return Forbid();
+        if (model == null) return Forbid();
 
         return View(model);
     }
-
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(ProjectEditViewModel model)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        if (!ModelState.IsValid)
-            return View(model);
-
+        if (!ModelState.IsValid)  return View(model);
         var success = await _projectService.UpdateProjectAsync(userId, model);
-        if (!success)
-            return Forbid();
-
-        TempData["Success"] = "تم تعديل المشروع بنجاح";
-        return RedirectToAction("Index");
+        if (!success)  return Forbid();
+        TempData["ShowSuccessModal"] = true;
+        TempData["SuccessTitle"] = "Parfait !";
+        TempData["SuccessMessage"] = "Les données ont été modifiées avec succès.";
+        return RedirectToAction("Edit");
     }
+
 
     [HttpGet]
     public async Task<IActionResult> Members()
@@ -77,17 +74,16 @@ public class ProjectContextController : ProjectContextBaseController
         var projectId = HttpContext.Session.GetInt32("CurrentProjectId");
         if (projectId == null)
             return RedirectToAction("Index");
-
         var members = await _projectService.GetProjectMembersAsync(projectId.Value);
         return View(members);
     }
+
     [HttpGet]
     public async Task<IActionResult> Requests()
     {
         var projectId = HttpContext.Session.GetInt32("CurrentProjectId");
         if (projectId == null)
             return RedirectToAction("Index");
-
         var requests = await _projectService.GetJoinRequestsAsync(projectId.Value);
         return View(requests);
     }
@@ -98,11 +94,12 @@ public class ProjectContextController : ProjectContextBaseController
         var projectId = HttpContext.Session.GetInt32("CurrentProjectId");
         if (projectId == null)
             return RedirectToAction("Index");
-      
         ViewBag.CurrentProjectId = projectId.Value;
         var requests = await _projectService.GetInvitationRequestsAsync(projectId.Value);
         return View(requests);
     }
+
+
     [HttpPost]
     public async Task<IActionResult> AcceptRequest(int requestId)
     {
@@ -110,8 +107,10 @@ public class ProjectContextController : ProjectContextBaseController
         if (projectId == null)
             return RedirectToAction("Index");
 
-        await _requestService.AcceptRequestAsync(requestId); 
-        TempData["Success"] = "تم قبول الطلب.";
+        await _requestService.AcceptRequestAsync(requestId);
+        TempData["ShowSuccessModal"] = true;
+        TempData["SuccessTitle"] = "Parfait !";
+        TempData["SuccessMessage"] = "Les données ont été modifiées avec succès.";
         return RedirectToAction("Requests");
     }
 

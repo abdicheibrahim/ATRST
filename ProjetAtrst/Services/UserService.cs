@@ -21,6 +21,8 @@ namespace ProjetAtrst.Services
             _unitOfWork = unitOfWork;
             _staticDataLoader = staticDataLoader;
         }
+        
+        
         public async Task<bool> LoginAsync(LoginViewModel model)
         {
             var result = await _signInManager.PasswordSignInAsync(
@@ -31,7 +33,6 @@ namespace ProjetAtrst.Services
 
             return result.Succeeded;
         }
-
         public async Task LogoutAsync()
         {
             await _signInManager.SignOutAsync();
@@ -60,36 +61,39 @@ namespace ProjetAtrst.Services
             user.Researcher.DipDate = model.DipDate;
             user.Researcher.WantsToContributeAsPartner = model.WantsToContributeAsPartner;
             user.Researcher.SocioEconomicContributions = model.SocioEconomicContributions;
+            user.Researcher.IsCompleted = true;
 
+            _unitOfWork.Users.Update(user);
+            await _unitOfWork.SaveAsync();
 
-
-
-            if (!user.Researcher.IsCompleted)
-            {
-                user.Researcher.IsCompleted = true;
-                 _unitOfWork.Users.Update(user);
-                var notification = new Notification
-                {
-                    UserId = userId,
-                    Title = "Votre profil est complété",
-                    Message = "Vos informations de compte sont complétées avec succès et sont en cours de vérification par l'administration."
-                };
-                _unitOfWork.Notifications.Create(notification);
-                await _unitOfWork.SaveAsync();
-            }
-            else
-            {
-                 _unitOfWork.Users.Update(user);
-                var notification = new Notification
-                {
-                    UserId = userId,
-                    Title = "Votre profil a été modifié.",
-                    Message = "Les informations de votre compte ont été modifiées avec succès et sont actuellement en cours de vérification par l'administration."
-                };
-                _unitOfWork.Notifications.Create(notification);
-                await _unitOfWork.SaveAsync();
-            }
-            
+            #region commented out logic for notifications
+            //this is commented out because the logic for notifications is not implemented in the original code.
+            //if (!user.Researcher.IsCompleted)
+            //{
+            //    user.Researcher.IsCompleted = true;
+            //     _unitOfWork.Users.Update(user);
+            //    var notification = new Notification
+            //    {
+            //        UserId = userId,
+            //        Title = "Votre profil est complété",
+            //        Message = "Vos informations de compte sont complétées avec succès et sont en cours de vérification par l'administration."
+            //    };
+            //    _unitOfWork.Notifications.Create(notification);
+            //    await _unitOfWork.SaveAsync();
+            //}
+            //else
+            //{
+            //     _unitOfWork.Users.Update(user);
+            //    var notification = new Notification
+            //    {
+            //        UserId = userId,
+            //        Title = "Votre profil a été modifié.",
+            //        Message = "Les informations de votre compte ont été modifiées avec succès et sont actuellement en cours de vérification par l'administration."
+            //    };
+            //    _unitOfWork.Notifications.Create(notification);
+            //    await _unitOfWork.SaveAsync();
+            //}
+            #endregion
 
         }
         public async Task<CompleteProfileViewModel?> GetCompleteProfileViewModelAsync(string userId)
@@ -104,17 +108,14 @@ namespace ProjetAtrst.Services
                 LastName = user.LastName,
                 FirstNameAr = user.FirstNameAr,
                 LastNameAr = user.LastNameAr,
-                
                 Gender = user.Gender,
                 Birthday = user.Birthday,
                 EstablishmentsList = _staticDataLoader.LoadEstablishments(),
                 Establishment = user.Researcher.Establishment,
                 GradesList = _staticDataLoader.LoadGrades(),
                 Grade = user.Researcher.Grade,
-
                 StatutList = _staticDataLoader.LoadStatuts(),
                 Statut = user.Researcher.Statut,
-
                 Speciality = user.Researcher.Speciality,
                 Mobile = user.Mobile,
                 Diploma = user.Researcher.Diploma,
@@ -125,7 +126,6 @@ namespace ProjetAtrst.Services
                 IsCompleted = user.Researcher.IsCompleted
             };
         }
-        //edit
         public async Task EditProfileAsync(string userId, EditProfileViewModel model)
         {
             var user = await _unitOfWork.Users.GetUserWithResearcherAsync(userId);
@@ -140,18 +140,18 @@ namespace ProjetAtrst.Services
             user.Gender = model.Gender;
             user.Birthday = model.Birthday;
            
-
-
-
-
             _unitOfWork.Users.Update(user);
-            var notification = new Notification
-            {
-                UserId = userId,
-                Title = "Votre profil a été modifié.",
-                Message = "Les informations de votre compte ont été modifiées avec succès et sont actuellement en cours de vérification par l'administration."
-            };
-            _unitOfWork.Notifications.Create(notification);
+
+            #region commented out logic for notifications
+            //var notification = new Notification
+            //{
+            //    UserId = userId,
+            //    Title = "Votre profil a été modifié.",
+            //    Message = "Les informations de votre compte ont été modifiées avec succès et sont actuellement en cours de vérification par l'administration."
+            //};
+            //_unitOfWork.Notifications.Create(notification);
+            #endregion
+
             await _unitOfWork.SaveAsync();
             
 

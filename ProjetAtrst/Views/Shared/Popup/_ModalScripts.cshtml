@@ -1,0 +1,33 @@
+﻿<script>
+    window.addEventListener("DOMContentLoaded", () => {
+        const modals = [
+            { id: "statusSuccessModal", autoClose: true },
+            { id: "statusErrorsModal", autoClose: true }
+        ];
+
+        modals.forEach(({ id, autoClose }) => {
+            const modalEl = document.getElementById(id);
+            if (modalEl) {
+                const modalInstance = new bootstrap.Modal(modalEl);
+                modalInstance.show();
+
+                if (autoClose) {
+                    const autoCloseTimer = setTimeout(() => {
+                        modalInstance.hide();
+                    }, 4000);
+
+                    modalEl.querySelector('[data-bs-dismiss="modal"]')?.addEventListener('click', () => {
+                        clearTimeout(autoCloseTimer);
+                    });
+
+                    modalEl.addEventListener('hidden.bs.modal', () => {
+                        clearTimeout(autoCloseTimer);
+                        document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+                        document.body.classList.remove('modal-open');
+                        document.body.style.overflow = '';
+                    });
+                }
+            }
+        });
+    });
+</script>

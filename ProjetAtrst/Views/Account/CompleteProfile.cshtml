@@ -19,6 +19,14 @@ else
         Veuillez compléter les informations ci-dessous pour activer votre compte.
     </div>
 }
+@section Styles{
+    <link href="~/css/showsuccesserrormodal.css" rel="stylesheet" />
+}
+@await Html.PartialAsync("~/Views/Shared/Popup/_SuccessModal.cshtml")
+@await Html.PartialAsync("~/Views/Shared/Popup/_ErrorModal.cshtml")
+@await Html.PartialAsync("~/Views/Shared/Popup/_ModalScripts.cshtml")
+
+@* @await Html.PartialAsync("_SuccessToast") *@
 
 <form asp-action="CompleteProfile" method="post">
     <div class="row shadow-sm g-3 needs-validation p-3 mb-5 mt-3 bg-white border rounded">
@@ -253,5 +261,5 @@ else
         });
     </script>
 
-
+    
 }

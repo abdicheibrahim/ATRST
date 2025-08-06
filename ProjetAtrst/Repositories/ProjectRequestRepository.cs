@@ -86,42 +86,21 @@ namespace ProjetAtrst.Repositories
                 .ToListAsync();
         }
 
-        //public async Task<List<ProjectRequest>> GetInvitationRequestsByResearcherIdAsync(string researcherId)
-        //{
-        //    return await _context.ProjectRequests
-        //        .Include(r => r.Project)
-        //            .ThenInclude(p => p.ProjectMemberships)
-        //                .ThenInclude(pm => pm.Researcher)
-        //                    .ThenInclude(r => r.User)
-        //        .Where(r => r.ReceiverId == researcherId && r.Type == RequestType.Invitation)
-        //        .OrderByDescending(r => r.CreatedAt)
-        //        .ToListAsync();
-        //}
-
+       
         public async Task<List<ProjectRequest>> GetJoinRequestsBySenderAsync(string researcherId)
         {
             return await _context.ProjectRequests
-                .Include(r => r.Project)
-                .Where(r => r.SenderId == researcherId && r.Type == RequestType.Join)
+                .Where(r => r.SenderId == researcherId
+                            && r.Project.ProjectMemberships
+                                .Any(pm => pm.ResearcherId == r.ReceiverId && pm.Role == Role.Leader)
+                            && r.Type == RequestType.Join) // أو النوع الذي تستعمله للانضمام
+                .Include(r => r.Receiver)
+                    .ThenInclude(receiver => receiver.User)
+                    .Include(r => r.Project)
                 .OrderByDescending(r => r.CreatedAt)
                 .ToListAsync();
         }
 
-        //-----------------update------------------------
-        //public async Task<List<ProjectRequest>> GetInvitationsByLeaderAsync(string leaderId)
-        //{
-        //    var projectIds = await _context.ProjectMemberships
-        //        .Where(pm => pm.ResearcherId == leaderId && pm.Role == Role.Leader)
-        //        .Select(pm => pm.ProjectId)
-        //        .ToListAsync();
-
-        //    return await _context.ProjectRequests
-        //        .Include(r => r.Receiver).ThenInclude(u => u.User)
-        //        .Include(r => r.Project)
-        //        .Where(r => r.Type == RequestType.Invitation && projectIds.Contains(r.ProjectId))
-        //        .OrderByDescending(r => r.CreatedAt)
-        //        .ToListAsync();
-        //}
         public async Task<List<ProjectRequest>> GetInvitationsForUserAsync(string userId)
         {
             return await _context.ProjectRequests

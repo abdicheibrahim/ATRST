@@ -19,40 +19,40 @@
 <body>
     <div class="register-container">
         <img src="~/images/logo-mini.png" alt="ATRST Logo" class="logo" />
-        <form method="post"  asp-action="Register">
+        <form method="post" asp-action="Register">
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="mb-3">
                 <label asp-for="Email" class="form-label">Adresse email</label>
-                <input asp-for="Email" type="email" class="form-control" placeholder="Entrez votre adresse email" />
+                <input asp-for="Email" type="email" class="form-control" placeholder="Entrez votre adresse email" required />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
                 <label asp-for="Password" class="form-label">Mot de passe</label>
                 <div class="input-group">
-                    <input type="password" class="form-control" asp-for="Password" placeholder="Créez un mot de passe" id="passwordInput" />
+                    <input type="password" class="form-control" asp-for="Password" placeholder="Créez un mot de passe" id="passwordInput" required />
                     <button type="button" class="btn btn-outline-secondary" onclick="togglePasswordVisibility('passwordInput', 'toggleIcon1')" tabindex="-1">
                         <i class="bi bi-eye" id="toggleIcon1"></i>
                     </button>
                 </div>
                 <span asp-validation-for="Password" class="text-danger"></span>
-                 <small id="passwordRules" class="form-text text-muted mt-1">
-                     Le mot de passe doit contenir au moins :
+                <small id="passwordRules" class="form-text text-muted mt-1">
+                    Le mot de passe doit contenir au moins :
                     <ul class="mb-0">
-                            <li>8 caractères</li>
-                            <li>Une lettre majuscule (A-Z)</li>
-                            <li>Une lettre minuscule (a-z)</li>
-                            <li>Un caractère spécial (!@@#...)</li>
+                        <li>8 caractères</li>
+                        <li>Une lettre majuscule (A-Z)</li>
+                        <li>Une lettre minuscule (a-z)</li>
+                        <li>Un caractère spécial (!@@#...)</li>
                     </ul>
-                 </small>
+                </small>
             </div>
 
 
             <div class="mb-3">
                 <label asp-for="ConfirmPassword" class="form-label">Confirmez le mot de passe</label>
                 <div class="input-group">
-                    <input type="password" class="form-control" asp-for="ConfirmPassword" placeholder="Confirmez le mot de passe" id="confirmPasswordInput" />
-                    <button type="button" class="btn btn-outline-secondary" onclick="togglePasswordVisibility('confirmPasswordInput', 'toggleIcon2')" tabindex="-1">
+                    <input type="password" class="form-control" asp-for="ConfirmPassword" placeholder="Confirmez le mot de passe" id="confirmPasswordInput" required />
+                    <button type="button" class="btn btn-outline-secondary" onclick="togglePasswordVisibility('confirmPasswordInput', 'toggleIcon2')" tabindex="-1" >
                         <i class="bi bi-eye" id="toggleIcon2"></i>
                     </button>
                 </div>
@@ -68,7 +68,7 @@
             <a asp-action="Login" class="small-link text-muted">Vous avez déjà un compte ? Connectez-vous</a>
         </form>
     </div>
-   
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>

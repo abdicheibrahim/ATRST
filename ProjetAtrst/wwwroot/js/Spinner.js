@@ -1,45 +1,50 @@
-﻿
-//document.addEventListener("DOMContentLoaded", function () {
-//    const form = document.querySelector("form");
-//const btn = document.getElementById("submitBtn");
-//const spinner = document.getElementById("spinner");
-//const btnText = document.getElementById("btnText");
-
-//if (form) {
-//    form.addEventListener("submit", function () {
-//        // تعطيل الزر حتى لا يضغط المستخدم مرة ثانية
-//        btn.disabled = true;
-
-//        // إظهار الـ spinner وإخفاء النص الأصلي
-//        spinner.classList.remove("d-none");
-//        btnText.textContent = "s'il vous plait, attendez...";
-//    });
-//    }
-//});
-
-document.addEventListener("DOMContentLoaded", function () {
+﻿document.addEventListener("DOMContentLoaded", function () {
     const form = document.querySelector("form");
     const btn = document.getElementById("submitBtn");
     const spinner = document.getElementById("spinner");
     const btnText = document.getElementById("btnText");
 
-    // ✅ إذا النموذج يحتوي على أخطاء تحقق (ModelState غير صالح)، نعيد الزر لوضعه الطبيعي
-    const hasValidationErrors = document.querySelectorAll(".text-danger:not(:empty)").length > 0;
-
-    if (hasValidationErrors) {
+    // دالة لإعادة تعيين الزر
+    function resetSubmitButton() {
         btn.disabled = false;
         spinner.classList.add("d-none");
-        btnText.textContent = "Créer"; // أو "Se connecter" حسب الصفحة
+        btnText.textContent = "Créer";
     }
 
-    // ✅ عندما المستخدم يضغط على زر الإرسال
+    // دالة لإظهار التحميل
+    function showLoading() {
+        btn.disabled = true;
+        spinner.classList.remove("d-none");
+        btnText.textContent = "s'il vous plaît, attendez...";
+    }
+
+    // التحقق من وجود أخطاء عند تحميل الصفحة
+    function hasValidationErrors() {
+        return document.querySelectorAll(".text-danger:not(:empty)").length > 0;
+    }
+
+    // إعادة تعيين الزر إذا كان هناك أخطاء
+    if (hasValidationErrors()) {
+        resetSubmitButton();
+    }
+
+    // إدارة إرسال النموذج
     if (form) {
-        form.addEventListener("submit", function () {
-            // فقط إذا لم يكن هناك أخطاء تحقق في المتصفح (HTML5)
+        form.addEventListener("submit", function (e) {
+            // التحقق من صحة النموذج
             if (form.checkValidity()) {
-                btn.disabled = true;
-                spinner.classList.remove("d-none");
-                btnText.textContent = "s'il vous plaît, attendez...";
+                showLoading();
+            } else {
+                e.preventDefault();
+                // لا تُعطل الزر إذا كان هناك أخطاء في التحقق
+                return false;
+            }
+        });
+
+        // إعادة تعيين الزر عند تغيير أي حقل
+        form.addEventListener("input", function () {
+            if (btn.disabled) {
+                resetSubmitButton();
             }
         });
     }

@@ -10,10 +10,16 @@
 
 <h2 class="mb-4">Modifier les informations du compte</h2>
 
-@if (TempData["Success"] != null)
+@* @if (TempData["Success"] != null)
 {
     <div class="alert alert-success">@TempData["Success"]</div>
+} *@
+@section Styles {
+    <link href="~/css/showsuccesserrormodal.css" rel="stylesheet" />
 }
+@await Html.PartialAsync("~/Views/Shared/Popup/_SuccessModal.cshtml")
+@await Html.PartialAsync("~/Views/Shared/Popup/_ErrorModal.cshtml")
+@await Html.PartialAsync("~/Views/Shared/Popup/_ModalScripts.cshtml")
 
 <form asp-action="EditAccount" method="post" enctype="multipart/form-data">
     <div class="row mb-3">
@@ -106,5 +112,6 @@
     </script>
     <partial name="_ValidationScriptsPartial" />
     <script src="~/js/Spinner.js"></script>
+   
 
 }

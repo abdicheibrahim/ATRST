@@ -4,6 +4,12 @@
     Layout = "_LayoutProject";
     ViewData["Title"] = "Modifier le projet";
 }
+@section Styles {
+    <link href="~/css/showsuccesserrormodal.css" rel="stylesheet" />
+}
+@await Html.PartialAsync("~/Views/Shared/Popup/_SuccessModal.cshtml")
+@await Html.PartialAsync("~/Views/Shared/Popup/_ErrorModal.cshtml")
+@await Html.PartialAsync("~/Views/Shared/Popup/_ModalScripts.cshtml")
 
 <h2><i class="bi bi-pencil-square me-2"></i>Modifier le projet</h2>
 

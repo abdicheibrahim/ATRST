@@ -1,4 +1,5 @@
-﻿function loadPaginatedProjects(page) {
+﻿
+function loadPaginatedProjects(page) {
     showSpinner();
 
     $.ajax({
@@ -17,24 +18,29 @@
         }
     });
 }
-
 function renderProjects(projects) {
     let html = '';
+
     projects.forEach(project => {
+        const firstLetter = project.title?.trim()?.charAt(0)?.toUpperCase() || '';
+        const imageHtml = project.imageUrl
+            ? `<img src="${project.imageUrl}" alt="Projet" class="img-thumbnail" style="height: 48px; width: auto;" />`
+            : `<div class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center mx-auto" style="width: 48px; height: 48px; font-size: 20px;">
+                   ${firstLetter}
+               </div>`;
+
         html += `
-            <div class="col">
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <h5>${project.title}</h5>
-                        <p>${project.description}</p>
-                        <p>Chef de projet: ${project.leaderFullName}</p>
-                        <a href="/ProjectRequest/Send?projectId=${project.id}&receiverId=${project.leaderId}&type=Join"
-                           class="btn btn-success">
-                            Demander à rejoindre
-                        </a>
-                    </div>
-                </div>
-            </div>
+            <tr>
+                <td class="text-center align-middle">${imageHtml}</td>
+                <td class="align-middle">${project.title || ''}</td>
+                <td class="align-middle">${project.leaderFullName || ''}</td>
+                <td class="align-middle">
+                    <a href="/ProjectRequest/Send?projectId=${project.id}&receiverId=${project.leaderId}&type=Join"
+                       class="btn btn-success btn-sm">
+                        Demander à rejoindre
+                    </a>
+                </td>
+            </tr>
         `;
     });
 

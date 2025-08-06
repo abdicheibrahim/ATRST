@@ -1,13 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ProjetAtrst.Interfaces.Services;
-using ProjetAtrst.Models;
-using ProjetAtrst.Interfaces;
 using ProjetAtrst.ViewModels.ProjectRequests;
 using System.Security.Claims;
-using ProjetAtrst.Services;
-using ProjetAtrst.ViewModels.Project;
-using Microsoft.EntityFrameworkCore;
 using ProjetAtrst.Enums;
 
 namespace ProjetAtrst.Controllers
@@ -27,15 +21,15 @@ namespace ProjetAtrst.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var (incoming, sent) = await _requestService.GetRequestsForDashboardAsync(userId);
-
             var viewModel = new RequestsDashboardViewModel
             {
                 IncomingRequests = incoming,
                 SentRequests = sent
             };
-
             return View(viewModel);
         }
+
+
         public async Task<IActionResult> Outgoing()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -95,13 +89,16 @@ namespace ProjetAtrst.Controllers
             return View(request);
         }
 
+        //ProjectRequest/SentInvitations
+        [HttpGet]
         public async Task<IActionResult> SentJoinRequests()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var requests = await _requestService.GetSentJoinRequestsAsync(userId);
             return View(requests);
         }
-
+        //ProjectRequest/SentInvitations
+        [HttpGet]
         public async Task<IActionResult> SentInvitations()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);

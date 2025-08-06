@@ -49,6 +49,8 @@ namespace ProjetAtrst.Controllers
             return View(model);
         }
 
+
+
         // GET: /Account/Login
         public IActionResult Login() => View();
 
@@ -67,6 +69,8 @@ namespace ProjetAtrst.Controllers
             return View(model);
         }
 
+
+
         // GET: /Account/Logout
         public async Task<IActionResult> Logout()
         {
@@ -74,6 +78,8 @@ namespace ProjetAtrst.Controllers
             return RedirectToAction("Login", "Account");
 
         }
+
+
 
         // GET: /Account/CompleteProfile
         [HttpGet]
@@ -97,6 +103,11 @@ namespace ProjetAtrst.Controllers
         {
             if (!ModelState.IsValid)
             {
+                //----Modal-------
+                TempData["ShowErrorModal"] = true;
+                TempData["ErrorTitle"] = "Oops !";
+                TempData["ErrorMessage"] = "Une erreur est survenue lors de l'enregistrement.";
+                //-----------------
                 model.EstablishmentsList = _staticDataLoader.LoadEstablishments();
                 model.GradesList = _staticDataLoader.LoadGrades();
                 model.StatutList = _staticDataLoader.LoadStatuts();
@@ -106,15 +117,23 @@ namespace ProjetAtrst.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null)
                 return RedirectToAction("Login");
-
             await _userService.CompleteProfileAsync(userId, model);
-
+            //----Modal-------
+            //TempData["ShowSuccessModal"] = true;
+            //TempData["SuccessTitle"] = "Parfait !";
+            //TempData["SuccessMessage"] = "Les données ont été enregistrées avec succès.";
+            //-----------------
+            //----Toast-------
+            //TempData["Success"] = "Le compte a été mis à jour avec succès.";
+            //---------------
             return RedirectToAction("Index", "Dashboard");
         }
 
+
+
+        // GET: /Account/EditProfile
         [Authorize]
         [ServiceFilter(typeof(ProfileCompletionFilter))]
-        // GET: /Account/CompleteProfile
         [HttpGet]
         public async Task<IActionResult> EditProfile()
         {
@@ -128,9 +147,10 @@ namespace ProjetAtrst.Controllers
 
             return View(model);
         }
+
+        // POST: /Account/EditProfile
         [Authorize]
         [ServiceFilter(typeof(ProfileCompletionFilter))]
-        // POST: /Account/CompleteProfile
         [HttpPost]
         public async Task<IActionResult> EditProfile(EditProfileViewModel model)
         {
@@ -142,11 +162,15 @@ namespace ProjetAtrst.Controllers
                 return RedirectToAction("Login");
 
             await _userService.EditProfileAsync(userId, model);
-
+            TempData["ShowSuccessModal"] = true;
+            TempData["SuccessTitle"] = "Parfait !";
+            TempData["SuccessMessage"] = "Les données ont été enregistrées avec succès.";
             return RedirectToAction("EditProfile");
         }
 
 
+
+        // GET: /Account/EditAccount
         [ServiceFilter(typeof(ProfileCompletionFilter))]
         [HttpGet]
         public async Task<IActionResult> EditAccount()
@@ -162,14 +186,23 @@ namespace ProjetAtrst.Controllers
 
             return View(model);
         }
+
+        // POST: /Account/EditAccount
         [HttpPost]
         public async Task<IActionResult> EditAccount(EditAccountViewModel model)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return NotFound();
 
-            if (!ModelState.IsValid) return View(model);
-
+            if (!ModelState.IsValid)
+            {
+                //----Modal-------
+                TempData["ShowErrorModal"] = true;
+                TempData["ErrorTitle"] = "Oops !";
+                TempData["ErrorMessage"] = "Une erreur est survenue lors de l'enregistrement.";
+                //-----------------
+                return View(model);
+            }
             // تحديث الصورة فقط
             if (model.ProfilePicture != null)
             {
@@ -180,12 +213,22 @@ namespace ProjetAtrst.Controllers
                 if (!allowedExtensions.Contains(extension))
                 {
                     ModelState.AddModelError("ProfilePicture", "Seules les images JPG, JPEG ou PNG sont autorisées.");
+                    //----Modal-------
+                    TempData["ShowErrorModal"] = true;
+                    TempData["ErrorTitle"] = "Oops !";
+                    TempData["ErrorMessage"] = "ProfilePicture, Seules les images JPG, JPEG ou PNG sont autorisées.";
+                    //-----------------
                     return View(model);
                 }
 
                 if (model.ProfilePicture.Length > maxSize)
                 {
                     ModelState.AddModelError("ProfilePicture", "L’image ne doit pas dépasser 2MB.");
+                    //----Modal-------
+                    TempData["ShowErrorModal"] = true;
+                    TempData["ErrorTitle"] = "Oops !";
+                    TempData["ErrorMessage"] = "ProfilePicture, L’image ne doit pas dépasser 2MB";
+                    //-----------------
                     return View(model);
                 }
 
@@ -216,6 +259,11 @@ namespace ProjetAtrst.Controllers
                 if (!result.Succeeded)
                 {
                     ModelState.AddModelError("", "Erreur lors de la mise à jour de l'email.");
+                    //----Modal-------
+                    TempData["ShowErrorModal"] = true;
+                    TempData["ErrorTitle"] = "Oops !";
+                    TempData["ErrorMessage"] = "Erreur lors de la mise à jour de l'email.";
+                    //-----------------
                     return View(model);
                 }
             }
@@ -238,7 +286,10 @@ namespace ProjetAtrst.Controllers
             }
 
             await _userManager.UpdateAsync(user);
-            TempData["Success"] = "Le compte a été mis à jour avec succès.";
+            //TempData["Success"] = "Le compte a été mis à jour avec succès.";
+            TempData["ShowSuccessModal"] = true;
+            TempData["SuccessTitle"] = "Parfait !";
+            TempData["SuccessMessage"] = "Le compte a été mis à jour avec succès.";
             return RedirectToAction("EditAccount");
         }
 

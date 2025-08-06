@@ -9,6 +9,12 @@
     ViewData["Title"] = "Profil";
 }
 
+@section Styles {
+    <link href="~/css/showsuccesserrormodal.css" rel="stylesheet" />
+}
+@await Html.PartialAsync("~/Views/Shared/Popup/_SuccessModal.cshtml")
+@await Html.PartialAsync("~/Views/Shared/Popup/_ErrorModal.cshtml")
+@await Html.PartialAsync("~/Views/Shared/Popup/_ModalScripts.cshtml")
 
 <div class="alert alert-success text-center alert-dismissible fade show" role="alert">
     Votre profil est<strong> complet.</strong> Vous pouvez le modifier ici.
@@ -101,6 +107,8 @@
             });
         });
     </script>
+
+   
 }
 
 
