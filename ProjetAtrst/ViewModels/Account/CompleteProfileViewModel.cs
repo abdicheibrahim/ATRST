@@ -37,20 +37,23 @@ namespace ProjetAtrst.ViewModels.Account
         [Display(Name = "Birthday")]
         public DateTime Birthday { get; set; }
 
-        [Required(ErrorMessage = "Establishment is required")]
+     //   [Required(ErrorMessage = "Establishment is required")]
         [Display(Name = "Establishment")]
         public string Establishment { get; set; } = string.Empty;
-        public List<SelectListItem> EstablishmentsList { get; set; } = new();
+        //public string CustomEstablishment { get; set; } = string.Empty;
+        //public List<SelectListItem> EstablishmentsList { get; set; } = new();
 
-        [Required(ErrorMessage = "Statut is required")]
-        public string? Statut { get; set; }
-        public List<SelectListItem> StatutList { get; set; } = new();
+      //  [Required(ErrorMessage = "Statut is required")]
+        public string Statut { get; set; }
+       // public string CustomStatut { get; set; }
+        //public List<SelectListItem> StatutList { get; set; } = new();
 
-        [Required(ErrorMessage = "Grade is required")]
+     //   [Required(ErrorMessage = "Grade is required")]
         [Display(Name = "Grade")]
         public string Grade { get; set; } = string.Empty;
-        public List<SelectListItem> GradesList { get; set; } = new();
-
+        //public string CustomGrade { get; set; } = string.Empty;
+        //public List<SelectListItem> GradesList { get; set; } = new();
+        
         [Required(ErrorMessage = "Speciality is required")]
         [Display(Name = "Speciality")]
         public string Speciality { get; set; } = string.Empty;

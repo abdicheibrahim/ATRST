@@ -99,8 +99,7 @@ namespace ProjetAtrst.Services
         public async Task<CompleteProfileViewModel?> GetCompleteProfileViewModelAsync(string userId)
         {
             var user = await _unitOfWork.Users.GetUserWithResearcherAsync(userId);
-            if (user == null || user.Researcher == null)
-                return null;
+            if (user == null || user.Researcher == null) return null;
 
             return new CompleteProfileViewModel
             {
@@ -110,11 +109,8 @@ namespace ProjetAtrst.Services
                 LastNameAr = user.LastNameAr,
                 Gender = user.Gender,
                 Birthday = user.Birthday,
-                EstablishmentsList = _staticDataLoader.LoadEstablishments(),
                 Establishment = user.Researcher.Establishment,
-                GradesList = _staticDataLoader.LoadGrades(),
                 Grade = user.Researcher.Grade,
-                StatutList = _staticDataLoader.LoadStatuts(),
                 Statut = user.Researcher.Statut,
                 Speciality = user.Researcher.Speciality,
                 Mobile = user.Mobile,
@@ -126,6 +122,7 @@ namespace ProjetAtrst.Services
                 IsCompleted = user.Researcher.IsCompleted
             };
         }
+
         public async Task EditProfileAsync(string userId, EditProfileViewModel model)
         {
             var user = await _unitOfWork.Users.GetUserWithResearcherAsync(userId);

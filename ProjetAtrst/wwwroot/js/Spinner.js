@@ -4,11 +4,25 @@
     const spinner = document.getElementById("spinner");
     const btnText = document.getElementById("btnText");
 
+    // ✅ تحديد النص حسب الصفحة الحالية
+    const pageButtonTitles = {
+        '/Account/Login': 'Se connecter',
+        '/Account/Register': 'Créer',
+        '/Account/ForgotPassword': 'Réinitialiser'
+        // أضف صفحات أخرى حسب الحاجة
+    };
+
+    // ✅ الحصول على النص الصحيح للزر
+    function getButtonDefaultText() {
+        const currentPath = window.location.pathname;
+        return pageButtonTitles[currentPath] || 'Soumettre';
+    }
+
     // دالة لإعادة تعيين الزر
     function resetSubmitButton() {
         btn.disabled = false;
         spinner.classList.add("d-none");
-        btnText.textContent = "Créer";
+        btnText.textContent = getButtonDefaultText();
     }
 
     // دالة لإظهار التحميل
@@ -36,7 +50,6 @@
                 showLoading();
             } else {
                 e.preventDefault();
-                // لا تُعطل الزر إذا كان هناك أخطاء في التحقق
                 return false;
             }
         });

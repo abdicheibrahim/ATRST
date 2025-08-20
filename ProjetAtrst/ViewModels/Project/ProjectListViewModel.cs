@@ -11,6 +11,7 @@ namespace ProjetAtrst.ViewModels.Project
         public DateTime LastActivity { get; set; }
         public Role Role { get; set; }
         public string? LogoPath { get; set; } = "/images/default-project.png";
+        public bool IsAcceptingJoinRequests { get; set; } 
 
     }
 }

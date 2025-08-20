@@ -7,6 +7,7 @@ using ProjetAtrst.ViewModels.Project;
 using ProjetAtrst.ViewModels.ProjectMembership;
 using Microsoft.EntityFrameworkCore;
 using ProjetAtrst.Repositories;
+using System.Text.Json;
 
 namespace ProjetAtrst.Services
 {
@@ -25,17 +26,60 @@ namespace ProjetAtrst.Services
         }
         public async Task CreateProjectAsync(ProjectCreateViewModel model, string researcherId)
         {
+            //// حفظ الشعار إذا تم تحميله
+            //string? logoPath = null;
+            //if (model.LogoFile != null && model.LogoFile.Length > 0)
+            //{
+            //    var uploadsFolder = Path.Combine("wwwroot", "uploads", "logos");
+            //    if (!Directory.Exists(uploadsFolder))
+            //        Directory.CreateDirectory(uploadsFolder);
+
+            //    var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(model.LogoFile.FileName);
+            //    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+            //    using (var fileStream = new FileStream(filePath, FileMode.Create))
+            //    {
+            //        await model.LogoFile.CopyToAsync(fileStream);
+            //    }
+
+            //    logoPath = Path.Combine("uploads", "logos", uniqueFileName).Replace("\\", "/");
+            //}
+
+            // تحويل المراجع إلى JSON
+            string referencesJson = JsonSerializer.Serialize(model.References ?? new List<string>());
+
+            // إنشاء المشروع
             var project = new Project
             {
                 Title = model.Title,
-                Description = model.Description,
+                
+               // LogoPath = logoPath,
+                
+                IsAcceptingJoinRequests = model.IsAcceptingJoinRequests,
+
+                Keywords = model.Keywords,
+                Domain = model.Domain,
+                Axis = model.Axis,
+                Theme = model.Theme,
+                Nature = model.Nature,
+                TRL = model.TRL,
+                PNR = model.PNR,
+                DurationInMonths = model.DurationInMonths,
+                HostInstitution = model.HostInstitution,
+
+                CurrentState = model.CurrentState,
+                Motivation = model.Motivation,
+                Methodology = model.Methodology,
+
+                SocioEconomicPartner = model.SocioEconomicPartner,
+                ExpectedResults = model.ExpectedResults,
+                TargetSectors = model.TargetSectors,
+                Impact = model.Impact,
+
+                ReferencesJson = referencesJson,
+
                 CreationDate = DateTime.UtcNow,
-                LastActivity = DateTime.UtcNow,
-                ProjectApprovalStatus = ProjectApprovalStatus.Pending,
-                ProjectStatus = model.ProjectStatus,
-                IsCompleted = false,
-                IsAcceptingJoinRequests = true,
-                ProjectMemberships = new List<ProjectMembership>()
+                LastActivity = DateTime.UtcNow
             };
 
             await _unitOfWork.Projects.AddAsync(project);
@@ -64,6 +108,7 @@ namespace ProjetAtrst.Services
                 Title = pm.Project.Title,
                 CreationDate = pm.Project.CreationDate,
                 Status = pm.Project.ProjectStatus.ToString(),
+                IsAcceptingJoinRequests = pm.Project.IsAcceptingJoinRequests,
                 LastActivity = pm.Project.LastActivity,
                 LogoPath = string.IsNullOrEmpty(pm.Project.LogoPath)
                ? "/images/default-project.png"

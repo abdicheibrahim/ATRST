@@ -101,31 +101,20 @@ namespace ProjetAtrst.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CompleteProfile(CompleteProfileViewModel model)
         {
+          
+
             if (!ModelState.IsValid)
             {
-                //----Modal-------
                 TempData["ShowErrorModal"] = true;
                 TempData["ErrorTitle"] = "Oops !";
                 TempData["ErrorMessage"] = "Une erreur est survenue lors de l'enregistrement.";
-                //-----------------
-                model.EstablishmentsList = _staticDataLoader.LoadEstablishments();
-                model.GradesList = _staticDataLoader.LoadGrades();
-                model.StatutList = _staticDataLoader.LoadStatuts();
-                return View(model);
+                return View(model); 
             }
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null)
-                return RedirectToAction("Login");
+            if (userId == null) return RedirectToAction("Login");
+
             await _userService.CompleteProfileAsync(userId, model);
-            //----Modal-------
-            //TempData["ShowSuccessModal"] = true;
-            //TempData["SuccessTitle"] = "Parfait !";
-            //TempData["SuccessMessage"] = "Les données ont été enregistrées avec succès.";
-            //-----------------
-            //----Toast-------
-            //TempData["Success"] = "Le compte a été mis à jour avec succès.";
-            //---------------
             return RedirectToAction("Index", "Dashboard");
         }
 

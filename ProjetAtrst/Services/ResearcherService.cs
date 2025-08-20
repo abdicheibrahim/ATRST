@@ -115,13 +115,13 @@ namespace ProjetAtrst.Services
           
             return new EditResearcherProfileViewModel
             {
-                EstablishmentsList= _staticDataLoader.LoadEstablishments(),
+              //  EstablishmentsList= _staticDataLoader.LoadEstablishments(),
                 Establishment = user.Researcher.Establishment,
 
-                GradesList = _staticDataLoader.LoadGrades(),
+               // GradesList = _staticDataLoader.LoadGrades(),
                 Grade = user.Researcher.Grade,
 
-                StatutList = _staticDataLoader.LoadStatuts(),
+               // StatutList = _staticDataLoader.LoadStatuts(),
                 Statut = user.Researcher.Statut,
 
                 Speciality = user.Researcher.Speciality,

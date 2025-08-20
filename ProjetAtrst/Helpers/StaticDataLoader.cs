@@ -1,75 +1,87 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
+using System.Collections.Concurrent;
+using System.Globalization;
+using System.Net;
+using System.Text;
 
-namespace ProjetAtrst.Helpers
-{
+namespace ProjetAtrst.Helpers 
+{ 
     public class StaticDataLoader
     {
+
         private readonly IWebHostEnvironment _env;
+        private readonly ConcurrentDictionary<string, List<SelectListItem>> _cache =
+            new(StringComparer.OrdinalIgnoreCase);
 
         public StaticDataLoader(IWebHostEnvironment env)
         {
             _env = env;
         }
 
-        public List<SelectListItem> LoadEstablishments()
+        // تحميل القائمة كاملة من الكاش/الملف
+        public List<SelectListItem> LoadList(string type)
         {
-            var path = Path.Combine(_env.WebRootPath, "data", "establishments.json");
-            if (!File.Exists(path))
-                return new List<SelectListItem>();
-
-            var json = File.ReadAllText(path);
-            var items = JsonConvert.DeserializeObject<List<string>>(json);
-
-            var selectList = new List<SelectListItem>
+            return _cache.GetOrAdd(type, key =>
             {
-                new() { Text = "-- Sélectionnez l'établissement --", Value = "" }
-            };
+                var fileName = key + ".json"; // مثال: Domains.json
+                var path = Path.Combine(_env.WebRootPath, "data", fileName);
 
-            foreach (var item in items!)
-            {
-                selectList.Add(new SelectListItem { Text = item, Value = item });
-            }
+                var list = new List<SelectListItem>();
 
-            return selectList;
+                if (File.Exists(path))
+                {
+                    var json = File.ReadAllText(path,Encoding.UTF8);
+                    var items = JsonConvert.DeserializeObject<List<string>>(json) ?? new List<string>();
+                    list = items.Select(s => {
+                        var decoded = WebUtility.HtmlDecode(s);
+                        return new SelectListItem { Text = decoded, Value = decoded };
+                    }).ToList();
+
+                }
+
+                // إضافة "Autre" لقائمة Domains فقط (يمكنك تعديلها حسب رغبتك)
+                if (key.Equals("Domains", StringComparison.OrdinalIgnoreCase) &&
+                    !list.Any(i => i.Value == "Autre"))
+                {
+                    list.Add(new SelectListItem { Text = "Autre", Value = "Autre" });
+                }
+
+                return list;
+            });
         }
 
-        public List<SelectListItem> LoadGrades()
+        // بحث مع حد أقصى للنتائج
+        public List<SelectListItem> SearchList(string type, string? term, int take = 25)
         {
-            var path = Path.Combine(_env.WebRootPath, "data", "grades.json"); // Changed filename
-            if (!File.Exists(path))
-                return new List<SelectListItem>();
+            var source = LoadList(type);
 
-            var json = File.ReadAllText(path);
-            var items = JsonConvert.DeserializeObject<List<string>>(json);
+            if (string.IsNullOrWhiteSpace(term))
+                return source.Take(take).ToList();
 
-            var selectList = new List<SelectListItem>(); // Initial item will be added by the HTML
+            var normTerm = Normalize(term);
 
-            foreach (var item in items!)
-            {
-                selectList.Add(new SelectListItem { Text = item, Value = item });
-            }
-
-            return selectList;
+            return source
+                .Where(x => Normalize(x.Text).Contains(normTerm))
+                .Take(take)
+                .ToList();
         }
 
-        public List<SelectListItem> LoadStatuts()
+        private static string Normalize(string input)
         {
-            var path = Path.Combine(_env.WebRootPath, "data", "statuts.json"); // New filename
-            if (!File.Exists(path))
-                return new List<SelectListItem>();
+            if (string.IsNullOrEmpty(input)) return string.Empty;
 
-            var json = File.ReadAllText(path);
-            var items = JsonConvert.DeserializeObject<List<string>>(json);
+            var normalized = input.Normalize(NormalizationForm.FormD);
+            var sb = new StringBuilder(capacity: normalized.Length);
 
-            var selectList = new List<SelectListItem>();
-
-            foreach (var item in items!)
+            foreach (var ch in normalized)
             {
-                selectList.Add(new SelectListItem { Text = item, Value = item });
+                var uc = CharUnicodeInfo.GetUnicodeCategory(ch);
+                if (uc != UnicodeCategory.NonSpacingMark)
+                    sb.Append(char.ToLowerInvariant(ch));
             }
 
-            return selectList;
+            return sb.ToString().Normalize(NormalizationForm.FormC);
         }
     }
 }

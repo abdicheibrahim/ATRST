@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
+using ProjetAtrst.Helpers;
 using ProjetAtrst.Interfaces.Services;
-using ProjetAtrst.Models;
 using ProjetAtrst.ViewModels.Project;
 using System.Security.Claims;
 
@@ -11,32 +12,76 @@ namespace ProjetAtrst.Controllers
     public class ProjectController : Controller
     {
         private readonly IProjectService _projectService;
-       // private readonly IProjectRequestService _projectRequestService;
-        public ProjectController(IProjectService projectService)
+        private readonly StaticDataLoader _staticDataLoader;
+        // private readonly IProjectRequestService _projectRequestService;
+        public ProjectController(IProjectService projectService, StaticDataLoader staticDataLoader)
         {
             _projectService = projectService;
-           // _projectRequestService = projectRequestService;
+            _staticDataLoader = staticDataLoader;
         }
 
-        //Verified
 
         [HttpGet]
         public IActionResult Create()
         {
-            return View();
+            ViewData["Title"] = "Create a new project";
+
+            var model = new ProjectCreateViewModel
+            {
+                // لم نعد بحاجة لتحميل القوائم هنا لأن التحميل صار عبر AJAX
+                //DomainsList = default,
+                //AxesList = default,
+                //ThemesList = default,
+                //NaturesList = default,
+                //TRLLevelsList = default,
+                //PNRList = default,
+            };
+
+            return View(model);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(ProjectCreateViewModel model)
         {
             if (!ModelState.IsValid)
+            {
+                // لم نعد بحاجة لإعادة تعبئة القوائم لأن الـ Select2 يعمل بالـ AJAX
+                //model.DomainsList = default;
+                //model.AxesList = default;
+                //model.ThemesList = default;
+                //model.NaturesList = default;
+                //model.TRLLevelsList = default;
+                //model.PNRList = default;
+
                 return View(model);
+            }
 
-            var researcherId = User.FindFirstValue(ClaimTypes.NameIdentifier); // أو من Session
+            var researcherId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(researcherId))
+                return Forbid();
+
             await _projectService.CreateProjectAsync(model, researcherId);
-
+            TempData["SuccessMessage"] = "Le projet a été créé avec succès.";
+            
+           
             return RedirectToAction("MyProjects");
         }
+
+        // نقطة البحث الموحدة لكل القوائم
+        [HttpGet]
+        public IActionResult SearchDropdown(string type, string term, int take = 25)
+        {
+            if (string.IsNullOrWhiteSpace(type))
+                return BadRequest("Missing type");
+
+            var list = _staticDataLoader.SearchList(type, term, take);
+
+            // Select2 يتوقع id/text
+            var data = list.Select(x => new { id = x.Value, text = x.Text }).ToList();
+
+            return Json(data);
+        }
+
         [HttpGet]
         public async Task<IActionResult> MyProjects()
         {

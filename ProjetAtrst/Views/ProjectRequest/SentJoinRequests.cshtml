@@ -4,8 +4,6 @@
 
 }
 
-@* <h3 class="mb-4">Requêtes envoyées 📤</h3> *@
-
 <div class="mb-4">
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
         <h2 class="mb-0">Requêtes envoyées 📤</h2>
@@ -16,132 +14,12 @@
         </div>
     </div>
 </div>
-
-@* <table class="table table-bordered">
-    <thead class="table-light">
-        <tr>
-            <th>Expéditeur</th>
-            <th>Projet</th>
-            <th>Message</th>
-            <th>Statut</th>
-            <th>Date d'envoi</th>
-            <th>Options</th>
-        </tr>
-    </thead>
-    <tbody>
-       @foreach (var req in Model)
-        {
-            <tr>
-                <td>@req.Sender?.User?.FullName</td>
-                <td>@req.Project?.Title</td>
-                <td>@req.Message</td>
-                <td>
-                    @switch (req.Status)
-                    {
-                        case RequestStatus.Pending:
-                            <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i>Suspendu</span>
-                            break;
-                        case RequestStatus.Accepted:
-                            <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Accepté</span>
-                             break;
-                        case RequestStatus.Rejected:
-                            <span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i>Rejeté</span>
-                            break;
-                    }
-                </td>
-                <td>@req.CreatedAt.ToString("yyyy-MM-dd")</td>
-                <td>
-                    <div class="d-flex gap-1">
-                        <a asp-controller="ProjectRequest" asp-action="Details" asp-route-id="@req.Id" class="btn btn-outline-primary btn-sm" title="Détails">
-                            <i class="bi bi-eye"></i>
-                        </a>
-
-                        @if (req.Status == RequestStatus.Pending)
-                        {
-                            <form asp-controller="ProjectRequest" asp-action="Accept" asp-route-id="@req.Id" method="post" class="d-inline">
-                                <button type="submit" class="btn btn-outline-success btn-sm" title="Accepter">
-                                    <i class="bi bi-check-lg"></i>
-                                </button>
-                            </form>
-
-                            <form asp-controller="ProjectRequest" asp-action="Reject" asp-route-id="@req.Id" method="post" class="d-inline">
-                                <button type="submit" class="btn btn-outline-danger btn-sm" title="Reject">
-                                    <i class="bi bi-x-lg"></i>
-                                </button>
-                            </form>
-                        }
-                    </div>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table> *@
-
-@* 
-<div class="table-responsive">
-    <table class="table table-bordered table-striped align-middle shadow-sm">
-        <thead class="table-success">
-            <tr>
-               
-                <th>Destinataire</th>
-                <th>Projet</th>
-                <th>Message</th>
-                <th>Statut</th>
-                <th>Date d'envoi</th>
-                <th>Options</th>
-            </tr>
-        </thead>
-        <tbody id="projects-list">
-            @foreach (var req in Model)
-            {
-                <tr>
-                    <td>@req.Receiver?.User?.FullName</td>
-                    <td>@req.Project?.Title</td>
-                    <td>@req.Message</td>
-                    <td>
-                        @switch (req.Status)
-                        {
-                            case RequestStatus.Pending:
-                                <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i>Suspendu</span>
-                                break;
-                            case RequestStatus.Accepted:
-                                <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Accepté</span>
-                                break;
-                            case RequestStatus.Rejected:
-                                <span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i>Rejeté</span>
-                                break;
-                        }
-                    </td>
-                    <td>@req.CreatedAt.ToString("yyyy-MM-dd")</td>
-                    <td>
-                        <div class="d-flex gap-1">
-                            <a asp-controller="ProjectRequest" asp-action="Details" asp-route-id="@req.Id" class="btn btn-outline-primary btn-sm" title="Détails">
-                                <i class="bi bi-eye"></i>
-                            </a>
-
-                            @if (req.Status == RequestStatus.Pending)
-                            {
-                                <form asp-controller="ProjectRequest" asp-action="Accept" asp-route-id="@req.Id" method="post" class="d-inline">
-                                    <button type="submit" class="btn btn-outline-success btn-sm" title="Accepter">
-                                        <i class="bi bi-check-lg"></i>
-                                    </button>
-                                </form>
-
-                                <form asp-controller="ProjectRequest" asp-action="Reject" asp-route-id="@req.Id" method="post" class="d-inline">
-                                    <button type="submit" class="btn btn-outline-danger btn-sm" title="Reject">
-                                        <i class="bi bi-x-lg"></i>
-                                    </button>
-                                </form>
-                            }
-                        </div>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</div> *@
-
-
+<div class="mb-3">
+    <button class="btn btn-outline-secondary status-filter" data-status="all">Tous</button>
+    <button class="btn btn-outline-warning status-filter" data-status="pending">Suspendu</button>
+    <button class="btn btn-outline-success status-filter" data-status="accepted">Accepté</button>
+    <button class="btn btn-outline-danger status-filter" data-status="rejected">Rejeté</button>
+</div>
 <div class="table-responsive">
     <table id="requestsTable" class="table table-bordered table-striped align-middle shadow-sm">
         <thead class="table-success">
@@ -205,81 +83,12 @@
 </div>
 
 @section scripts {
-    
-<!-- إضافة مكتبات DataTables -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css">
-<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // تهيئة جدول DataTables
-            var table = $('#requestsTable').DataTable({
-                // إعدادات اللغة الفرنسية
-                language: {
-                    "sProcessing": "Traitement en cours...",
-                    "sSearch": "Rechercher&nbsp;:",
-                    "sLengthMenu": "Afficher _MENU_ &eacute;l&eacute;ments",
-                    "sInfo": "Affichage de l'&eacute;l&eacute;ment _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments",
-                    "sInfoEmpty": "Affichage de l'&eacute;l&eacute;ment 0 &agrave; 0 sur 0 &eacute;l&eacute;ment",
-                    "sInfoFiltered": "(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)",
-                    "sInfoPostFix": "",
-                    "sLoadingRecords": "Chargement en cours...",
-                    "sZeroRecords": "Aucun &eacute;l&eacute;ment &agrave; afficher",
-                    "sEmptyTable": "Aucune donn&eacute;e disponible dans le tableau",
-                    "oPaginate": {
-                        "sFirst": "Premier",
-                        "sPrevious": "Pr&eacute;c&eacute;dent",
-                        "sNext": "Suivant",
-                        "sLast": "Dernier"
-                    },
-                    "oAria": {
-                        "sSortAscending": ": activer pour trier la colonne par ordre croissant",
-                        "sSortDescending": ": activer pour trier la colonne par ordre d&eacute;croissant"
-                    }
-                },
-
-                // إعدادات الترقيم الصفحات
-                pageLength: 10,           // عدد العناصر في كل صفحة
-                lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Tous"]], // خيارات عرض العناصر
-
-                // تفعيل التصفية
-                searching: true,          // تفعيل مربع البحث
-                ordering: true,           // تفعيل الترتيب
-                paging: true,             // تفعيل الترقيم الصفحات
-
-                // إعدادات إضافية
-                responsive: true,         // جعل الجدول متجاوب
-                autoWidth: false,         // عدم تعديل العرض تلقائياً
-
-                // ترتيب افتراضي حسب التاريخ (العمود الرابع)
-                order: [[4, 'desc']],
-
-                // تخصيص أعمدة الترتيب
-                columnDefs: [
-                    {
-                        targets: [3],        // العمود الرابع (الحالة)
-                        orderable: true      // تفعيل الترتيب للحالة
-                    },
-                    {
-                        targets: [5],        // العمود الأخير (الخيارات)
-                        orderable: false     // تعطيل الترتيب للخيارات
-                    }
-                ]
-            });
-
-            // إضافة فلترة مخصصة حسب الحالة
-            $('.status-filter').on('click', function() {
-                var status = $(this).data('status');
-                if (status === 'all') {
-                    table.column(3).search('').draw();
-                } else {
-                    table.column(3).search(status, true, false).draw();
-                }
-            });
-        });
-    </script>
+    <!-- إضافة مكتبات DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css">
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+    <script src="~/js/datatablesincsr.js"></script>
 }
