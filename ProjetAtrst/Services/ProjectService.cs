@@ -1,12 +1,14 @@
-﻿using ProjetAtrst.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using ProjetAtrst.DTO;
+using ProjetAtrst.Helpers;
+using ProjetAtrst.Interfaces;
 using ProjetAtrst.Interfaces.Repositories;
 using ProjetAtrst.Interfaces.Services;
 using ProjetAtrst.Models;
-using ProjetAtrst.ViewModels.ProjectRequests;
+using ProjetAtrst.Repositories;
 using ProjetAtrst.ViewModels.Project;
 using ProjetAtrst.ViewModels.ProjectMembership;
-using Microsoft.EntityFrameworkCore;
-using ProjetAtrst.Repositories;
+using ProjetAtrst.ViewModels.ProjectRequests;
 using System.Text.Json;
 
 namespace ProjetAtrst.Services
@@ -204,28 +206,161 @@ namespace ProjetAtrst.Services
             return true;
         }
 
-        public async Task<(List<AvailableProjectViewModel> Projects, int TotalCount)> GetAvailableProjectsAsync(string researcherId, int pageNumber, int pageSize)
+        //delete
+        //public async Task<(List<AvailableProjectViewModel> Projects, int TotalCount)> GetAvailableProjectsAsync(string researcherId, int pageNumber, int pageSize)
+        //{
+        //    var (projects, totalCount) = await _unitOfWork.Projects.GetAvailableProjectsForJoinAsync(researcherId, pageNumber, pageSize);
+
+        //    var result = projects.Select(p =>
+        //    {
+        //        var leaderMembership = p.ProjectMemberships.FirstOrDefault(pm => pm.Role == Role.Leader);
+
+        //        return new AvailableProjectViewModel
+        //        {
+        //            Id = p.Id,
+        //            Title = p.Title,
+        //            Description = p.Description,
+        //            CreationDate = p.CreationDate,
+        //            ImageUrl = p.LogoPath,
+        //            LeaderId = leaderMembership?.ResearcherId ?? "غير معروف",
+        //            LeaderFullName = leaderMembership?.Researcher?.User?.FullName ?? "غير معروف"
+        //        };
+        //    }).ToList();
+
+        //    return (result, totalCount);
+        //}
+
+        //------New-------//
+        // ------------- السيناريو الأول: Paging عادي -------------
+        public async Task<(List<AvailableProjectViewModel> Projects, int TotalCount)>
+            GetAvailableProjectsPageAsync(string researcherId, int pageNumber, int pageSize)
         {
-            var (projects, totalCount) = await _unitOfWork.Projects.GetAvailableProjectsForJoinAsync(researcherId, pageNumber, pageSize);
+            var (dtos, totalCount) = await _unitOfWork.Projects
+                .GetAvailableProjectsForJoinAsync(researcherId, pageNumber, pageSize);
 
-            var result = projects.Select(p =>
-            {
-                var leaderMembership = p.ProjectMemberships.FirstOrDefault(pm => pm.Role == Role.Leader);
-
-                return new AvailableProjectViewModel
-                {
-                    Id = p.Id,
-                    Title = p.Title,
-                    Description = p.Description,
-                    CreationDate = p.CreationDate,
-                    ImageUrl = p.LogoPath,
-                    LeaderId = leaderMembership?.ResearcherId ?? "غير معروف",
-                    LeaderFullName = leaderMembership?.Researcher?.User?.FullName ?? "غير معروف"
-                };
-            }).ToList();
-
-            return (result, totalCount);
+            var vms = dtos.Select(MapToVm).ToList();
+            return (vms, totalCount);
         }
+
+        // ------------- السيناريو الثاني: DataTables Server-Side -------------
+        public async Task<DataTableResponse<AvailableProjectViewModel>> GetAvailableProjectsDataTableAsync(
+            string researcherId,
+            int start,
+            int length,
+            string? searchValue,
+            string? sortColumn,
+            string? sortDirection,
+            string? draw)
+        {
+            if (length <= 0) length = 10;
+            if (start < 0) start = 0;
+
+            // الاستعلام الأساسي (بعد شروط "المتاح للانضمام")
+            var baseQuery = _unitOfWork.Projects.GetAvailableProjectsQuery(researcherId);
+
+            // إجمالي السجلات قبل البحث
+            var totalRecords = await baseQuery.CountAsync();
+
+            // تطبيق البحث
+            var filteredQuery = ApplySearch(baseQuery, searchValue);
+
+            // إجمالي بعد البحث
+            var filteredRecords = await filteredQuery.CountAsync();
+
+            // تطبيق الترتيب
+            var sortedQuery = ApplySorting(filteredQuery, sortColumn, sortDirection);
+
+            // Paging
+            var page = await sortedQuery
+                .Skip(start)
+                .Take(length)
+                .ToListAsync();
+
+            // تحويل إلى ViewModel
+            var data = page.Select(MapToVm).ToList();
+
+            return new DataTableResponse<AvailableProjectViewModel>
+            {
+                Draw = draw,
+                RecordsTotal = totalRecords,
+                RecordsFiltered = filteredRecords,
+                Data = data
+            };
+        }
+
+        // ----------------- Helpers -----------------
+
+        private static IQueryable<AvailableProjectDto> ApplySearch(
+            IQueryable<AvailableProjectDto> query, string? search)
+        {
+            if (string.IsNullOrWhiteSpace(search))
+                return query;
+
+            search = search.Trim();
+            return query.Where(p =>
+                (p.Title ?? "").Contains(search) ||
+              //  (p.Description ?? "").Contains(search) ||
+                (p.LeaderFullName ?? "").Contains(search));
+        }
+
+        private static IQueryable<AvailableProjectDto> ApplySorting(
+            IQueryable<AvailableProjectDto> query,
+            string? sortColumn,
+            string? sortDirection)
+        {
+            // الأعمدة المسموحة (طابق أسماء DataTables "columns[i].name")
+            // مثال: name="Title" / "LeaderFullName" / "CreationDate"
+            var dirDesc = string.Equals(sortDirection, "desc", StringComparison.OrdinalIgnoreCase);
+
+            switch (sortColumn)
+            {
+                case "Title":
+                    return dirDesc ? query.OrderByDescending(p => p.Title)
+                                   : query.OrderBy(p => p.Title);
+
+                case "LeaderFullName":
+                    return dirDesc ? query.OrderByDescending(p => p.LeaderFullName)
+                                   : query.OrderBy(p => p.LeaderFullName);
+
+                case "CreationDate":
+                    return dirDesc ? query.OrderByDescending(p => p.CreationDate)
+                                   : query.OrderBy(p => p.CreationDate);
+
+                default:
+                    // ترتيب افتراضي ثابت
+                    return query.OrderByDescending(p => p.CreationDate);
+            }
+        }
+
+        private static AvailableProjectViewModel MapToVm(AvailableProjectDto dto) => new()
+        {
+            Id = dto.Id,
+            Title = dto.Title,
+          //  Description = dto.Description,
+            CreationDate = dto.CreationDate,
+            ImageUrl = dto.ImageUrl,
+            LeaderId = dto.LeaderId,
+            LeaderFullName = dto.LeaderFullName
+        };
+
+
+        public async Task<ProjectDetailsV2ViewModel?> GetProjectDetailsAsync(int projectId)
+        {
+            var dto = await _unitOfWork.Projects.GetProjectDetailsAsync(projectId);
+            if (dto == null) return null;
+
+            return new ProjectDetailsV2ViewModel
+            {
+                Id = dto.Id,
+                Title = dto.Title,
+                Description = dto.Description,
+                CreationDate = dto.CreationDate,
+                ImageUrl = dto.ImageUrl,
+                LeaderId = dto.LeaderId,
+                LeaderFullName = dto.LeaderFullName
+            };
+        }
+        //--------------//
 
 
 

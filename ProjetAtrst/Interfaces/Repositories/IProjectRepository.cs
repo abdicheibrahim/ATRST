@@ -1,15 +1,28 @@
-﻿using ProjetAtrst.Models;
+﻿using ProjetAtrst.DTO;
+using ProjetAtrst.Models;
+using ProjetAtrst.ViewModels.Project;
 
 namespace ProjetAtrst.Interfaces.Repositories
 {
     public interface IProjectRepository : IGenericRepository<Project>
     {
-        //Task<Project?> GetLeaderProjectAsync(string researcherId);
+      
         Task<Project?> GetByIdAsync(int id);
-        Task<(List<Project> Projects, int TotalCount)> GetAvailableProjectsForJoinAsync(string researcherId, int pageNumber, int pageSize);
+        //delete
+       // Task<(List<Project> Projects, int TotalCount)> GetAvailableProjectsForJoinAsync(string researcherId, int pageNumber, int pageSize);
+        //
 
         Task<(string ProjectTitle, string LeaderFullName)> GetProjectInfoAsync(int projectId);
 
+        //new
 
+        Task<(List<AvailableProjectDto> Projects, int TotalCount)>GetAvailableProjectsForJoinAsync(string researcherId, int pageNumber, int pageSize);
+
+        // (اختياري) لاستخدام DataTables: Query قابل للتوسعة (بحث/فرز) في الـ Service
+        IQueryable<AvailableProjectDto> GetAvailableProjectsQuery(string researcherId);
+
+        //
+
+        Task<ProjectDetailsDto?> GetProjectDetailsAsync(int projectId);
     }
 }

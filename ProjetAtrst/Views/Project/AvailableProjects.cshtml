@@ -1,55 +1,166 @@
-@using ProjetAtrst.ViewModels.Project
-@model AvailableProjectsWithPaginationViewModel
-<h2>Projets disponibles pour participer</h2>
+@{
+    ViewData["Title"] = "Liste des projets disponibles";
+}
 
-<div class="table-responsive">
-    <table class="table table-bordered table-striped align-middle shadow-sm">
-        <thead class="table-success">
-            <tr>
-                <th style="width: 80px;">Image</th>
-                <th>Titre</th>
-                <th>Chef de projet</th>
-                <th style="width: 160px;">Action</th>
-            </tr>
-        </thead>
-        <tbody id="projects-list">
-            @foreach (var project in Model.Projects)
-            {
-                <tr>
-                    <td class="text-center">
-                        @if (!string.IsNullOrEmpty(project.ImageUrl))
-                        {
-                            <img src="@project.ImageUrl" alt="Projet" class="img-thumbnail" style="height: 48px; width: auto;" />
-                        }
-                        else
-                        {
-                            <div class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; font-size: 20px;">
-                                @project.Title?.Trim().FirstOrDefault().ToString().ToUpper()
-                            </div>
-                        }
-                    </td>
-                    <td>@project.Title</td>
-                    <td>@project.LeaderFullName</td>
-                    <td>
-                        <a asp-controller="ProjectRequest"
-                           asp-action="Send"
-                           asp-route-projectId="@project.Id"
-                           asp-route-receiverId="@project.LeaderId"
-                           asp-route-type="Join"
-                           class="btn btn-success btn-sm">
-                            Demander à rejoindre
-                        </a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
 
-<div id="pagination-container" class="mt-3 fixed-bottom bg-white shadow p-2">
+<table id="projectsTable" class="table table-striped table-bordered w-100">
+    <thead class="table-success">
+        <tr>
+            <th style="width:72px;">Image</th>
+            <th>Titre</th>
+          
+            <th>Chef de projet</th>
+            <th>Date de création</th>
+            <th style="width:160px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<!-- Modal للتفاصيل -->
+<div class="modal fade" id="projectDetailsModal" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="projectModalLabel">Project details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-md-4 text-center">
+                        <img id="projectModalImage" src="" alt="Project image" class="img-fluid rounded" style="max-height:220px; width:auto;" />
+                    </div>
+                    <div class="col-md-8">
+                        <h4 id="projectModalTitle"></h4>
+                        <p class="mb-1"><strong>Chef de projet:</strong> <span id="projectModalLeader"></span></p>
+                        <p class="mb-1"><strong>Date:</strong> <span id="projectModalDate"></span></p>
+                        <hr />
+                       
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a id="btnJoinModal" href="#" class="btn btn-success">Demander à rejoindre</a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
-     <script src="~/js/available-projects.js"></script> 
-    
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+
+    <script>
+        $(function () {
+            var table = $('#projectsTable').DataTable({
+                processing: true,
+                serverSide: true,
+                searching: true,
+                ajax: {
+                    url: '@Url.Action("LoadProjects", "Project")',
+                    type: 'POST'
+                    // إذا عندك AntiForgery مفعل: أضف الهيدر هنا
+                    // headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() }
+                },
+                columns: [
+                    {
+                        data: 'imageUrl',
+                        orderable: false,
+                               render: function (data, type, row) 
+                               {
+                            if (data) {
+                                return `<img src="${data}" alt="logo"
+                                            class=" d-block mx-auto"
+                                            style="width:48px; height:48px; object-fit:cover; border-radius:8px;" />`;
+                            } else {
+                                const letter = (row.title || '').trim().charAt(0).toUpperCase() || '';
+                                return `<div class="bg-dark text-white d-flex align-items-center justify-content-center mx-auto"
+                                            style="width:48px;height:48px;font-size:20px;border-radius:8px;">
+                                            ${letter}
+                                        </div>`;
+                                }
+                            }
+
+                    },
+                    { data: 'title', name: 'Title' },
+                   
+                    { data: 'leaderFullName', name: 'LeaderFullName' },
+                    {
+                        data: 'creationDate',
+                        name: 'CreationDate',
+                        render: function (data) {
+                            return data ? new Date(data).toLocaleDateString() : '';
+                        }
+                    },
+                    {
+                        data: null,
+                        orderable: false,
+                        render: function (data, type, row) {
+                            // زر التفاصيل وزر طلب الانضمام
+                            var detailsBtn = `<button class="btn btn-sm btn-primary btn-details me-2" data-id="${row.id}">More details</button>`;
+                            var joinUrl = `/ProjectRequest/Send?projectId=${row.id}&receiverId=${row.leaderId}&type=Join`;
+                            var joinBtn = `<a class="btn btn-sm btn-success" href="${joinUrl}">Join</a>`;
+                            return `<div class="d-flex">${detailsBtn}${joinBtn}</div>`;
+                        }
+                    }
+                ],
+                order: [[3, 'desc']], // ترتيب افتراضي حسب creationDate (عمود رقم 3 ابتدائياً)
+                lengthMenu: [10, 25, 50],
+                pageLength: 10
+            });
+
+            // عند الضغط على زر التفاصيل
+            $(document).on('click', '.btn-details', function (e) {
+                e.preventDefault();
+                var id = $(this).data('id');
+                if (!id) return;
+
+                // استدعاء الـ Action Details (GET)
+                $.get('@Url.Action("Details", "Project")', { id: id })
+                         .done(function (resp) {
+            $('#projectModalTitle').text(resp.title || '—');
+            $('#projectModalLeader').text(resp.leaderFullName || '—');
+            $('#projectModalDate').text(resp.creationDate ? new Date(resp.creationDate).toLocaleDateString() : '');
+
+            // صورة أو الحرف الأول
+                   if (resp.imageUrl) {
+            $('#projectModalImage').replaceWith(`
+                <img id="projectModalImage" src="${resp.imageUrl}"
+                     alt="Project image"
+                     class="img-fluid d-block mx-auto"
+                     style="width:120px; height:120px; object-fit:cover; border-radius:12px;" />
+            `);
+        } else {
+            const letter = (resp.title || '').trim().charAt(0).toUpperCase() || '?';
+            $('#projectModalImage').replaceWith(`
+                <div id="projectModalImage"
+                     class="bg-dark text-white d-flex align-items-center justify-content-center mx-auto"
+                     style="width:120px;height:120px;font-size:48px;border-radius:12px;">
+                     ${letter}
+                </div>
+            `);
+        }
+
+
+            // تحديث رابط زر الانضمام داخل المودال
+            var joinHref = `/ProjectRequest/Send?projectId=${resp.id}&receiverId=${resp.leaderId}&type=Join`;
+            $('#btnJoinModal').attr('href', joinHref);
+
+            // إظهار المودال
+            var modalEl = document.getElementById('projectDetailsModal');
+            var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+            modal.show();
+        })
+
+                    .fail(function () {
+                        alert('تعذر جلب تفاصيل المشروع.');
+                    });
+            });
+        });
+    </script>
 }
