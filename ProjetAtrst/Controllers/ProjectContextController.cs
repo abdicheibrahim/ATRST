@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProjetAtrst.Controllers;
 using ProjetAtrst.Enums;
+using ProjetAtrst.Helpers;
 using ProjetAtrst.Interfaces.Services;
 using ProjetAtrst.Models;
 using ProjetAtrst.ViewModels.Project;
@@ -12,11 +13,13 @@ public class ProjectContextController : ProjectContextBaseController
     private readonly IProjectService _projectService;
     private readonly IProjectRequestService _requestService;
     private readonly IResearcherService _researcherService;
+   
     public ProjectContextController(IProjectService projectService, IProjectRequestService requestService, IResearcherService researcherService)
     {
         _projectService = projectService;
         _requestService = requestService;
         _researcherService = researcherService;
+      
     }
 
     public IActionResult Enter(int projectId)
@@ -45,26 +48,42 @@ public class ProjectContextController : ProjectContextBaseController
     {
         var projectId = (int?)ViewBag.CurrentProjectId;
         if (projectId == null) return RedirectToAction("Index");
+
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userId == null) return Forbid();
+
         var model = await _projectService.GetProjectForEditAsync(userId, projectId.Value);
         if (model == null) return Forbid();
 
+        ViewData["Title"] = $"Modifier le projet: {model.Title}";
         return View(model);
     }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(ProjectEditViewModel model)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null) return Forbid();
 
-        if (!ModelState.IsValid)  return View(model);
+        if (!ModelState.IsValid)
+        {
+            ViewData["Title"] = $"Modifier le projet: {model.Title}";
+            return View(model);
+        }
+
         var success = await _projectService.UpdateProjectAsync(userId, model);
-        if (!success)  return Forbid();
+        if (!success) return Forbid();
+
         TempData["ShowSuccessModal"] = true;
         TempData["SuccessTitle"] = "Parfait !";
         TempData["SuccessMessage"] = "Les données ont été modifiées avec succès.";
-        return RedirectToAction("Edit");
+
+        // إعادة تحميل النموذج للحصول على البيانات المحدثة
+        var updatedModel = await _projectService.GetProjectForEditAsync(userId, model.Id);
+        ViewData["Title"] = $"Modifier le projet: {updatedModel?.Title ?? model.Title}";
+
+        return View(updatedModel ?? model);
     }
 
 
@@ -125,17 +144,6 @@ public class ProjectContextController : ProjectContextBaseController
 
     //-------------------- Update Project Context --------------------
 
-    //[HttpGet]
-    //public async Task<IActionResult> SendInvitations()
-    //{
-    //    var projectId = HttpContext.Session.GetInt32("CurrentProjectId");
-    //    if (projectId == null)
-    //        return RedirectToAction("Index");
-
-    //    var candidates = await _researcherService.GetAvailableResearchersForInvitationAsync(projectId.Value);
-    //    ViewBag.CurrentProjectId = projectId.Value;
-    //    return View(candidates);
-    //}
 
     [HttpGet]
     public async Task<IActionResult> SendInvitations(int page = 1, int pageSize = 6)
@@ -166,8 +174,6 @@ public class ProjectContextController : ProjectContextBaseController
         return View(viewModel);
     }
 
-
-
     [HttpPost]
     public async Task<IActionResult> SendInvitation(string researcherId)
     {
@@ -180,4 +186,5 @@ public class ProjectContextController : ProjectContextBaseController
         return RedirectToAction("SendInvitations");
     }
 
+    
 }

@@ -1,82 +1,76 @@
-﻿
-
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ProjetAtrst.ViewModels.Project
 {
     public class ProjectCreateViewModel
     {
-        
-        public bool IsAcceptingJoinRequests { get; set; } = true;
-        // === 1. Informations de base ===
-        [Required(ErrorMessage = "Le titre est requis")]
+        [Required(ErrorMessage = "Le titre du projet est obligatoire.")]
+        [StringLength(200, ErrorMessage = "Le titre ne doit pas dépasser 200 caractères.")]
         [Display(Name = "Titre du projet")]
-        public string Title { get; set; } = string.Empty;
+        public string Title { get; set; }
 
-        [Display(Name = "Mots-clés")]
-        public string? Keywords { get; set; }
+        [Required(ErrorMessage = "Le PNR est obligatoire.")]
+        [Display(Name = "PNR")]
+        public string PNR { get; set; }
 
+        [Required(ErrorMessage = "La nature du projet est obligatoire.")]
+        [Display(Name = "Nature du projet")]
+        public string Nature { get; set; }
+
+        [Required(ErrorMessage = "Le domaine est obligatoire.")]
         [Display(Name = "Domaine")]
-        public string? Domain { get; set; }
+        public string Domain { get; set; }
 
         [Display(Name = "Axe")]
-        public string? Axis { get; set; }
+        public string Axis { get; set; }
 
         [Display(Name = "Thème")]
-        public string? Theme { get; set; }
-        [Display(Name = "Programme national de recherche")]
-        public string? PNR { get; set; }
+        public string Theme { get; set; }
 
-        [Display(Name = "Nature du projet")]
-        public string? Nature { get; set; }
+        [Display(Name = "Mots-clés")]
+        public List<string> Keywords { get; set; } = new List<string>();
+
+        [Display(Name = "Établissement d'accueil")]
+        public string HostInstitution { get; set; }
 
         [Display(Name = "Niveau TRL")]
-        public string? TRL { get; set; }
+        public string TRL { get; set; }
 
-        [Display(Name = "Durée (en mois)")]
-        [Range(1, 60, ErrorMessage = "La durée doit être comprise entre 1 et 60 mois")]
-        public int DurationInMonths { get; set; } = 36;
+        [Required(ErrorMessage = "La durée est obligatoire.")]
+        [Range(1, 60, ErrorMessage = "La durée doit être entre 1 et 60 mois.")]
+        [Display(Name = "Durée (mois)")]
+        public int DurationInMonths { get; set; }
 
-        [Display(Name = "Établissement d’accueil")]
-        public string? HostInstitution { get; set; }
+        [Display(Name = "Autoriser les chercheurs à demander à rejoindre ce projet")]
+        public bool IsAcceptingJoinRequests { get; set; }
 
-        // === 2. Présentation du projet ===
         [Display(Name = "État des lieux")]
-        public string? CurrentState { get; set; }
+        [StringLength(2000, ErrorMessage = "L'état des lieux ne doit pas dépasser 2000 caractères.")]
+        public string CurrentState { get; set; }
 
         [Display(Name = "Motivations du projet")]
-        public string? Motivation { get; set; }
+        [StringLength(2000, ErrorMessage = "Les motivations ne doivent pas dépasser 2000 caractères.")]
+        public string Motivation { get; set; }
 
         [Display(Name = "Méthodologie")]
-        public string? Methodology { get; set; }
+        [StringLength(3000, ErrorMessage = "La méthodologie ne doit pas dépasser 3000 caractères.")]
+        public string Methodology { get; set; }
 
-        // === 3. Résultats attendus et impact ===
         [Display(Name = "Partenaire socio-économique")]
-        public string? SocioEconomicPartner { get; set; }
-
-        [Display(Name = "Résultats attendus")]
-        public string? ExpectedResults { get; set; }
+        public string SocioEconomicPartner { get; set; }
 
         [Display(Name = "Secteurs cibles")]
-        public string? TargetSectors { get; set; }
+        public string TargetSectors { get; set; }
+
+        [Display(Name = "Résultats attendus")]
+        [StringLength(2000, ErrorMessage = "Les résultats attendus ne doivent pas dépasser 2000 caractères.")]
+        public string ExpectedResults { get; set; }
 
         [Display(Name = "Impact socio-économique")]
-        public string? Impact { get; set; }
+        [StringLength(2000, ErrorMessage = "L'impact ne doit pas dépasser 2000 caractères.")]
+        public string Impact { get; set; }
 
-        // === 4. Références ===
-        [Display(Name = "Références bibliographiques (liste séparée par des lignes)")]
-        public List<string>? References { get; set; } 
-
-        // === 5. Fichier du logo ===
-        //[Display(Name = "Logo du projet (facultatif)")]
-        //public IFormFile? LogoFile { get; set; }
-
-        // === Dropdown Lists  ===
-        public List<SelectListItem>? DomainsList { get; set; }
-        public List<SelectListItem>? AxesList { get; set; }
-        public List<SelectListItem>? ThemesList { get; set; }
-        public List<SelectListItem>? NaturesList { get; set; }
-        public List<SelectListItem>? TRLLevelsList { get; set; }
-        public List<SelectListItem>? PNRList { get; set; }
+        [Display(Name = "Références bibliographiques")]
+        public string References { get; set; }
     }
 }

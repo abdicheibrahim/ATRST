@@ -7,10 +7,10 @@
     Layout = "_LayoutResearcher";
 }
 
-<h2 class="mb-4"><i class="bi bi-plus-square "></i> @ViewData["Title"]</h2>
+<h2 class="mb-4"><i class="bi bi-plus-square"></i> @ViewData["Title"]</h2>
 
 <form asp-action="Create" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
-    @* <div class="row shadow-sm g-4 p-4 mt-3 bg-white border rounded"> *@
+
     <div class="row shadow-sm g-3 needs-validation p-3 mb-5 mt-3 bg-white border rounded">
         <!-- === 1. Informations de base === -->
         <h5>1. Informations de base</h5>
@@ -41,8 +41,7 @@
             <span asp-validation-for="Nature" class="text-danger"></span>
         </div>
 
-
-        <!-- Nature du projet -->
+        <!-- Domaine du projet -->
         <input type="hidden" asp-for="Domain" id="DomainHidden" />
         <div class="col-md-6">
             <label class="form-label">Domaine</label>
@@ -58,7 +57,7 @@
             <label class="form-label">Axe</label>
             <select class="form-select" id="AxisSelect"></select>
             <input type="text" id="customAxis" class="form-control mt-2 d-none"
-                   placeholder="Entrez le Axis" />
+                   placeholder="Entrez le Axe" />
             <span asp-validation-for="Axis" class="text-danger"></span>
         </div>
 
@@ -68,7 +67,7 @@
             <label class="form-label">Thème</label>
             <select class="form-select" id="ThemeSelect"></select>
             <input type="text" id="customTheme" class="form-control mt-2 d-none"
-                   placeholder="Entrez le Theme" />
+                   placeholder="Entrez le Thème" />
             <span asp-validation-for="Theme" class="text-danger"></span>
         </div>
 
@@ -80,12 +79,12 @@
         </div>
 
         <div class="col-md-6">
-            <label asp-for="HostInstitution" class="form-label">Établissement d’accueil</label>
+            <label asp-for="HostInstitution" class="form-label">Établissement d'accueil</label>
             <input asp-for="HostInstitution" class="form-control" />
         </div>
 
         <!-- Niveau TRL du projet -->
-        <input type="hidden" asp-for="TRL" id="ThemeHidden" />
+        <input type="hidden" asp-for="TRL" id="TRLHidden" />
         <div class="col-md-6">
             <label class="form-label">Niveau TRL</label>
             <select class="form-select" id="TRLSelect"></select>
@@ -94,14 +93,13 @@
             <span asp-validation-for="TRL" class="text-danger"></span>
         </div>
 
-
         <div class="col-md-6">
             <label asp-for="DurationInMonths" class="form-label">Durée (mois)</label>
             <input asp-for="DurationInMonths" class="form-control" type="number" min="1" max="60" />
             <span asp-validation-for="DurationInMonths" class="text-danger"></span>
         </div>
 
-        <div class="col-md-12 form-check mt-3  form-switch  h-25">
+        <div class="col-md-12 form-check mt-3 form-switch h-25">
             <input type="checkbox" class="form-check-input" asp-for="IsAcceptingJoinRequests" />
             <label class="form-check-label" asp-for="IsAcceptingJoinRequests">
                 Autoriser les chercheurs à demander à rejoindre ce projet
@@ -109,9 +107,10 @@
         </div>
 
     </div>
+
     <!-- === 2. Présentation du projet === -->
     <div class="row shadow-sm g-3 needs-validation p-3 mb-5 mt-3 bg-white border rounded">
-        
+
         <h5 class="mt-4">2. Présentation du projet</h5>
 
         <div class="col-md-12">
@@ -126,9 +125,10 @@
 
         <div class="col-md-12">
             <label asp-for="Methodology" class="form-label">Méthodologie</label>
-            <textarea asp-for="Methodology" class="form-control Description"  rows="3"></textarea>
+            <textarea asp-for="Methodology" class="form-control Description" rows="3"></textarea>
         </div>
     </div>
+
     <!-- === 3. Résultats attendus === -->
     <div class="row shadow-sm g-3 needs-validation p-3 mb-5 mt-3 bg-white border rounded">
 
@@ -155,7 +155,7 @@
         </div>
     </div>
 
-        <!-- === 4. Références === -->
+    <!-- === 4. Références === -->
     <div class="row shadow-sm g-3 needs-validation p-3 mb-5 mt-3 bg-white border rounded">
 
         <h5 class="mt-4">4. Références bibliographiques</h5>
@@ -168,7 +168,7 @@
         </div>
     </div>
 
-        <!-- === Submit === -->
+    <!-- === Submit === -->
     <div class="row shadow-sm g-3 needs-validation p-3 mb-5 mt-3 bg-white border rounded">
 
         <div class="col-12 d-flex justify-content-between mt-4">
@@ -181,67 +181,62 @@
         </div>
     </div>
 </form>
-
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <!-- تحسين تحميل المكتبات -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css  " rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js  "></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+
     <!-- Summernote CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.css  " rel="stylesheet">
 
     <!-- Summernote JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.js  "></script>
 
     <script>
-                $(document).ready(function () {
-                    $('.Description').summernote({
-                    height: 300,
-                    lang: 'fr-FR', // أو 'ar-AR'
-                    placeholder: 'Entrez la description du projet ici...',
-                    toolbar: [
-
-                        ['font', ['bold', 'italic', 'underline', 'clear']],
-                            ['fontsize', ['fontsize']],
-                ['color', ['color']],
-                        ['para', ['ul', 'ol', 'paragraph']],
-                        ['insert', ['link']],
-                        ['view', ['codeview']]
-                    ],
-
-                });
-
-                });
+        $(document).ready(function () {
+            $('.Description').summernote({
+                height: 300,
+                lang: 'fr-FR',
+                placeholder: 'Entrez la description du projet ici...',
+                toolbar: [
+                    ['font', ['bold', 'italic', 'underline', 'clear']],
+                    ['fontsize', ['fontsize']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['insert', ['link']],
+                    ['view', ['codeview']]
+                ]
+            });
+        });
     </script>
 
-    <!-- JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    
     <script>
         $(document).ready(function() {
             $('.select2-keywords').select2({
-                tags: true, // يسمح بإنشاء علامات جديدة
-                tokenSeparators: [','], // يفصل بين الكلمات باستخدام الفاصلة
+                tags: true,
+                tokenSeparators: [','],
                 placeholder: "Mots-clés séparés par des virgules",
                 allowClear: true,
                 width: '100%'
             });
 
-            // إذا كانت هناك قيم موجودة مسبقاً
-            var existingKeywords = '@Model.Keywords';
-            if (existingKeywords) {
-                var keywordsArray = existingKeywords.split(',').map(function(item) {
-                    return item.trim();
-                });
-                $('.select2-keywords').val(keywordsArray).trigger('change');
+            // تحميل الكلمات المفتاحية الموجودة مسبقاً
+            @if (Model.Keywords != null && Model.Keywords.Any())
+            {
+                        <text>
+                        var existingKeywords = @Html.Raw(JsonSerializer.Serialize(Model.Keywords));
+                        if (existingKeywords && existingKeywords.length > 0) {
+                            $('.select2-keywords').val(existingKeywords).trigger('change');
+                        }
+                        </text>
             }
         });
     </script>
-
-
-        <!-- Search in the input field -->
-
-
     <script>
-        // مزامنة القيم مع الحقول المخفية -- وتجاهل placeholder كنص مرسل
+        // مزامنة القيم مع الحقول المخفية
         function syncField(selectId, inputId, hiddenId) {
             const $sel = $('#' + selectId);
             const val = $sel.val();
@@ -249,14 +244,11 @@
             const isOther = (val === 'Autre' || val === 'Other');
 
             if (isOther) {
-                // إذا اخترنا "Autre" نُظهر الحقل اليدوي ونأخذ منه القيمة
                 $('#' + inputId).removeClass('d-none').attr('required', 'required');
                 $('#' + hiddenId).val($('#' + inputId).val().trim());
             } else {
-                // إخفاء الحقل اليدوي
                 $('#' + inputId).addClass('d-none').removeAttr('required').val('');
 
-                // نتأكد أنّ القيمة المرسلة ليست فارغة أو نفس نص الـ placeholder
                 if (val === null || val === undefined || val === '' || val === placeholder) {
                     $('#' + hiddenId).val('');
                 } else {
@@ -265,11 +257,9 @@
             }
         }
 
-        // تهيئة Select2 مع وضع data-placeholder للمقارنة لاحقًا
+        // تهيئة Select2
         function initSelect2(selector, type, placeholder, appendAutre = true, minimumInputLength = 2, endpointUrl) {
             const url = endpointUrl || '@Url.Action("SearchDropdown", "Project")';
-
-            // خزّن النص كـ data attribute للمقارنة لاحقًا
             $(selector).attr('data-placeholder', placeholder);
 
             $(selector).select2({
@@ -289,7 +279,6 @@
                     },
                     delay: 200,
                     processResults: function (data) {
-                        // نتأكد من أن البيانات بصيغة { id, text }
                         if (appendAutre && !data.some(d => (d.id || d.value) === 'Autre')) {
                             data.push({ id: 'Autre', text: 'Autre' });
                         }
@@ -298,7 +287,6 @@
                 }
             });
 
-            // تركيز تلقائي داخل حقل البحث عند الفتح
             $(selector).on('select2:open', function () {
                 setTimeout(function () {
                     document.querySelector('.select2-container--open .select2-search__field')?.focus();
@@ -322,7 +310,7 @@
             }
         }
 
-        // تعيين قيمة ابتدائية (نتجاهل null / undefined / '' لكن نسمح بـ 0)
+        // تعيين قيمة ابتدائية
         function setInitialValue(selector, value, text) {
             if (value === null || value === undefined || value === '') return;
             const option = new Option(text || value, value, true, true);
@@ -331,11 +319,10 @@
 
         $(document).ready(function () {
             // 1) تهيئة القوائم
-           // initSelect2('#establishmentSelect', 'Establishments', '-- Sélectionnez l\'établissement --', true, 2);
-            initSelect2('#PNRSelect', 'PNR', '-- Sélectionnez un PNR --', false, 0); // صفر لعرض بدون كتابة
-            initSelect2('#NatureSelect', 'Nature', '-- Sélectionnez un Nature --', true, 0);
-            initSelect2('#DomainSelect', 'Domains', '-- Sélectionnez un Domain --', false, 0);
-            initSelect2('#ThemeSelect', 'Theme', '-- Sélectionnez un Theme --', false, 0);
+            initSelect2('#PNRSelect', 'PNR', '-- Sélectionnez un PNR --', false, 0);
+            initSelect2('#NatureSelect', 'Nature', '-- Sélectionnez une Nature --', true, 0);
+            initSelect2('#DomainSelect', 'Domains', '-- Sélectionnez un Domaine --', true, 0);
+            initSelect2('#ThemeSelect', 'Theme', '-- Sélectionnez un Thème --', false, 0);
             initSelect2('#AxisSelect', 'Axis', '-- Sélectionnez un Axe --', false, 0);
             initSelect2('#TRLSelect', 'TRL', '-- Sélectionnez un TRL --', false, 0);
 
@@ -348,19 +335,19 @@
             const initTRL = @Html.Raw(JsonSerializer.Serialize(Model.TRL));
 
             setInitialValue('#PNRSelect', initPNR);
-            setInitialValue('#NaturetSelect', initNature);
-            setInitialValue('#NDomainSelect', initDomain);
-             setInitialValue('#ThemeSelect', initTheme);
-             setInitialValue('#AxisSelect', initAxis);
-             setInitialValue('#TRLSelect', initTRL);
+            setInitialValue('#NatureSelect', initNature);
+            setInitialValue('#DomainSelect', initDomain);
+            setInitialValue('#ThemeSelect', initTheme);
+            setInitialValue('#AxisSelect', initAxis);
+            setInitialValue('#TRLSelect', initTRL);
 
-            // 3) تفعيل/تعطيل الإدخال اليدوي حسب القيمة الحالية
+            // 3) تفعيل/تعطيل الإدخال اليدوي
             toggleCustomInput('PNRSelect', 'customPNR');
             toggleCustomInput('NatureSelect', 'customNature');
             toggleCustomInput('DomainSelect', 'customDomain');
-             toggleCustomInput('ThemeSelect', 'customTheme');
-             toggleCustomInput('AxisSelect', 'customAxis');
-             toggleCustomInput('TRLSelect', 'customTRL');
+            toggleCustomInput('ThemeSelect', 'customTheme');
+            toggleCustomInput('AxisSelect', 'customAxis');
+            toggleCustomInput('TRLSelect', 'customTRL');
 
             $('#PNRSelect').on('change', function () {
                 toggleCustomInput('PNRSelect', 'customPNR');
@@ -381,115 +368,15 @@
                 toggleCustomInput('TRLSelect', 'customTRL');
             });
 
-            // 4) مزامنة قبل الإرسال (نمنع إرسال نص placeholder)
+            // 4) مزامنة قبل الإرسال
             $('form').on('submit', function () {
                 syncField('PNRSelect', 'customPNR', 'PNRHidden');
                 syncField('NatureSelect', 'customNature', 'NatureHidden');
-                syncField('DomainSelect', 'DomainNature', 'DomainHidden');
-                 syncField('ThemeSelect', 'customTheme', 'ThemeHidden');
-                 syncField('AxisSelect', 'customAxis', 'AxisHidden');
-                 syncField('TRLSelect', 'customTRL', 'TRLHidden');
+                syncField('DomainSelect', 'customDomain', 'DomainHidden');
+                syncField('ThemeSelect', 'customTheme', 'ThemeHidden');
+                syncField('AxisSelect', 'customAxis', 'AxisHidden');
+                syncField('TRLSelect', 'customTRL', 'TRLHidden');
             });
         });
     </script>
-
-        <!--// Search in the input field //--> 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    @* <script>
-        function initSelect2(selector, type, placeholder, minimumInputLength = 2) {
-            $(selector).select2({
-                theme: 'bootstrap-5',
-                width: '100%',
-                placeholder: placeholder,
-                minimumInputLength: minimumInputLength,
-                ajax: {
-                    url: '@Url.Action("SearchDropdown", "Project")', // غيّر "Projects" إذا كان اسم الكنترولر مختلف
-                    data: function (params) {
-                        return {
-                            term: params.term || '',
-                            type: type,
-                            take: 25
-                        };
-                    },
-                    delay: 200,
-                    processResults: function (data) {
-                        // دائماً نضيف خيار Autre لقائمة Domains
-                        if (type.toLowerCase() === 'domains') {
-                            if (!data.some(d => d.id === 'Autre')) {
-                                data.push({ id: 'Autre', text: 'Autre' });
-                            }
-                        }
-                        return { results: data };
-                    }
-                }
-            });
-
-            // تركيز تلقائي في حقل البحث عند الفتح
-            $(selector).on('select2:open', function () {
-                setTimeout(function () {
-                    document.querySelector('.select2-container--open .select2-search__field')?.focus();
-                }, 0);
-            });
-        }
-
-        function toggleCustomInput(selectId, inputId) {
-            const val = $(`#${selectId}`).val();
-            if (val === 'Autre' || val === 'Other') {
-                $(`#${inputId}`).removeClass('d-none').attr("required", "required");
-            } else {
-                $(`#${inputId}`).addClass('d-none').removeAttr("required");
-            }
-        }
-
-        $(document).ready(function () {
-            initSelect2('#DomainSelect', 'Domains', 'اختر المجال...');
-            initSelect2('#AxeSelect', 'Axes', 'اختر المحور...');
-            initSelect2('#ThemeSelect', 'Themes', 'اختر الثيم...');
-            initSelect2('#NatureSelect', 'Natures', 'اختر الطبيعة...');
-            initSelect2('#TrlSelect', 'TRLLevels', 'اختر المستوى...');
-            initSelect2('#PnrSelect', 'PNR', 'اختر PNR...');
-
-            $('#DomainSelect').on('change', function () {
-                toggleCustomInput('DomainSelect', 'customDomain');
-            });
-
-            // في حال رجوع الصفحة بسبب فشل التحقق وكان هناك قيمة مختارة مسبقاً (Server-side)
-            // يمكنك تعيين قيمة ابتدائية بإضافة Option ديناميكي:
-            const initialDomain = '@(Model?.Domain ?? "")';
-            if (initialDomain) {
-                const opt = new Option(initialDomain, initialDomain, true, true);
-                $('#DomainSelect').append(opt).trigger('change');
-            }
-        });
-    </script> *@
-
 }
-
-
-

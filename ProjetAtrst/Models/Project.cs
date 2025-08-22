@@ -35,7 +35,7 @@ namespace ProjetAtrst.Models
         [Required]
         public string Title { get; set; } = string.Empty;
 
-        public string? Keywords { get; set; }
+        public List<string> Keywords { get; set; } = new List<string>();
 
         public string? Domain { get; set; }
         public string? Axis { get; set; }

@@ -10,48 +10,10 @@ namespace ProjetAtrst.Repositories
     {
         public ProjectRepository(ApplicationDbContext context) : base(context) { }
         
-        //Verified
         public async Task<Project?> GetByIdAsync(int id)
         {
             return await _dbSet.FindAsync(id);
         }
-
-        // delete
-        //public async Task<(List<Project> Projects, int TotalCount)> GetAvailableProjectsForJoinAsync(string researcherId, int pageNumber, int pageSize)
-        //{
-        //    var joinedProjectIds = await _context.ProjectMemberships
-        //        .Where(pm => pm.ResearcherId == researcherId)
-        //        .Select(pm => pm.ProjectId)
-        //        .ToListAsync();
-
-        //    var requestedProjectIds = await _context.ProjectRequests
-        //        .Where(j => j.SenderId == researcherId)
-        //        .Select(j => j.ProjectId)
-        //        .ToListAsync();
-
-        //    var query = _context.Projects
-        //        .Where(p =>
-        //            p.ProjectStatus == ProjectStatus.Open &&
-        //            p.IsAcceptingJoinRequests &&
-        //            !joinedProjectIds.Contains(p.Id) &&
-        //            !requestedProjectIds.Contains(p.Id)
-        //        )
-        //        .Include(p => p.ProjectMemberships)
-        //            .ThenInclude(pm => pm.Researcher)
-        //                .ThenInclude(r => r.User);
-
-        //    var totalCount = await query.CountAsync();
-
-        //    var projects = await query
-        //        .Skip((pageNumber - 1) * pageSize)
-        //        .Take(pageSize)
-        //        .ToListAsync();
-
-        //    return (projects, totalCount);
-        //}
-
-        //
-
         public async Task<(string ProjectTitle, string LeaderFullName)> GetProjectInfoAsync(int projectId)
         {
              var result = await _context.ProjectMemberships
@@ -72,11 +34,7 @@ namespace ProjetAtrst.Repositories
 
             return (result.ProjectTitle, result.LeaderFullName);
         }
-
-
-        // new
-
-        // أساس الاستعلام (بدون Paging) – نستخدم NOT EXISTS لتفادي تحميل قوائم IDs
+        //-- for get available projects for join--//
         private IQueryable<Project> BaseAvailableQuery(string researcherId)
         {
             return _context.Projects
@@ -87,8 +45,6 @@ namespace ProjetAtrst.Repositories
                     !_context.ProjectRequests.Any(r => r.SenderId == researcherId && r.ProjectId == p.Id)
                 );
         }
-
-        // إسقاط (Projection) إلى DTO مع استخراج الـ Leader عبر الـ Memberships
         public IQueryable<AvailableProjectDto> GetAvailableProjectsQuery(string researcherId)
         {
             return BaseAvailableQuery(researcherId)
@@ -112,9 +68,7 @@ namespace ProjetAtrst.Repositories
                 })
                 .AsNoTracking();
         }
-
-        public async Task<(List<AvailableProjectDto> Projects, int TotalCount)>
-            GetAvailableProjectsForJoinAsync(string researcherId, int pageNumber, int pageSize)
+        public async Task<(List<AvailableProjectDto> Projects, int TotalCount)> GetAvailableProjectsForJoinAsync(string researcherId, int pageNumber, int pageSize)
         {
             if (pageNumber < 1) pageNumber = 1;
             if (pageSize <= 0) pageSize = 10;
@@ -149,7 +103,7 @@ namespace ProjetAtrst.Repositories
 
             return (page, totalCount);
         }
-
+        //---------------------//
         public async Task<ProjectDetailsDto?> GetProjectDetailsAsync(int projectId)
         {
             return await _context.Projects
@@ -173,5 +127,42 @@ namespace ProjetAtrst.Repositories
                 .AsNoTracking()
                 .FirstOrDefaultAsync();
         }
+
+        //--- New methods for project management ---//
+        public async Task<Project?> GetProjectForEditAsync(int projectId)
+        {
+            return await _context.Projects
+                .Include(p => p.ProjectMemberships)
+                .FirstOrDefaultAsync(p => p.Id == projectId);
+        }
+        public async Task<bool> UpdateProjectAsync(Project project)
+        {
+            try
+            {
+                _context.Projects.Update(project);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        public async Task<bool> IsUserProjectLeaderAsync(int projectId, string userId)
+        {
+            return await _context.ProjectMemberships
+                .AnyAsync(pm => pm.ProjectId == projectId &&
+                              pm.ResearcherId == userId &&
+                              pm.Role == Role.Leader);
+        }
+        public async Task<Project?> GetProjectWithMembersAsync(int projectId)
+        {
+            return await _context.Projects
+                .Include(p => p.ProjectMemberships)
+                .ThenInclude(m => m.Researcher)
+                .ThenInclude(r => r.User)
+                .FirstOrDefaultAsync(p => p.Id == projectId);
+        }
+        //-------------------//
     }
 }

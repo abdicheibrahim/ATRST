@@ -24,62 +24,56 @@ namespace ProjetAtrst.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            ViewData["Title"] = "Create a new project";
-
-            var model = new ProjectCreateViewModel
-            {
-                // لم نعد بحاجة لتحميل القوائم هنا لأن التحميل صار عبر AJAX
-                //DomainsList = default,
-                //AxesList = default,
-                //ThemesList = default,
-                //NaturesList = default,
-                //TRLLevelsList = default,
-                //PNRList = default,
-            };
-
-            return View(model);
+            ViewData["Title"] = "Créer un nouveau projet";
+            return View(new ProjectCreateViewModel());
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProjectCreateViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                // لم نعد بحاجة لإعادة تعبئة القوائم لأن الـ Select2 يعمل بالـ AJAX
-                //model.DomainsList = default;
-                //model.AxesList = default;
-                //model.ThemesList = default;
-                //model.NaturesList = default;
-                //model.TRLLevelsList = default;
-                //model.PNRList = default;
-
                 return View(model);
             }
 
-            var researcherId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(researcherId))
-                return Forbid();
+            try
+            {
+                var researcherId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(researcherId))
+                    return Forbid();
 
-            await _projectService.CreateProjectAsync(model, researcherId);
-            TempData["SuccessMessage"] = "Le projet a été créé avec succès.";
-            
-           
-            return RedirectToAction("MyProjects");
+                await _projectService.CreateProjectAsync(model, researcherId);
+
+                TempData["SuccessMessage"] = "Le projet a été créé avec succès.";
+                return RedirectToAction("MyProjects");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Une erreur s'est produite lors de la création du projet. Veuillez réessayer.");
+                return View(model);
+            }
         }
-
-        // نقطة البحث الموحدة لكل القوائم
+       
         [HttpGet]
         public IActionResult SearchDropdown(string type, string term, int take = 25)
         {
             if (string.IsNullOrWhiteSpace(type))
                 return BadRequest("Missing type");
 
-            var list = _staticDataLoader.SearchList(type, term, take);
+            if (take <= 0) take = 25;
+            if (take > 100) take = 100;
 
-            // Select2 يتوقع id/text
-            var data = list.Select(x => new { id = x.Value, text = x.Text }).ToList();
-
-            return Json(data);
+            try
+            {
+                var list = _staticDataLoader.SearchList(type, term, take);
+                var data = list.Select(x => new { id = x.Value, text = x.Text }).ToList();
+                return Json(data);
+            }
+            catch
+            {
+                return Json(new List<object>());
+            }
         }
 
         [HttpGet]

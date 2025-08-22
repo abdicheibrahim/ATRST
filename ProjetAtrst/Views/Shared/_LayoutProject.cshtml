@@ -1,6 +1,6 @@
 @{
     Layout = null;
-    var projectId = ViewBag.CurrentProjectId ?? 0;
+    // var projectId = ViewBag.CurrentProjectId ?? 0;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -45,25 +45,25 @@
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-links">
-            <a asp-controller="ProjectContext" asp-action="Index" asp-route-projectId="@projectId"
+            <a asp-controller="ProjectContext" asp-action="Index"
                class="nav-link @(IsActive("ProjectContext","Index"))">
                 <i class="bi bi-house-door"></i> Accueil
             </a>
             <hr />
-            <a asp-controller="ProjectContext" asp-action="Invitation" asp-route-projectId="@projectId"
+            <a asp-controller="ProjectContext" asp-action="Invitation" 
                class="nav-link @(IsActive("ProjectContext","Invitation"))">
                 <i class="bi bi-send-arrow-down"></i> Invitations à rejoindre
             </a>
-            <a asp-controller="ProjectContext" asp-action="Requests" asp-route-projectId="@projectId"
+            <a asp-controller="ProjectContext" asp-action="Requests" 
                class="nav-link @(IsActive("ProjectContext","Requests"))">
                 <i class="bi bi-envelope-arrow-down"></i> Demandes d'adhésion
             </a>
-            <a asp-controller="ProjectContext" asp-action="Members" asp-route-projectId="@projectId"
+            <a asp-controller="ProjectContext" asp-action="Members" 
                class="nav-link @(IsActive("ProjectContext","Members"))">
                 <i class="bi bi-people"></i> Membres
             </a>
             <hr />
-            <a asp-controller="ProjectContext" asp-action="Edit" asp-route-projectId="@projectId"
+            <a asp-controller="ProjectContext" asp-action="Edit" 
                class="nav-link @(IsActive("ProjectContext","Edit"))">
                 <i class="bi bi-pencil-square"></i> Modifier le projet
             </a>
