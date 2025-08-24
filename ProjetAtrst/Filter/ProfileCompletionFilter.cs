@@ -4,11 +4,13 @@ using ProjetAtrst.Interfaces.Services;
 
 public class ProfileCompletionFilter : IAsyncActionFilter
 {
-    private readonly IResearcherService _researcherService;
+   
+    private readonly IUserService _userService;
 
-    public ProfileCompletionFilter(IResearcherService researcherService)
+    public ProfileCompletionFilter(IResearcherService researcherService,IUserService userService)
     {
-        _researcherService = researcherService;
+       
+        _userService = userService;
     }
 
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
@@ -21,7 +23,7 @@ public class ProfileCompletionFilter : IAsyncActionFilter
 
             if (!string.IsNullOrEmpty(userId))
             {
-                var isProfileComplete = await _researcherService.IsProfileCompleteAsync(userId);
+                var isProfileComplete = await _userService.IsProfileCompleteAsync(userId);
 
                 if (!isProfileComplete)
                 {

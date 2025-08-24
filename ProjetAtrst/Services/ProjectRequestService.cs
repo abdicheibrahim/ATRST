@@ -199,7 +199,7 @@ public class ProjectRequestService : IProjectRequestService
         string receiverName = null;
         if (type == RequestType.Invitation)
         {
-            var user = await _unitOfWork.Users.GetUserWithResearcherAsync(receiverId);
+            var user = await _unitOfWork.Users.GetByIdAsync(receiverId);
             receiverName = user != null ? user.FullName  : "Anonymous";
         }
 

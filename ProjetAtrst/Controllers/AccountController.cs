@@ -32,14 +32,14 @@ namespace ProjetAtrst.Controllers
         // GET: /Account/Register
         public IActionResult Register() => View();
 
-        // POST: /Account/Register
+        // POST: /Account/Register 
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
 
-            var result = await _researcherService.RegisterNewResearcherAsync(model);
+            var result = await _userService.RegisterNewAccountAsync(model);
             if (result.Succeeded)
                 return RedirectToAction("Index", "Dashboard");
 
@@ -68,8 +68,6 @@ namespace ProjetAtrst.Controllers
             ModelState.AddModelError("", "Invalid login attempt.");
             return View(model);
         }
-
-
 
         // GET: /Account/Logout
         public async Task<IActionResult> Logout()

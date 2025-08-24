@@ -8,6 +8,7 @@ namespace ProjetAtrst.Models
         Accepted,
         Rejected
     }
+ 
     public class Researcher
     {
         [Key]
@@ -18,35 +19,24 @@ namespace ProjetAtrst.Models
         [Required]
         public ApplicationUser User { get; set; } = default!;
 
-        [MaxLength(255)]
-        public string? Establishment { get; set; }
-
-        public string? Statut { get; set; } // Position (e.g. lurker, permanent, etc.
-        public string? Grade { get; set; }  //  Rank
-        public string? Speciality { get; set; }
 
         public string? Diploma { get; set; }
-        public string? DipInstitution { get; set; }
-        public DateTime DipDate { get; set; }
-
-        public bool IsCompleted { get; set; } = false;
-
-        // Would you like to contribute as a partner
-        public bool WantsToContributeAsPartner { get; set; } = false;
-
-        //  Economic contributions (if any)
-        public string? SocioEconomicContributions { get; set; }
+        public string? Grade { get; set; }
+        public string? Speciality { get; set; }
+        public string? Establishment { get; set; }
+        public List<string>? ParticipationPrograms { get; set; } = new List<string>();
+       
 
         // Administrative approval
         public ResearcherApprovalStatus ResearcherApprovalStatus { get; set; } = ResearcherApprovalStatus.Pending;
-
+        public string? ApprovedByAdminId { get; set; }
+        public Admin? ApprovedByAdmin { get; set; }
+        public bool IsCompleted { get; set; } = false;
         // Relationships
         public ICollection<Notification>? Notifications { get; set; }
         public ICollection<ProjectMembership>? ProjectMemberships { get; set; }
         public ICollection<ProjectRequest>? ProjectRequests { get; set; }
 
-        public string? ApprovedByAdminId { get; set; }
-        public Admin? ApprovedByAdmin { get; set; }
     }
 
 }

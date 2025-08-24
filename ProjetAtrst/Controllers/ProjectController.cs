@@ -56,6 +56,7 @@ namespace ProjetAtrst.Controllers
         }
        
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult SearchDropdown(string type, string term, int take = 25)
         {
             if (string.IsNullOrWhiteSpace(type))

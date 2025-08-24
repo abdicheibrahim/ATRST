@@ -12,7 +12,16 @@ namespace ProjetAtrst.Repositories
                 .Include(u => u.Researcher)
                 .FirstOrDefaultAsync(u => u.Id == userId);
         }
-       
+
+        public async Task<ApplicationUser?> GetUserWithDetailsAsync(string userId)
+        {
+            return await _context.Users
+                .Include(u => u.Researcher)
+                //.Include(u => u.Partner)
+               //.Include(u => u.Associate)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+        }
+
     }
 
 

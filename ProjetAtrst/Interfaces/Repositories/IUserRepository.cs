@@ -6,8 +6,8 @@ namespace ProjetAtrst.Interfaces.Repositories
     public interface IUserRepository : IGenericRepository<ApplicationUser>
     {
         Task<ApplicationUser?> GetUserWithResearcherAsync(string userId);
-        
 
+        Task<ApplicationUser?> GetUserWithDetailsAsync(string userId);
     }
 
 }

@@ -32,34 +32,6 @@ namespace ProjetAtrst.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<IdentityResult> RegisterNewResearcherAsync(RegisterViewModel model)
-        {
-            var user = new ApplicationUser
-            {
-                UserName = model.Email,
-                Email = model.Email
-            };
-
-            var result = await _userManager.CreateAsync(user, model.Password);
-            if (!result.Succeeded)
-                return result;
-
-            var researcher = new Researcher
-            {
-                Id = user.Id,
-                User = user
-
-            };
-
-          
-            await _unitOfWork.Researchers.AddAsync(researcher);
-            await _unitOfWork.SaveAsync();
-            await _signInManager.SignInAsync(user, isPersistent: false);
-
-            return IdentityResult.Success;
-        }
-
-        //test
 
         public async Task EditProfileResearcherViewModelAsync(string userId, EditResearcherProfileViewModel model)
         {
@@ -73,14 +45,12 @@ namespace ProjetAtrst.Services
             user.Researcher.Speciality = model.Speciality;
             user.Mobile = model.Mobile;
             user.Researcher.Diploma = model.Diploma;
-            user.Researcher.DipInstitution = model.DipInstitution;
-            user.Researcher.DipDate = model.DipDate;
 
 
 
-            if (!user.Researcher.IsCompleted)
+            if (!user.IsCompleted)
             {
-                user.Researcher.IsCompleted = true;
+                user.IsCompleted = true;
                 _unitOfWork.Users.Update(user);
                 var notification = new Notification
                 {
@@ -121,36 +91,15 @@ namespace ProjetAtrst.Services
                // GradesList = _staticDataLoader.LoadGrades(),
                 Grade = user.Researcher.Grade,
 
-               // StatutList = _staticDataLoader.LoadStatuts(),
-                Statut = user.Researcher.Statut,
 
                 Speciality = user.Researcher.Speciality,
                 Mobile = user.Mobile,
                 Diploma = user.Researcher.Diploma,
-                DipInstitution = user.Researcher.DipInstitution,
-                DipDate = user.Researcher.DipDate,
-                IsCompleted = user.Researcher.IsCompleted
+                IsCompleted = user.IsCompleted
             };
         }
 
-        public async Task<bool> IsProfileCompleteAsync(string userId)
-        {
-            var user = await _unitOfWork.Users.GetUserWithResearcherAsync(userId);
-
-            if (user == null) return false;
-
-            // تحقق حسب منطقك مثل الاسم أو رقم الهوية أو أي شيء
-            return !string.IsNullOrEmpty(user.FullName) &&
-                   !string.IsNullOrEmpty(user.FirstName)&&
-                   !string.IsNullOrEmpty(user.LastName) &&
-                   !string.IsNullOrEmpty(user.FirstNameAr) &&
-                   !string.IsNullOrEmpty(user.LastNameAr) ;
-        }
-
-
         //--------------New Code----------------
-
-
         public async Task<(List<ResearcherViewModel> Researchers, int TotalCount)> GetAvailableResearchersForInvitationAsync(int projectId, int page, int pageSize)
         {
             var excludedIds = await _unitOfWork.Researchers.GetInvitedOrMembersIdsAsync(projectId);

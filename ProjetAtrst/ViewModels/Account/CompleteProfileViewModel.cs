@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using ProjetAtrst.Models;
-using System.ComponentModel.DataAnnotations;
-
-namespace ProjetAtrst.ViewModels.Account
+﻿namespace ProjetAtrst.ViewModels.Account
 {
     public class CompleteProfileViewModel
     {
+        // Role Type Selection
+        [Required(ErrorMessage = "Veuillez sélectionner votre rôle")]
+        [Display(Name = "Type de profil")]
+        public RoleType RoleType { get; set; }  // Chercheur | Partenaire | Associe
+
+        // Common background information
         [MaxLength(50)]
         [Required(ErrorMessage = "First Name is required")]
         [Display(Name = "First Name")]
@@ -23,7 +25,7 @@ namespace ProjetAtrst.ViewModels.Account
         public string FirstNameAr { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "اللقب مطلوب")]
-        [MaxLength(50, ErrorMessage = "الاسم يجب أن لا يتجاوز 50 حرفًا")]
+        [MaxLength(50, ErrorMessage = "اللقب يجب أن لا يتجاوز 50 حرفًا")]
         [RegularExpression(@"^[\u0621-\u064A\s]+$", ErrorMessage = "اللقب يجب أن يحتوي على حروف عربية ومسافات فقط")]
         [Display(Name = "اللقب")]
         public string LastNameAr { get; set; } = string.Empty;
@@ -37,57 +39,64 @@ namespace ProjetAtrst.ViewModels.Account
         [Display(Name = "Birthday")]
         public DateTime Birthday { get; set; }
 
-     //   [Required(ErrorMessage = "Establishment is required")]
-        [Display(Name = "Establishment")]
-        public string Establishment { get; set; } = string.Empty;
-        //public string CustomEstablishment { get; set; } = string.Empty;
-        //public List<SelectListItem> EstablishmentsList { get; set; } = new();
-
-      //  [Required(ErrorMessage = "Statut is required")]
-        public string Statut { get; set; }
-       // public string CustomStatut { get; set; }
-        //public List<SelectListItem> StatutList { get; set; } = new();
-
-     //   [Required(ErrorMessage = "Grade is required")]
-        [Display(Name = "Grade")]
-        public string Grade { get; set; } = string.Empty;
-        //public string CustomGrade { get; set; } = string.Empty;
-        //public List<SelectListItem> GradesList { get; set; } = new();
-        
-        [Required(ErrorMessage = "Speciality is required")]
-        [Display(Name = "Speciality")]
-        public string Speciality { get; set; } = string.Empty;
-
         [Phone(ErrorMessage = "Invalid phone number format")]
         [Display(Name = "Mobile")]
         public string? Mobile { get; set; }
 
-        [Required(ErrorMessage = "Diploma is required")]
+        [Display(Name = "Establishment")]
+        public string Establishment { get; set; } = string.Empty;
+
+        // =======================================================
+        // Chercheur
+        // =======================================================
         [Display(Name = "Diploma")]
-        public string Diploma { get; set; } = string.Empty;
+        public string? Diploma { get; set; }
 
-        [Required(ErrorMessage = "Diploma Institution is required")]
-        [Display(Name = "Diploma Institution")]
-        public string DipInstitution { get; set; } = string.Empty;
+        [Display(Name = "Grade")]
+        public string? Grade { get; set; }
 
-        [Required(ErrorMessage = "Diploma Date is required")]
-        [DataType(DataType.Date)]
-        [Display(Name = "Diploma Date")]
-        public DateTime DipDate { get; set; }
+        [Display(Name = "Speciality")]
+        public string? Speciality { get; set; }
 
+        [Display(Name = "Participation à des programmes de recherche")]
+        public List<string>? ParticipationPrograms { get; set; }
+
+        //[Display(Name = "Travaux en relation avec le projet proposé")]
+        //public string? RelatedWorks { get; set; }
+
+        // =======================================================
+        // Partenaire
+        // =======================================================
+        [Display(Name = "Baccalauréat")]
+        public string? Baccalaureat { get; set; }
+
+        [Display(Name = "Profession")]
+        public string? Profession { get; set; }
+
+        [Display(Name = "Contributions socio-économiques")]
+        [DataType(DataType.MultilineText)]
+        public string? SocioEconomicContributions { get; set; }
+
+        [Display(Name = "Participation à des programmes de recherche (Partenaire)")]
+        public string? PartnerResearchPrograms { get; set; }
+
+        [Display(Name = "Travaux d’intérêt socio-économique")]
+        public string? PartnerSocioEconomicWorks { get; set; }
+
+        // =======================================================
+        // associé
+        // =======================================================
+        [Display(Name = "Participation (Membre associé)")]
+        public string? MemberParticipation { get; set; }
+
+        // =======================================================
+        // Account Status
+        // =======================================================
         public bool IsLeader { get; set; } = false;
         public bool IsMember { get; set; } = false;
 
         public bool IsCompleted { get; set; }
         public bool IsApprovedByAdmin { get; set; }
         public DateTime RegisterDate { get; set; } = DateTime.UtcNow;
-
-        // ✅ جديد:
-        [Display(Name = "Souhaitez-vous contribuer en tant que partenaire social/économique ?")]
-        public bool WantsToContributeAsPartner { get; set; } = false;
-
-        [Display(Name = "Contributions économiques et sociales")]
-        [DataType(DataType.MultilineText)]
-        public string? SocioEconomicContributions { get; set; }
     }
 }
