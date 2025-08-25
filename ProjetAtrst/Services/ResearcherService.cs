@@ -43,36 +43,37 @@ namespace ProjetAtrst.Services
             user.Researcher.Establishment = model.Establishment;
             user.Researcher.Grade = model.Grade;
             user.Researcher.Speciality = model.Speciality;
-            user.Mobile = model.Mobile;
             user.Researcher.Diploma = model.Diploma;
-
-
-
-            if (!user.IsCompleted)
-            {
-                user.IsCompleted = true;
-                _unitOfWork.Users.Update(user);
-                var notification = new Notification
-                {
-                    UserId = userId,
-                    Title = "Votre profil est complété",
-                    Message = "Vos informations de compte sont complétées avec succès et sont en cours de vérification par l'administration."
-                };
-                _unitOfWork.Notifications.Create(notification);
-                await _unitOfWork.SaveAsync();
-            }
-            else
-            {
-                _unitOfWork.Users.Update(user);
-                var notification = new Notification
-                {
-                    UserId = userId,
-                    Title = "Votre profil a été modifié.",
-                    Message = "Les informations de votre compte ont été modifiées avec succès et sont actuellement en cours de vérification par l'administration."
-                };
-                _unitOfWork.Notifications.Create(notification);
-                await _unitOfWork.SaveAsync();
-            }
+            user.Researcher.ParticipationPrograms = model.ParticipationPrograms;
+            user.Researcher.IsCompleted = true;
+            _unitOfWork.Users.Update(user);
+            await _unitOfWork.SaveAsync();
+            
+            //if (!user.IsCompleted)
+            //{
+            //    user.IsCompleted = true;
+            //    _unitOfWork.Users.Update(user);
+            //    var notification = new Notification
+            //    {
+            //        UserId = userId,
+            //        Title = "Votre profil est complété",
+            //        Message = "Vos informations de compte sont complétées avec succès et sont en cours de vérification par l'administration."
+            //    };
+            //    _unitOfWork.Notifications.Create(notification);
+            //    await _unitOfWork.SaveAsync();
+            //}
+            //else
+            //{
+            //    _unitOfWork.Users.Update(user);
+            //    var notification = new Notification
+            //    {
+            //        UserId = userId,
+            //        Title = "Votre profil a été modifié.",
+            //        Message = "Les informations de votre compte ont été modifiées avec succès et sont actuellement en cours de vérification par l'administration."
+            //    };
+            //    _unitOfWork.Notifications.Create(notification);
+            //    await _unitOfWork.SaveAsync();
+            //}
 
 
         }
@@ -85,21 +86,15 @@ namespace ProjetAtrst.Services
           
             return new EditResearcherProfileViewModel
             {
-              //  EstablishmentsList= _staticDataLoader.LoadEstablishments(),
+              
                 Establishment = user.Researcher.Establishment,
-
-               // GradesList = _staticDataLoader.LoadGrades(),
                 Grade = user.Researcher.Grade,
-
-
                 Speciality = user.Researcher.Speciality,
-                Mobile = user.Mobile,
                 Diploma = user.Researcher.Diploma,
+                ParticipationPrograms=user.Researcher.ParticipationPrograms,
                 IsCompleted = user.IsCompleted
             };
         }
-
-        //--------------New Code----------------
         public async Task<(List<ResearcherViewModel> Researchers, int TotalCount)> GetAvailableResearchersForInvitationAsync(int projectId, int page, int pageSize)
         {
             var excludedIds = await _unitOfWork.Researchers.GetInvitedOrMembersIdsAsync(projectId);

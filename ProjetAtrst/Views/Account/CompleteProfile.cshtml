@@ -155,7 +155,7 @@ else
         <div class="col-md-6">
             <label asp-for="ParticipationPrograms" class="form-label"></label>
             <select asp-for="ParticipationPrograms" class="form-control select2-keywords" multiple="multiple" style="width: 100%;">
-                <!-- سيتم ملء الخيارات بواسطة JavaScript -->
+                <!-- Options will be populated by JavaScript -->
             </select>
         </div>
        
@@ -195,10 +195,6 @@ else
             <textarea class="form-control" asp-for="MemberParticipation"></textarea>
         </div>
 
-        @* <div class="col-md-12">
-            <label asp-for="OtherProjects" class="form-label"></label>
-            <textarea class="form-control" asp-for="OtherProjects"></textarea>
-        </div> *@
     </div>
 
   
@@ -218,8 +214,8 @@ else
 
     <script src="~/js/Spinner.js"></script>
 
-     <!-- Show/hide partitions based on role type -->
-    <script>
+    <!-- Show/hide partitions based on role type -->
+<script>
         document.addEventListener("DOMContentLoaded", function () {
             const roleSelect = document.getElementById("roleTypeSelect");
             const sectionChercheur = document.getElementById("sectionChercheur");
@@ -246,8 +242,7 @@ else
         });
     </script>
 
-
-       <!-- Arabic letters only -->
+    <!-- Arabic letters only -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const arabicOnly = /^[\u0621-\u064A\s]+$/;
@@ -405,8 +400,8 @@ else
             });
         });
     </script>
-
-    <script>
+    <!-- keywords -->
+<script>
         $(document).ready(function() {
             $('.select2-keywords').select2({
                 tags: true,

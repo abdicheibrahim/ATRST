@@ -1,3 +1,4 @@
+@using System.Text.Json
 @using ProjetAtrst.ViewModels.Researcher
 @model EditResearcherProfileViewModel
 
@@ -14,112 +15,233 @@
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
 </div>
 <form asp-action="EditProfile" method="post">
-   
-    <div class=" row shadow-sm g-3 needs-validation  p-3 mb-5 mt-3 bg-white border rounded">
-        <h5>Détails professionnels</h5>
-        <div class="col-md-6">
-            <label asp-for="Establishment" class="form-label">Établissement</label>
-            <select asp-for="Establishment" asp-items="Model.EstablishmentsList" class="form-select" id="establishmentSelect"></select>
-            <span asp-validation-for="Establishment" class="text-danger"></span>
 
-            <input type="text" id="customEstablishment" name="Establishment" class="form-control mt-2 d-none" placeholder="Entrez le nom de l'établissement manuellement" />
-        </div>
-        
-        <div class="col-md-6">
-            <label asp-for="Grade" class="form-label">Grade</label>
-            <select asp-for="Grade" asp-items="Model.GradesList" class="form-select" id="gradeSelect"></select>
-            <span asp-validation-for="Grade" class="text-danger"></span>
+<div id="sectionChercheur" class="row shadow-sm g-3 needs-validation p-3 mb-5 mt-3 bg-white border rounded">
 
-             <input type="text" id="customGrade" name="Grade" class="form-control mt-2 d-none" placeholder="Entrez le grade manuellement" /> 
-        </div>
-        
-        <div class="col-md-6">
-            <label asp-for="Statut" class="form-label">Statut</label>
-            <select asp-for="Statut" asp-items="Model.StatutList" class="form-select" id="statutSelect"></select>
-            <span asp-validation-for="Statut" class="text-danger"></span>
+<h5>Détails Chercheur</h5>
 
-             <input type="text" id="customStatut" name="Statut" class="form-control mt-2 d-none" placeholder="Entrez le statut manuellement" /> 
-        </div>
-        @* </div> *@
-
-        <div class="col-md-6">
-            <label asp-for="Speciality" class="form-label">Spécialité</label>
-            <input type="text" class="form-control input" asp-for="Speciality">
-            <span asp-validation-for="Speciality"></span>
-        </div>
-
-        <div class="col-md-6">
-            <label asp-for="Mobile" class="form-label">Téléphone mobile</label>
-            <input type="text" class="form-control input" asp-for="Mobile">
-            <span asp-validation-for="Mobile"></span>
-        </div>
-        <div class="col-md-6">
-            <label asp-for="Diploma" class="form-label">Diplôme</label>
-            <input type="text" class="form-control input" asp-for="Diploma">
-            <span asp-validation-for="Diploma"></span>
-        </div>
-        <div class="col-md-6">
-            <label asp-for="DipInstitution" class="form-label">Établissement du diplôme</label>
-            <input type="text" class="form-control input" asp-for="DipInstitution">
-            <span asp-validation-for="DipInstitution"></span>
-        </div>
-        <div class="col-md-6">
-            <label asp-for="DipDate" class="form-label">Date d'obtention</label>
-            <input type="date" class="form-control input" asp-for="DipDate">
-            <span asp-validation-for="DipDate"></span>
-        </div>
-
-
-
+    <!-- Establishment -->
+    <input type="hidden" asp-for="Establishment" id="establishmentHidden" />
+    <div class="col-md-6">
+        <label class="form-label">Établissement</label>
+        <select class="form-select" id="establishmentSelect"></select>
+        <input type="text" id="customEstablishment" class="form-control mt-2 d-none"
+                placeholder="Entrez le nom de l'établissement manuellement" />
+        <span asp-validation-for="Establishment" class="text-danger"></span>
     </div>
 
-    <button type="submit" id="submitBtn" class="btn btn-success ">
-        <i class="bi bi-pencil-square me-2"></i>
-        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="spinner"></span>
-        <span id="btnText">Enregistrer les modifications</span>
-    </button>
+    <!-- Grade -->
+    <input type="hidden" asp-for="Grade" id="gradeHidden" />
+    <div class="col-md-6">
+        <label class="form-label">Grade</label>
+        <select class="form-select" id="gradeSelect"></select>
+        <input type="text" id="customGrade" class="form-control mt-2 d-none"
+                placeholder="Entrez le grade manuellement" />
+        <span asp-validation-for="Grade" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="Speciality" class="form-label">Spécialité</label>
+        <input type="text" class="form-control input" asp-for="Speciality">
+        <span asp-validation-for="Speciality"></span>
+    </div>
+
+
+
+    <div class="col-md-6">
+        <label asp-for="Diploma" class="form-label">Diplôme</label>
+        <input type="text" class="form-control input" asp-for="Diploma">
+        <span asp-validation-for="Diploma"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="ParticipationPrograms" class="form-label"></label>
+        <select asp-for="ParticipationPrograms" class="form-control select2-keywords" multiple="multiple" style="width: 100%;">
+            <!-- Options will be populated by JavaScript -->
+        </select>
+    </div>
+
+</div>
+
+
+<button type="submit" id="submitBtn" class="btn btn-success w-100">
+    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="spinner"></span>
+    <span id="btnText">Enregistrer les modifications</span>
+</button>
+
+    
 </form>
 
 
 @section Scripts
 {
     <partial name="_ValidationScriptsPartial" />
-
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-
-    <script>
-        function normalizeString(str) {
-            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-        }
-
-        function customMatcher(params, data) {
-            if ($.trim(params.term) === '') return data;
-            const term = normalizeString(params.term);
-            const text = normalizeString(data.text);
-            return text.includes(term) ? data : null;
-        }
-
-                $(document).ready(function () {
-            $('#establishmentSelect').select2({
-                theme: 'bootstrap-5',
-                width: '100%',
-                matcher: customMatcher
-            });
-
-            // Se concentrer automatiquement sur le champ de recherche lors de l'ouverture
-            $('#establishmentSelect').on('select2:open', function () {
-                setTimeout(function () {
-                    document.querySelector('.select2-container--open .select2-search__field').focus();
-                }, 0);
-            });
-        });
-           
-
-
-    </script>
+    <!--select2-->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css  " rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js  "></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
 
     <script src="~/js/Spinner.js"></script>
+
+    <!-- Select2 -->
+    <script>
+        // مزامنة القيم مع الحقول المخفية -- وتجاهل placeholder كنص مرسل
+        function syncField(selectId, inputId, hiddenId) {
+            const $sel = $('#' + selectId);
+            const val = $sel.val();
+            const placeholder = $sel.attr('data-placeholder') || '';
+            const isOther = (val === 'Autre' || val === 'Other');
+
+            if (isOther) {
+                // إذا اخترنا "Autre" نُظهر الحقل اليدوي ونأخذ منه القيمة
+                $('#' + inputId).removeClass('d-none').attr('required', 'required');
+                $('#' + hiddenId).val($('#' + inputId).val().trim());
+            } else {
+                // إخفاء الحقل اليدوي
+                $('#' + inputId).addClass('d-none').removeAttr('required').val('');
+
+                // نتأكد أنّ القيمة المرسلة ليست فارغة أو نفس نص الـ placeholder
+                if (val === null || val === undefined || val === '' || val === placeholder) {
+                    $('#' + hiddenId).val('');
+                } else {
+                    $('#' + hiddenId).val(val);
+                }
+            }
+        }
+
+        // تهيئة Select2 مع وضع data-placeholder للمقارنة لاحقًا
+        function initSelect2(selector, type, placeholder, appendAutre = true, minimumInputLength = 2, endpointUrl) {
+            const url = endpointUrl || '@Url.Action("SearchDropdown", "Project")';
+
+            // خزّن النص كـ data attribute للمقارنة لاحقًا
+            $(selector).attr('data-placeholder', placeholder);
+
+            $(selector).select2({
+                theme: 'bootstrap-5',
+                width: '100%',
+                placeholder: placeholder,
+                allowClear: true,
+                minimumInputLength: minimumInputLength,
+                ajax: {
+                    url: url,
+                    data: function (params) {
+                        return {
+                            term: params.term || '',
+                            type: type,
+                            take: 25
+                        };
+                    },
+                    delay: 200,
+                    processResults: function (data) {
+                        // نتأكد من أن البيانات بصيغة { id, text }
+                        if (appendAutre && !data.some(d => (d.id || d.value) === 'Autre')) {
+                            data.push({ id: 'Autre', text: 'Autre' });
+                        }
+                        return { results: data };
+                    }
+                }
+            });
+
+            // تركيز تلقائي داخل حقل البحث عند الفتح
+            $(selector).on('select2:open', function () {
+                setTimeout(function () {
+                    document.querySelector('.select2-container--open .select2-search__field')?.focus();
+                }, 0);
+            });
+        }
+
+        // تبديل بين الإدخال اليدوي والاختيار من القائمة
+        function toggleCustomInput(selectId, inputId) {
+            const $sel = $('#' + selectId);
+            const $inp = $('#' + inputId);
+            const val = $sel.val();
+            const isOther = (val === 'Autre' || val === 'Other');
+
+            if (isOther) {
+                $sel.prop('disabled', true);
+                $inp.removeClass('d-none').attr('required', 'required');
+            } else {
+                $sel.prop('disabled', false);
+                $inp.addClass('d-none').removeAttr('required');
+            }
+        }
+
+        // تعيين قيمة ابتدائية (نتجاهل null / undefined / '' لكن نسمح بـ 0)
+        function setInitialValue(selector, value, text) {
+            if (value === null || value === undefined || value === '') return;
+            const option = new Option(text || value, value, true, true);
+            $(selector).append(option).trigger('change.select2');
+        }
+
+        $(document).ready(function () {
+            // 1) تهيئة القوائم
+            initSelect2('#establishmentSelect', 'Establishments', '-- Sélectionnez l\'établissement --', true, 2);
+            initSelect2('#gradeSelect', 'Grades', '-- Sélectionnez un grade / diplôme --', true, 0); // صفر لعرض بدون كتابة
+           // initSelect2('#statutSelect', 'Statuts', '-- Sélectionnez un statut --', true, 2);
+
+            // 2) قيم ابتدائية من الموديل
+            const initEst = @Html.Raw(JsonSerializer.Serialize(Model.Establishment));
+            const initGrade = @Html.Raw(JsonSerializer.Serialize(Model.Grade));
+           // const initStatut = Html.Raw(JsonSerializer.Serialize(Model.Statut));
+
+            setInitialValue('#establishmentSelect', initEst);
+            setInitialValue('#gradeSelect', initGrade);
+           // setInitialValue('#statutSelect', initStatut);
+
+            // 3) تفعيل/تعطيل الإدخال اليدوي حسب القيمة الحالية
+            toggleCustomInput('establishmentSelect', 'customEstablishment');
+            toggleCustomInput('gradeSelect', 'customGrade');
+            //toggleCustomInput('statutSelect', 'customStatut');
+
+            $('#establishmentSelect').on('change', function () {
+                toggleCustomInput('establishmentSelect', 'customEstablishment');
+            });
+            $('#gradeSelect').on('change', function () {
+                toggleCustomInput('gradeSelect', 'customGrade');
+            });
+            // $('#statutSelect').on('change', function () {
+            //     toggleCustomInput('statutSelect', 'customStatut');
+            // });
+
+            // 4) مزامنة قبل الإرسال (نمنع إرسال نص placeholder)
+            $('form').on('submit', function () {
+                syncField('establishmentSelect', 'customEstablishment', 'establishmentHidden');
+                syncField('gradeSelect', 'customGrade', 'gradeHidden');
+                // syncField('statutSelect', 'customStatut', 'statutHidden');
+            });
+        });
+    </script>
+    <!-- keywords -->
+    <script>
+        $(document).ready(function() {
+            $('.select2-keywords').select2({
+                tags: true,
+                tokenSeparators: [','],
+                placeholder: "Indiquez votre participation à des programmes de recherche",
+                allowClear: true,
+                width: '100%'
+            });
+
+            // تحميل الكلمات المفتاحية الموجودة مسبقاً
+            @if (Model.ParticipationPrograms != null && Model.ParticipationPrograms.Any())
+            {
+                        <text>
+                            var existingKeywords = @Html.Raw(JsonSerializer.Serialize(Model.ParticipationPrograms));
+                            if (existingKeywords && existingKeywords.length > 0) {
+                                existingKeywords.forEach(function(item) {
+                                    // أضف الخيار إذا لم يكن موجود
+                                    if ($('.select2-keywords option[value="' + item + '"]').length === 0) {
+                                        $('.select2-keywords').append(new Option(item, item, true, true));
+                                    }
+                                });
+                                // بعد إضافة الخيارات حددها كـ selected
+                                $('.select2-keywords').trigger('change');
+                            }
+                        </text>
+            }
+        });
+    </script>
+
 
 }
 

@@ -173,7 +173,8 @@ namespace ProjetAtrst.Services
             user.FullName = model.LastName + " " + model.FirstName;
             user.Gender = model.Gender;
             user.Birthday = model.Birthday;
-           
+            user.Mobile = model.Mobile;
+
             _unitOfWork.Users.Update(user);
 
             #region commented out logic for notifications
@@ -205,7 +206,8 @@ namespace ProjetAtrst.Services
                 LastNameAr = user.LastNameAr,
                 Gender = user.Gender,
                 Birthday = user.Birthday,
-               
+                Mobile = user.Mobile
+
             };
         }
         public async Task<bool> IsProfileCompleteAsync(string userId)
