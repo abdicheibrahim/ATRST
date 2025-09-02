@@ -29,7 +29,7 @@ namespace ProjetAtrst.Controllers
 
             var model = await _researcherService.GetEditProfileResearcherViewModelAsync(userId);
             if (model == null)
-                return NotFound(); // or Redirect
+                return NotFound(); 
 
             return View(model);
         }

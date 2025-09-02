@@ -42,7 +42,6 @@ public class ProjectContextController : ProjectContextBaseController
         return View();
     }
 
-
     [HttpGet]
     public async Task<IActionResult> Edit()
     {
@@ -86,7 +85,6 @@ public class ProjectContextController : ProjectContextBaseController
         return View(updatedModel ?? model);
     }
 
-
     [HttpGet]
     public async Task<IActionResult> Members()
     {
@@ -118,7 +116,6 @@ public class ProjectContextController : ProjectContextBaseController
         return View(requests);
     }
 
-
     [HttpPost]
     public async Task<IActionResult> AcceptRequest(int requestId)
     {
@@ -141,9 +138,6 @@ public class ProjectContextController : ProjectContextBaseController
         TempData["Warning"] = "تم رفض الطلب.";
         return RedirectToAction("Requests");
     }
-
-    //-------------------- Update Project Context --------------------
-
 
     [HttpGet]
     public async Task<IActionResult> SendInvitations(int page = 1, int pageSize = 6)

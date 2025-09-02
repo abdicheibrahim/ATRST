@@ -1,9 +1,11 @@
-﻿using ProjetAtrst.Interfaces.Services;
-using ProjetAtrst.Interfaces;
-using ProjetAtrst.Models;
-using ProjetAtrst.ViewModels.Account;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using ProjetAtrst.Helpers;
+using ProjetAtrst.Interfaces;
+using ProjetAtrst.Interfaces.Services;
+using ProjetAtrst.ViewModels.Account;
+using ProjetAtrst.ViewModels.Associate;
+using ProjetAtrst.ViewModels.Partner;
+using ProjetAtrst.ViewModels.Researcher;
 
 namespace ProjetAtrst.Services
 {
@@ -59,47 +61,46 @@ namespace ProjetAtrst.Services
             if (user == null )
                 return;
 
-            user.FirstName = model.FirstName;
-            user.LastName = model.LastName;
-            user.FirstNameAr = model.FirstNameAr;
-            user.LastNameAr = model.LastNameAr;
-            user.FullName = model.LastName + " " + model.FirstName;
-            user.Gender = model.Gender;
-            user.Birthday = model.Birthday;
-            user.Mobile = model.Mobile;
+            user.FirstName = model.PersonalInformation.FirstName;
+            user.LastName = model.PersonalInformation.LastName;
+            user.FirstNameAr = model.PersonalInformation.FirstNameAr;
+            user.LastNameAr = model.PersonalInformation.LastNameAr;
+            user.FullName = model.PersonalInformation.LastName + " " + model.PersonalInformation.FirstName;
+            user.Gender = model.PersonalInformation.Gender;
+            user.Birthday = model.PersonalInformation.Birthday;
+            user.Mobile = model.PersonalInformation.Mobile;
             user.RegisterDate = DateTime.UtcNow;
-            user.RoleType = (RoleType)model.RoleType;
+            user.RoleType = model.RoleType;
             if (user.RoleType == RoleType.Researcher)
             {
                 user.Researcher = user.Researcher ?? new Researcher { Id = user.Id, User = user };
-                user.Researcher.Diploma = model.Diploma;
-                user.Researcher.Grade = model.Grade;
-                user.Researcher.Speciality = model.Speciality;
-                user.Researcher.Establishment = model.Establishment;
-                user.Researcher.ParticipationPrograms= model.ParticipationPrograms;
+                user.Researcher.Diploma = model.Researcher.Diploma;
+                user.Researcher.Grade = model.Researcher.Grade;
+                user.Researcher.Speciality = model.Researcher.Speciality;
+                user.Researcher.Establishment = model.Researcher.Establishment;
+                user.Researcher.ParticipationPrograms= model.Researcher.ParticipationPrograms;
                 user.IsCompleted = true;
             }
             else
             if (user.RoleType == RoleType.Partner)
             {
-                //user.Partner = user.Partner ?? new Partner { Id = user.Id, User = user };
-                //user.Partner.Diploma = model.Diploma;
-                //user.Partner.Baccalaureat = model.Baccalaureat;
-                //user.Partner.Profession = model.Profession;
-                //user.Partner.Speciality = model.Speciality;
-                //user.Partner.Establishment = model.Establishment;
-                //user.Partner.ParticipationPrograms = model.ParticipationPrograms;
-                //user.Partner.SocioEconomicContributions = model.SocioEconomicContributions;
-                //user.Partner.IsCompleted = true;
+                user.Partner = user.Partner ?? new Partner { Id = user.Id, User = user };
+                user.Partner.Baccalaureat = model.Partner.Baccalaureat;
+                user.Partner.Diploma = model.Partner.Diploma;
+                user.Partner.Profession = model.Partner.Profession;
+                user.Partner.Speciality = model.Partner.Speciality;
+                user.Partner.Establishment = model.Partner.Establishment;
+                user.Partner.PartnerResearchPrograms = model.Partner.PartnerResearchPrograms;
+                user.Partner.PartnerSocioEconomicWorks = model.Partner.PartnerSocioEconomicWorks;
+                user.IsCompleted = true;
             }
             else if (user.RoleType == RoleType.Associate)
             {
-                //user.Associate = user.Associate ?? new Associate { Id = user.Id, User = user };
-                //user.Associate.Diploma = model.Diploma;
-                //user.Associate.Speciality = model.Speciality;
-                //user.Associate.Establishment = model.Establishment;
-                //user.Associate.MemberParticipation = model.MemberParticipation;
-                //user.Associate.IsCompleted = true;
+                user.Associate = user.Associate ?? new Associate { Id = user.Id, User = user };
+                user.Associate.Diploma = model.Associate.Diploma;
+                user.Associate.Speciality = model.Associate.Speciality;
+                user.Associate.MemberParticipation = model.Associate.MemberParticipation;
+                user.IsCompleted = true;
 
             }
 
@@ -112,16 +113,20 @@ namespace ProjetAtrst.Services
             // نجلب المستخدم مع الـ navigation properties
             var user = await _unitOfWork.Users.GetUserWithDetailsAsync(userId);
             if (user == null) return null;
-
+            //var _personalInformation = 
             var model = new CompleteProfileViewModel
             {
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                FirstNameAr = user.FirstNameAr,
-                LastNameAr = user.LastNameAr,
-                Gender = user.Gender,
-                Birthday = user.Birthday,
-                Mobile = user.Mobile,
+                PersonalInformation= new EditProfileViewModel
+                {
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    FirstNameAr = user.FirstNameAr,
+                    LastNameAr = user.LastNameAr,
+                    Gender = user.Gender,
+                    Birthday = user.Birthday,
+                    Mobile = user.Mobile,
+                },
+
                 RoleType = user.RoleType,
                 IsCompleted = user.IsCompleted
             };
@@ -131,30 +136,44 @@ namespace ProjetAtrst.Services
                 case RoleType.Researcher:
                     if (user.Researcher != null)
                     {
-                        model.Establishment = user.Researcher.Establishment;
-                        model.Grade = user.Researcher.Grade;
-                        model.Speciality = user.Researcher.Speciality;
-                        model.Diploma = user.Researcher.Diploma;
-                        model.ParticipationPrograms = user.Researcher.ParticipationPrograms;
+                        model.Researcher = new ResearcherProfileViewModel
+                        {
+                            Establishment = user.Researcher.Establishment,
+                            Grade = user.Researcher.Grade,
+                            Speciality = user.Researcher.Speciality,
+                            Diploma = user.Researcher.Diploma,
+                            ParticipationPrograms = user.Researcher.ParticipationPrograms,
+                        };
                     }
                     break;
 
-                //case RoleType.Partner:
-                //    if (user.Partner != null)
-                //    {
-                //        model.Baccalaureat = user.Partner.Baccalaureat;
-                //        model.Profession = user.Partner.Profession;
-                //        model.SocioEconomicContributions = user.Partner.SocioEconomicContributions;
-                //    }
-                //    break;
+                case RoleType.Partner:
+                    if (user.Partner != null)
+                    {
+                        model.Partner = new PartnerProfileViewModel
+                        {
+                            Baccalaureat = user.Partner.Baccalaureat,
+                            Diploma = user.Partner.Diploma,
+                            Profession = user.Partner.Profession,
+                            Speciality = user.Partner.Speciality,
+                            Establishment = user.Partner.Establishment,
+                            PartnerResearchPrograms = user.Partner.PartnerResearchPrograms,
+                            PartnerSocioEconomicWorks = user.Partner.PartnerSocioEconomicWorks,
+                        };
+                    }
+                    break;
 
-                //case RoleType.Associate:
-                //    if (user.Associate != null)
-                //    {
-                //        model.MemberParticipation = user.Associate.MemberParticipation;
-                //        model.OtherProjects = user.Associate.OtherProjects;
-                //    }
-                //    break;
+                case RoleType.Associate:
+                    if (user.Associate != null)
+                    {
+                        model.Associate = new AssociateProfileViewModel
+                        {
+                            Diploma = user.Associate.Diploma,
+                            Speciality= user.Associate.Speciality,
+                            MemberParticipation = user.Associate.MemberParticipation
+                        };
+                    }
+                    break;
             }
 
             return model;
@@ -162,8 +181,8 @@ namespace ProjetAtrst.Services
 
         public async Task EditProfileAsync(string userId, EditProfileViewModel model)
         {
-            var user = await _unitOfWork.Users.GetUserWithResearcherAsync(userId);
-            if (user == null || user.Researcher == null)
+            var user = await _unitOfWork.Users.GetUserWithDetailsAsync(userId);
+            if (user == null )
                 return;
 
             user.FirstName = model.FirstName;
@@ -194,8 +213,8 @@ namespace ProjetAtrst.Services
         }
         public async Task<EditProfileViewModel?> GetEditProfileViewModelAsync(string userId)
         {
-            var user = await _unitOfWork.Users.GetUserWithResearcherAsync(userId);
-            if (user == null || user.Researcher == null)
+            var user = await _unitOfWork.Users.GetUserWithDetailsAsync(userId);
+            if (user == null )
                 return null;
 
             return new EditProfileViewModel
@@ -212,8 +231,8 @@ namespace ProjetAtrst.Services
         }
         public async Task<bool> IsProfileCompleteAsync(string userId)
         {
-            var user = await _unitOfWork.Users.GetUserWithResearcherAsync(userId);
-            if (user == null || user.Researcher == null)
+            var user = await _unitOfWork.Users.GetByIdAsync(userId);
+            if (user == null )
                 return false;
             return user.IsCompleted;
         }

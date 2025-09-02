@@ -21,11 +21,11 @@
         <div class="border-1 p-3">
             <div class="mb-3">
                 <strong>👤 Expéditeur :</strong>
-                <div>@(string.IsNullOrWhiteSpace(Model.Sender?.User?.FullName) ? "Inconnu" : Model.Sender.User.FullName)</div>
+                <div>@(string.IsNullOrWhiteSpace(Model.Sender?.FullName) ? "Inconnu" : Model.Sender.FullName)</div>
             </div>
             <div class="mb-3">
                 <strong>🎯 Destinataire :</strong>
-                <div>@(string.IsNullOrWhiteSpace(Model.Receiver?.User?.FullName) ? "Inconnu" : Model.Receiver.User.FullName)</div>
+                <div>@(string.IsNullOrWhiteSpace(Model.Receiver?.FullName) ? "Inconnu" : Model.Receiver.FullName)</div>
             </div>
             <div class="mb-3">
                 <strong>📌 Type de demande :</strong>

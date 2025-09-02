@@ -18,13 +18,12 @@ namespace ProjetAtrst.Repositories
         {
              var result = await _context.ProjectMemberships
             .Include(pm => pm.Project)
-            .Include(pm => pm.Researcher)
-            .ThenInclude(r => r.User)
+            .Include(pm => pm.User)
             .Where(pm => pm.ProjectId == projectId && pm.Role== Role.Leader)
             .Select(pm => new
             {
                 ProjectTitle = pm.Project.Title,
-                LeaderFullName = pm.Researcher.User.FullName 
+                LeaderFullName = pm.User.FullName 
             })
             .FirstOrDefaultAsync();
 
@@ -41,7 +40,7 @@ namespace ProjetAtrst.Repositories
                 .Where(p =>
                     p.ProjectStatus == ProjectStatus.Open &&
                     p.IsAcceptingJoinRequests &&
-                    !_context.ProjectMemberships.Any(pm => pm.ResearcherId == researcherId && pm.ProjectId == p.Id) &&
+                    !_context.ProjectMemberships.Any(pm => pm.UserId == researcherId && pm.ProjectId == p.Id) &&
                     !_context.ProjectRequests.Any(r => r.SenderId == researcherId && r.ProjectId == p.Id)
                 );
         }
@@ -52,18 +51,17 @@ namespace ProjetAtrst.Repositories
                 {
                     Id = p.Id,
                     Title = p.Title,
-                    //Description = p.Description,
                     CreationDate = p.CreationDate,
                     ImageUrl = p.LogoPath,
 
                     LeaderId = p.ProjectMemberships
                         .Where(pm => pm.Role == Role.Leader)
-                        .Select(pm => pm.ResearcherId)
+                        .Select(pm => pm.UserId)
                         .FirstOrDefault(),
 
                     LeaderFullName = p.ProjectMemberships
                         .Where(pm => pm.Role == Role.Leader)
-                        .Select(pm => pm.Researcher.User.FullName)
+                        .Select(pm => pm.User.FullName)
                         .FirstOrDefault()
                 })
                 .AsNoTracking();
@@ -89,11 +87,11 @@ namespace ProjetAtrst.Repositories
                     ImageUrl = p.LogoPath,
                     LeaderId = p.ProjectMemberships
                         .Where(pm => pm.Role == Role.Leader)
-                        .Select(pm => pm.ResearcherId)
+                        .Select(pm => pm.UserId)
                         .FirstOrDefault(),
                     LeaderFullName = p.ProjectMemberships
                         .Where(pm => pm.Role == Role.Leader)
-                        .Select(pm => pm.Researcher.User.FullName)
+                        .Select(pm => pm.User.FullName)
                         .FirstOrDefault()
                 })
                 .AsNoTracking()
@@ -117,11 +115,11 @@ namespace ProjetAtrst.Repositories
                     ImageUrl = p.LogoPath, // تأكد من اسم الخاصية عندك
                     LeaderId = p.ProjectMemberships
                         .Where(pm => pm.Role == Role.Leader)
-                        .Select(pm => pm.ResearcherId)
+                        .Select(pm => pm.UserId)
                         .FirstOrDefault(),
                     LeaderFullName = p.ProjectMemberships
                         .Where(pm => pm.Role == Role.Leader)
-                        .Select(pm => pm.Researcher.User.FullName)
+                        .Select(pm => pm.User.FullName)
                         .FirstOrDefault()
                 })
                 .AsNoTracking()
@@ -152,14 +150,13 @@ namespace ProjetAtrst.Repositories
         {
             return await _context.ProjectMemberships
                 .AnyAsync(pm => pm.ProjectId == projectId &&
-                              pm.ResearcherId == userId &&
+                              pm.UserId == userId &&
                               pm.Role == Role.Leader);
         }
         public async Task<Project?> GetProjectWithMembersAsync(int projectId)
         {
             return await _context.Projects
                 .Include(p => p.ProjectMemberships)
-                .ThenInclude(m => m.Researcher)
                 .ThenInclude(r => r.User)
                 .FirstOrDefaultAsync(p => p.Id == projectId);
         }

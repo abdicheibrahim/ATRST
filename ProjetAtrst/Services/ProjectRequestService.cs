@@ -83,7 +83,7 @@ public class ProjectRequestService : IProjectRequestService
         var membership = new ProjectMembership
         {
             ProjectId = request.ProjectId,
-            ResearcherId = request.SenderId,
+            UserId = request.SenderId,
             Role = Role.Member, // أو أي Enum معرف عندك
             JoinedAt = DateTime.UtcNow
         };

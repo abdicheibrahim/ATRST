@@ -29,7 +29,6 @@ namespace ProjetAtrst.Controllers
             return View(viewModel);
         }
 
-
         public async Task<IActionResult> Outgoing()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -37,7 +36,6 @@ namespace ProjetAtrst.Controllers
             return View(requests);
         }
 
-    
         [HttpGet]
         public async Task<IActionResult> Send(int projectId, string receiverId, RequestType type)
         {
@@ -89,7 +87,6 @@ namespace ProjetAtrst.Controllers
             return View(request);
         }
 
-        //ProjectRequest/SentInvitations
         [HttpGet]
         public async Task<IActionResult> SentJoinRequests()
         {
@@ -97,7 +94,7 @@ namespace ProjetAtrst.Controllers
             var requests = await _requestService.GetSentJoinRequestsAsync(userId);
             return View(requests);
         }
-        //ProjectRequest/SentInvitations
+
         [HttpGet]
         public async Task<IActionResult> SentInvitations()
         {
@@ -105,6 +102,8 @@ namespace ProjetAtrst.Controllers
             var invitations = await _requestService.GetMyInvitationsAsync(userId);
             return View(invitations);
         }
+
+        //Invitations to join
     }
 
 }

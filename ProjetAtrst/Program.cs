@@ -52,6 +52,10 @@ namespace ProjetAtrst
             builder.Services.AddControllersWithViews();
             builder.Services.AddScoped<IResearcherService, ResearcherService>();
             builder.Services.AddScoped<IResearcherRepository, ResearcherRepository>();
+            builder.Services.AddScoped<IPartnerService, PartnerService>();
+            builder.Services.AddScoped<IPartnerRepository, PartnerRepository>();
+            builder.Services.AddScoped<IAssociateRepository, AssociateRepository>();
+            builder.Services.AddScoped<IAssociateService, AssociateService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
             builder.Services.AddScoped<IUserService, UserService>();

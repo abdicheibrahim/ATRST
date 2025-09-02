@@ -8,7 +8,6 @@ using System.Security.Claims;
 namespace ProjetAtrst.Controllers
 {
     [Authorize]
-    [ServiceFilter(typeof(ProfileCompletionFilter))]
     public class ProjectController : Controller
     {
         private readonly IProjectService _projectService;
@@ -20,7 +19,7 @@ namespace ProjetAtrst.Controllers
             _staticDataLoader = staticDataLoader;
         }
 
-
+        [ServiceFilter(typeof(ProfileCompletionFilter))]
         [HttpGet]
         public IActionResult Create()
         {
@@ -28,6 +27,7 @@ namespace ProjetAtrst.Controllers
             return View(new ProjectCreateViewModel());
         }
 
+        [ServiceFilter(typeof(ProfileCompletionFilter))]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProjectCreateViewModel model)
@@ -56,7 +56,6 @@ namespace ProjetAtrst.Controllers
         }
        
         [HttpGet]
-        [AllowAnonymous]
         public IActionResult SearchDropdown(string type, string term, int take = 25)
         {
             if (string.IsNullOrWhiteSpace(type))
@@ -76,7 +75,7 @@ namespace ProjetAtrst.Controllers
                 return Json(new List<object>());
             }
         }
-
+        [ServiceFilter(typeof(ProfileCompletionFilter))]
         [HttpGet]
         public async Task<IActionResult> MyProjects()
         {
@@ -128,6 +127,7 @@ namespace ProjetAtrst.Controllers
         // View رئيسي (فيه جدول فارغ مبدئياً)
 
         // يعرض الصفحة فقط (الجدول يكون فاضي ويمتلي عبر DataTables)
+        [ServiceFilter(typeof(ProfileCompletionFilter))]
         public IActionResult AvailableProjects() => View();
 
         // يُستدعى من DataTables عبر AJAX (POST)
@@ -173,7 +173,7 @@ namespace ProjetAtrst.Controllers
                 data = resp.Data
             });
         }
-
+        [ServiceFilter(typeof(ProfileCompletionFilter))]
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
@@ -183,6 +183,6 @@ namespace ProjetAtrst.Controllers
 
             return Ok(project); // سيُرسل JSON للـ client
         }
-
+        
     }
 }

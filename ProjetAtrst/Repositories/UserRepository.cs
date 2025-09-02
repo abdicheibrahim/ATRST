@@ -17,8 +17,8 @@ namespace ProjetAtrst.Repositories
         {
             return await _context.Users
                 .Include(u => u.Researcher)
-                //.Include(u => u.Partner)
-               //.Include(u => u.Associate)
+                .Include(u => u.Partner)
+               .Include(u => u.Associate)
                 .FirstOrDefaultAsync(u => u.Id == userId);
         }
 

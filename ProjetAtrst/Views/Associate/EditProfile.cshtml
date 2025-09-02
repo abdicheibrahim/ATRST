@@ -1,0 +1,61 @@
+﻿@using System.Text.Json
+@using ProjetAtrst.ViewModels.Associate
+@model EditAssociateProfileViewModel
+
+@{
+    Layout = "_LayoutResearcher";
+}
+
+@{
+    ViewData["Title"] = "Profil";
+}
+
+<div class="alert alert-success text-center alert-dismissible fade show" role="alert">
+    Votre profil est<strong> complet.</strong> Vous pouvez le modifier ici.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+</div>
+<form asp-action="EditProfile" method="post">
+
+    <div class="row shadow-sm g-3 needs-validation p-3 mb-5 mt-3 bg-white border rounded">
+        <h5>Membre associé</h5>
+
+        <div class="col-md-6">
+            <label asp-for="Diploma" class="form-label">Diplôme</label>
+            <input type="text" class="form-control input" asp-for="Diploma">
+            <span asp-validation-for="Diploma"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="Speciality" class="form-label">Spécialité</label>
+            <input type="text" class="form-control input" asp-for="Speciality">
+            <span asp-validation-for="Speciality"></span>
+        </div>
+        <div class="col-md-12">
+            <label asp-for="MemberParticipation" class="form-label"></label>
+            <textarea class="form-control" asp-for="MemberParticipation"></textarea>
+        </div>
+
+    </div>
+
+
+
+
+    <button type="submit" id="submitBtn" class="btn btn-success w-100">
+        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="spinner"></span>
+        <span id="btnText">Enregistrer les modifications</span>
+    </button>
+
+
+</form>
+
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+   
+    <script src="~/js/Spinner.js"></script>
+
+
+}
+
+

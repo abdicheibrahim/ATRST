@@ -2,7 +2,7 @@
 
 namespace ProjetAtrst.Models
 {
-    public enum ResearcherApprovalStatus
+    public enum ApprovalStatus
     {
         Pending,
         Accepted,
@@ -14,7 +14,6 @@ namespace ProjetAtrst.Models
         [Key]
         [Required]
         public string Id { get; set; } = default!;
-
         [ForeignKey(nameof(Id))]
         [Required]
         public ApplicationUser User { get; set; } = default!;
@@ -28,10 +27,9 @@ namespace ProjetAtrst.Models
        
 
         // Administrative approval
-        public ResearcherApprovalStatus ResearcherApprovalStatus { get; set; } = ResearcherApprovalStatus.Pending;
+        public ApprovalStatus ResearcherApprovalStatus { get; set; } = ApprovalStatus.Pending;
         public string? ApprovedByAdminId { get; set; }
         public Admin? ApprovedByAdmin { get; set; }
-        public bool IsCompleted { get; set; } = false;
         // Relationships
         public ICollection<Notification>? Notifications { get; set; }
         public ICollection<ProjectMembership>? ProjectMemberships { get; set; }

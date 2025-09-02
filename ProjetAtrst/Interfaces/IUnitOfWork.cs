@@ -7,11 +7,13 @@ namespace ProjetAtrst.Interfaces
     public interface IUnitOfWork
     {
         IResearcherRepository Researchers { get; }
+        IPartnerRepository Partners { get; }
         IProjectRepository Projects { get; }
         IUserRepository Users { get; }
         INotificationRepository Notifications { get; }
         IProjectMembershipRepository ProjectMemberships { get; }
         IProjectRequestRepository ProjectRequest { get; }
+        IAssociateRepository Associates { get; }
         Task<int> SaveAsync();
     }
 }

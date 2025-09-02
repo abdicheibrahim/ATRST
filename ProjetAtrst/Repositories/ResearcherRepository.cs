@@ -35,7 +35,7 @@ namespace ProjetAtrst.Repositories
 
             var members = await _context.ProjectMemberships
                 .Where(pm => pm.ProjectId == projectId)
-                .Select(pm => pm.ResearcherId)
+                .Select(pm => pm.UserId)
                 .ToListAsync();
 
             return invited.Union(members).ToList();

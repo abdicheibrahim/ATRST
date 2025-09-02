@@ -81,7 +81,7 @@ namespace ProjetAtrst.Services
                 var membership = new ProjectMembership
                 {
                     ProjectId = project.Id,
-                    ResearcherId = researcherId,
+                    UserId = researcherId,
                     Role = Role.Leader,
                     JoinedAt = DateTime.UtcNow
                 };
@@ -386,8 +386,8 @@ namespace ProjetAtrst.Services
 
             return memberships.Select(m => new ProjectMemberViewModel
             {
-                Name = m.Researcher.User.FullName,
-                Email = m.Researcher.User.Email,
+                Name = m.User.FullName,
+                Email = m.User.Email,
                 Role = m.Role,
                 JoinedAt = m.JoinedAt
             }).ToList();
@@ -400,7 +400,7 @@ namespace ProjetAtrst.Services
             {
                 RequestId = r.Id,
                 SenderId = r.SenderId,
-                SenderName = r.Sender.User.FullName,
+                SenderName = r.Sender.FullName,
                 Status = r.Status,
                 SentAt = r.CreatedAt
             }).ToList();
@@ -413,7 +413,7 @@ namespace ProjetAtrst.Services
             {
                 RequestId = r.Id,
                 SenderId = r.SenderId,
-                SenderName = r.Receiver.User.FullName,
+                SenderName = r.Receiver.FullName,
                 Status = r.Status,
                 SentAt = r.CreatedAt
             }).ToList();

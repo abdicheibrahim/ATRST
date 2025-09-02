@@ -34,7 +34,7 @@
         @foreach (var req in Model)
         {
             <tr>
-                <td>@req.Receiver?.User.FullName</td>
+                <td>@req.Receiver?.FullName</td>
                 <td>@req.Type.ToString()</td>
                 <td>@req.Project?.Title</td>
                 <td>@req.Message</td>

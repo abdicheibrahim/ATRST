@@ -5,7 +5,7 @@
 @inject UserManager<ApplicationUser> UserManager
 @{
     var user = await UserManager.GetUserAsync(User);
-    var notifications = user != null ? await NotificationService.GetUnreadNotificationsAsync(user.Id) : new List<Notification>();
+     var notifications = user != null ? await NotificationService.GetUnreadNotificationsAsync(user.Id) : new List<Notification>();
     // var count = notifications.Count;
     // var fullName = user?.FullName ?? "Utilisateur";
     // var imagePath = user?.ProfilePicturePath;
@@ -66,9 +66,25 @@
             <a asp-controller="Account" asp-action="EditProfile" class="nav-link @(IsActive("Account","EditProfile"))">
                 <i class="bi bi-person"></i>Informations personnelles
             </a>
-            <a asp-controller="Researcher" asp-action="EditProfile" class="nav-link @(IsActive("Researcher","EditProfile"))">
-                <i class="bi bi-person-vcard"></i>Informations professionnelles
-            </a>
+            @switch (user.RoleType)
+            {
+                case RoleType.Researcher:
+                    <a asp-controller="Researcher" asp-action="EditProfile" class="nav-link @(IsActive("Researcher", "EditProfile"))">
+                        <i class="bi bi-person-vcard"></i>Informations professionnelles
+                    </a>
+                    break;
+                case RoleType.Partner:
+                    <a asp-controller="Partner" asp-action="EditProfile" class="nav-link @(IsActive("Partner", "EditProfile"))">
+                        <i class="bi bi-person-vcard"></i>Informations professionnelles
+                    </a>
+                    break;
+                case RoleType.Associate:
+                    <a asp-controller="Associate" asp-action="EditProfile" class="nav-link @(IsActive("Associate", "EditProfile"))">
+                        <i class="bi bi-person-vcard"></i>Informations professionnelles
+                    </a>
+                    break;
+            }
+            
             <a asp-controller="Account" asp-action="EditAccount" class="nav-link @(IsActive("Account","EditAccount"))">
                 <i class="bi bi-gear"></i> Parametres du compte
             </a>

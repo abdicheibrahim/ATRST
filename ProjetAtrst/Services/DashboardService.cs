@@ -16,7 +16,7 @@ namespace ProjetAtrst.Services
 
         public async Task<List<MyLeaderProjectsViewModel>> GetMyLeaderProjectsAsync(string researcherId)
         {
-            var memberships = await _projectMembershipRepo.GetProjectsByResearcherWithDetailsAsync(researcherId);
+            var memberships = await _projectMembershipRepo.GetProjectsByUserWithDetailsAsync(researcherId);
 
             var leaderProjects = memberships
                 .Where(pm => pm.Role == Role.Leader)
@@ -36,7 +36,7 @@ namespace ProjetAtrst.Services
 
         public async Task<List<MyJoinedProjectsViewModel>> GetMyJoinedProjectsAsync(string researcherId)
         {
-            var memberships = await _projectMembershipRepo.GetProjectsByResearcherWithDetailsAsync(researcherId);
+            var memberships = await _projectMembershipRepo.GetProjectsByUserWithDetailsAsync(researcherId);
 
             var joinedProjects = memberships
                 .Where(pm => pm.Role != Role.Leader)
@@ -47,7 +47,7 @@ namespace ProjetAtrst.Services
                     ImageUrl = pm.Project.LogoPath,
                     LeaderFullName = pm.Project.ProjectMemberships
                         .Where(m => m.Role == Role.Leader)
-                        .Select(m => m.Researcher.User.FullName)
+                        .Select(m => m.User.FullName)
                         .FirstOrDefault() ?? "غير معروف",
                     
                 })

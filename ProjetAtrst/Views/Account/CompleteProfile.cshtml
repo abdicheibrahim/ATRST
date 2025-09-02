@@ -54,13 +54,14 @@ else
             <h5>Type de profil</h5>
             <div class="col-md-6">
                 <label asp-for="RoleType" class="form-label">rôle</label>
-                <select asp-for="RoleType" class="form-select" id="roleTypeSelect" disabled>
+                <select asp-for="RoleType" class="form-select" id="roleTypeSelect"  >
                     <option value=@Model.RoleType>@Model.RoleType</option>
                 </select>
                 <span asp-validation-for="RoleType" class="text-danger"></span>
             </div>
         </div>
     }
+
 
    
     <div class="row shadow-sm g-3 needs-validation p-3 mb-5 mt-3 bg-white border rounded">
@@ -69,47 +70,47 @@ else
       
 
         <div class="col-md-6">
-            <label asp-for="FirstName" class="form-label">Prénom</label>
-            <input type="text" class="form-control input" asp-for="FirstName" placeholder="Entrez votre prénom">
-            <span asp-validation-for="FirstName"></span>
+            <label asp-for="PersonalInformation.FirstName" class="form-label">Prénom</label>
+            <input type="text" class="form-control input" asp-for="PersonalInformation.FirstName" placeholder="Entrez votre prénom">
+            <span asp-validation-for="PersonalInformation.FirstName"></span>
         </div>
 
         <div class="col-md-6">
-            <label asp-for="LastName" class="form-label">Nom</label>
-            <input type="text" class="form-control input" asp-for="LastName" placeholder="Entrez votre nom">
-            <span asp-validation-for="LastName"></span>
+            <label asp-for="PersonalInformation.LastName" class="form-label">Nom</label>
+            <input type="text" class="form-control input" asp-for="PersonalInformation.LastName" placeholder="Entrez votre nom">
+            <span asp-validation-for="PersonalInformation.LastName"></span>
         </div>
 
         <div class="col-md-6">
-            <label asp-for="FirstNameAr" class="form-label">Prénom (arabe)</label>
-            <input type="text" class="form-control input" asp-for="FirstNameAr" placeholder="أدخل الاسم">
-            <span asp-validation-for="FirstNameAr"></span>
+            <label asp-for="PersonalInformation.FirstNameAr" class="form-label">Prénom (arabe)</label>
+            <input type="text" class="form-control input" asp-for="PersonalInformation.FirstNameAr" placeholder="أدخل الاسم">
+            <span asp-validation-for="PersonalInformation.FirstNameAr"></span>
         </div>
 
         <div class="col-md-6">
-            <label asp-for="LastNameAr" class="form-label">Nom (arabe)</label>
-            <input type="text" class="form-control input" asp-for="LastNameAr" placeholder="أدخل اللقب">
-            <span asp-validation-for="LastNameAr"></span>
+            <label asp-for="PersonalInformation.LastNameAr" class="form-label">Nom (arabe)</label>
+            <input type="text" class="form-control input" asp-for="PersonalInformation.LastNameAr" placeholder="أدخل اللقب">
+            <span asp-validation-for="PersonalInformation.LastNameAr"></span>
         </div>
 
         <div class="col-md-6">
-            <label asp-for="Gender" class="form-label">Genre</label>
-            <select class="form-control input" asp-for="Gender">
+            <label asp-for="PersonalInformation.Gender" class="form-label">Genre</label>
+            <select class="form-control input" asp-for="PersonalInformation.Gender">
                 <option value="">-- Sélectionnez le genre --</option>
                 <option value="Homme">Homme</option>
                 <option value="Femme">Femme</option>
             </select>
-            <span asp-validation-for="Gender"></span>
+            <span asp-validation-for="PersonalInformation.Gender"></span>
         </div>
         <div class="col-md-6">
-            <label asp-for="Birthday" class="form-label">Date de naissance</label>
-            <input type="date" class="form-control input" asp-for="Birthday" placeholder="JJ/MM/AAAA">
-            <span asp-validation-for="Birthday"></span>
+            <label asp-for="PersonalInformation.Birthday" class="form-label">Date de naissance</label>
+            <input type="date" class="form-control input" asp-for="PersonalInformation.Birthday" value="" placeholder="JJ/MM/AAAA">
+            <span asp-validation-for="PersonalInformation.Birthday"></span>
         </div>
         <div class="col-md-6">
-            <label asp-for="Mobile" class="form-label">Téléphone mobile</label>
-            <input type="text" class="form-control input" asp-for="Mobile">
-            <span asp-validation-for="Mobile"></span>
+            <label asp-for="PersonalInformation.Mobile" class="form-label">Téléphone mobile</label>
+            <input type="text" class="form-control input" asp-for="PersonalInformation.Mobile">
+            <span asp-validation-for="PersonalInformation.Mobile"></span>
         </div>
     </div>
 
@@ -118,43 +119,41 @@ else
 
         <h5>Détails Chercheur</h5>
 
-        <!-- Establishment -->
-        <input type="hidden" asp-for="Establishment" id="establishmentHidden" />
         <div class="col-md-6">
-            <label class="form-label">Établissement</label>
-            <select class="form-select" id="establishmentSelect"></select>
-            <input type="text" id="customEstablishment" class="form-control mt-2 d-none"
-                   placeholder="Entrez le nom de l'établissement manuellement" />
-            <span asp-validation-for="Establishment" class="text-danger"></span>
+            <label asp-for="Researcher.Diploma" class="form-label">Diplôme</label>
+            <input type="text" class="form-control input" asp-for="Researcher.Diploma">
+            <span asp-validation-for="Researcher.Diploma"></span>
         </div>
 
         <!-- Grade -->
-        <input type="hidden" asp-for="Grade" id="gradeHidden" />
+        <input type="hidden" asp-for="Researcher.Grade" id="gradeHidden" />
         <div class="col-md-6">
             <label class="form-label">Grade</label>
             <select class="form-select" id="gradeSelect"></select>
             <input type="text" id="customGrade" class="form-control mt-2 d-none"
                    placeholder="Entrez le grade manuellement" />
-            <span asp-validation-for="Grade" class="text-danger"></span>
+            <span asp-validation-for="Researcher.Grade" class="text-danger"></span>
         </div>
 
         <div class="col-md-6">
-            <label asp-for="Speciality" class="form-label">Spécialité</label>
-            <input type="text" class="form-control input" asp-for="Speciality">
-            <span asp-validation-for="Speciality"></span>
+            <label asp-for="Researcher.Speciality" class="form-label">Spécialité</label>
+            <input type="text" class="form-control input" asp-for="Researcher.Speciality">
+            <span asp-validation-for="Researcher.Speciality"></span>
         </div>
 
-       
-
+        <!-- Establishment -->
+        <input type="hidden" asp-for="Researcher.Establishment" id="establishmentHidden" />
         <div class="col-md-6">
-            <label asp-for="Diploma" class="form-label">Diplôme</label>
-            <input type="text" class="form-control input" asp-for="Diploma">
-            <span asp-validation-for="Diploma"></span>
+            <label class="form-label">Établissement</label>
+            <select class="form-select" id="establishmentSelect"></select>
+            <input type="text" id="customEstablishment" class="form-control mt-2 d-none"
+                   placeholder="Entrez le nom de l'établissement manuellement" />
+            <span asp-validation-for="Researcher.Establishment" class="text-danger"></span>
         </div>
 
         <div class="col-md-6">
-            <label asp-for="ParticipationPrograms" class="form-label"></label>
-            <select asp-for="ParticipationPrograms" class="form-control select2-keywords" multiple="multiple" style="width: 100%;">
+            <label asp-for="Researcher.ParticipationPrograms" class="form-label"></label>
+            <select asp-for="Researcher.ParticipationPrograms" class="form-control select2-keywords" multiple="multiple" style="width: 100%;">
                 <!-- Options will be populated by JavaScript -->
             </select>
         </div>
@@ -168,21 +167,49 @@ else
         <h5>Détails Partenaire</h5>
 
         <div class="col-md-6">
-            <label asp-for="Baccalaureat" class="form-label"></label>
-            <input type="text" class="form-control" asp-for="Baccalaureat" />
-            <span asp-validation-for="Baccalaureat" class="text-danger"></span>
+            <label asp-for="Partner.Baccalaureat" class="form-label"></label>
+            <input type="text" class="form-control" asp-for="Partner.Baccalaureat" />
+            <span asp-validation-for="Partner.Baccalaureat" class="text-danger"></span>
         </div>
 
         <div class="col-md-6">
-            <label asp-for="Profession" class="form-label"></label>
-            <input type="text" class="form-control" asp-for="Profession" />
-            <span asp-validation-for="Profession" class="text-danger"></span>
+            <label asp-for="Partner.Diploma" class="form-label">Diplôme</label>
+            <input type="text" class="form-control input" asp-for="Partner.Diploma">
+            <span asp-validation-for="Partner.Diploma"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="Partner.Profession" class="form-label"></label>
+            <input type="text" class="form-control" asp-for="Partner.Profession" />
+            <span asp-validation-for="Partner.Profession" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="Partner.Speciality" class="form-label">Spécialité</label>
+            <input type="text" class="form-control input" asp-for="Partner.Speciality">
+            <span asp-validation-for="Partner.Speciality"></span>
+        </div>
+
+        <!-- Establishment -->
+        <input type="hidden" asp-for="Partner.Establishment" id="partenaireEstablishmentHidden" />
+        <div class="col-md-6">
+            <label class="form-label">Établissement</label>
+            <select class="form-select" id="partenaireEstablishmentSelect"></select>
+            <input type="text" id="customEstablishment" class="form-control mt-2 d-none"
+                   placeholder="Entrez le nom de l'établissement manuellement" />
+            <span asp-validation-for="Partner.Establishment" class="text-danger"></span>
         </div>
 
         <div class="col-md-12">
-            <label asp-for="SocioEconomicContributions" class="form-label"></label>
-            <textarea class="form-control" asp-for="SocioEconomicContributions"></textarea>
-            <span asp-validation-for="SocioEconomicContributions" class="text-danger"></span>
+            <label asp-for="Partner.PartnerResearchPrograms" class="form-label"></label>
+            <textarea class="form-control" asp-for="Partner.PartnerResearchPrograms"></textarea>
+            <span asp-validation-for="Partner.PartnerResearchPrograms" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-12">
+            <label asp-for="Partner.PartnerSocioEconomicWorks" class="form-label"></label>
+            <textarea class="form-control" asp-for="Partner.PartnerSocioEconomicWorks"></textarea>
+            <span asp-validation-for="Partner.PartnerSocioEconomicWorks" class="text-danger"></span>
         </div>
     </div>
 
@@ -190,9 +217,20 @@ else
     <div id="sectionAssocie" class="row shadow-sm g-3 p-3 mb-4 bg-white border rounded" style="display:none;">
         <h5>Membre associé</h5>
 
+        <div class="col-md-6">
+            <label asp-for="Associate.Diploma" class="form-label">Diplôme</label>
+            <input type="text" class="form-control input" asp-for="Associate.Diploma">
+            <span asp-validation-for="Associate.Diploma"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="Associate.Speciality" class="form-label">Spécialité</label>
+            <input type="text" class="form-control input" asp-for="Associate.Speciality">
+            <span asp-validation-for="Associate.Speciality"></span>
+        </div>
         <div class="col-md-12">
-            <label asp-for="MemberParticipation" class="form-label"></label>
-            <textarea class="form-control" asp-for="MemberParticipation"></textarea>
+            <label asp-for="Associate.MemberParticipation" class="form-label"></label>
+            <textarea class="form-control" asp-for="Associate.MemberParticipation"></textarea>
         </div>
 
     </div>
@@ -365,25 +403,32 @@ else
         $(document).ready(function () {
             // 1) تهيئة القوائم
             initSelect2('#establishmentSelect', 'Establishments', '-- Sélectionnez l\'établissement --', true, 2);
+            initSelect2('#partenaireEstablishmentSelect', 'Establishments', '-- Sélectionnez l\'établissement --', true, 2);
             initSelect2('#gradeSelect', 'Grades', '-- Sélectionnez un grade / diplôme --', true, 0); // صفر لعرض بدون كتابة
            // initSelect2('#statutSelect', 'Statuts', '-- Sélectionnez un statut --', true, 2);
 
             // 2) قيم ابتدائية من الموديل
-            const initEst = @Html.Raw(JsonSerializer.Serialize(Model.Establishment));
-            const initGrade = @Html.Raw(JsonSerializer.Serialize(Model.Grade));
+            const initEst = @Html.Raw(JsonSerializer.Serialize(Model.Researcher.Establishment));
+            const initEstPartner = @Html.Raw(JsonSerializer.Serialize(Model.Partner.Establishment));
+            const initGrade = @Html.Raw(JsonSerializer.Serialize(Model.Researcher.Grade));
            // const initStatut = Html.Raw(JsonSerializer.Serialize(Model.Statut));
 
             setInitialValue('#establishmentSelect', initEst);
+            setInitialValue('#partenaireEstablishmentSelect', initEstPartner);
             setInitialValue('#gradeSelect', initGrade);
            // setInitialValue('#statutSelect', initStatut);
             
             // 3) تفعيل/تعطيل الإدخال اليدوي حسب القيمة الحالية
             toggleCustomInput('establishmentSelect', 'customEstablishment');
+            toggleCustomInput('partenaireEstablishmentSelect', 'customEstablishment');
             toggleCustomInput('gradeSelect', 'customGrade');
             //toggleCustomInput('statutSelect', 'customStatut');
 
             $('#establishmentSelect').on('change', function () {
                 toggleCustomInput('establishmentSelect', 'customEstablishment');
+            });
+            $('#partenaireEstablishmentSelect').on('change', function () {
+                toggleCustomInput('partenaireEstablishmentSelect', 'customEstablishment');
             });
             $('#gradeSelect').on('change', function () {
                 toggleCustomInput('gradeSelect', 'customGrade');
@@ -395,6 +440,7 @@ else
             // 4) مزامنة قبل الإرسال (نمنع إرسال نص placeholder)
             $('form').on('submit', function () {
                 syncField('establishmentSelect', 'customEstablishment', 'establishmentHidden');
+                syncField('partenaireEstablishmentSelect', 'customEstablishment', 'partenaireEstablishmentHidden');
                 syncField('gradeSelect', 'customGrade', 'gradeHidden');
                 // syncField('statutSelect', 'customStatut', 'statutHidden');
             });
@@ -412,10 +458,10 @@ else
             });
 
             // تحميل الكلمات المفتاحية الموجودة مسبقاً
-            @if (Model.ParticipationPrograms != null && Model.ParticipationPrograms.Any())
+            @if (Model.Researcher.ParticipationPrograms != null && Model.Researcher.ParticipationPrograms.Any())
             {
                     <text>
-                        var existingKeywords = @Html.Raw(JsonSerializer.Serialize(Model.ParticipationPrograms));
+                            var existingKeywords = @Html.Raw(JsonSerializer.Serialize(Model.Researcher.ParticipationPrograms));
                         if (existingKeywords && existingKeywords.length > 0) {
                             existingKeywords.forEach(function(item) {
                                 // أضف الخيار إذا لم يكن موجود
@@ -429,6 +475,6 @@ else
                     </text>
             }
         });
-    </script>
+</script>
 
 }

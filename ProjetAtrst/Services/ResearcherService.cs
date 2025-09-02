@@ -39,13 +39,12 @@ namespace ProjetAtrst.Services
             if (user == null || user.Researcher == null)
                 return;
 
-            user.RegisterDate = DateTime.UtcNow;
+            //user.RegisterDate = DateTime.UtcNow;
             user.Researcher.Establishment = model.Establishment;
             user.Researcher.Grade = model.Grade;
             user.Researcher.Speciality = model.Speciality;
             user.Researcher.Diploma = model.Diploma;
             user.Researcher.ParticipationPrograms = model.ParticipationPrograms;
-            user.Researcher.IsCompleted = true;
             _unitOfWork.Users.Update(user);
             await _unitOfWork.SaveAsync();
             
@@ -92,7 +91,7 @@ namespace ProjetAtrst.Services
                 Speciality = user.Researcher.Speciality,
                 Diploma = user.Researcher.Diploma,
                 ParticipationPrograms=user.Researcher.ParticipationPrograms,
-                IsCompleted = user.IsCompleted
+               
             };
         }
         public async Task<(List<ResearcherViewModel> Researchers, int TotalCount)> GetAvailableResearchersForInvitationAsync(int projectId, int page, int pageSize)

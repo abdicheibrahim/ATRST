@@ -29,9 +29,6 @@ namespace ProjetAtrst.ViewModels.Researcher
         [Display(Name = "Participation à des programmes de recherche")]
         public List<string>? ParticipationPrograms { get; set; }
 
-        // Read-only properties for display
-        public bool IsCompleted { get; set; }
-        public bool IsApprovedByAdmin { get; set; }
        
     }
 }
