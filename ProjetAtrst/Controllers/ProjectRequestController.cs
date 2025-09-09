@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ProjetAtrst.Enums;
 using ProjetAtrst.Interfaces.Services;
+using ProjetAtrst.Models;
+using ProjetAtrst.Services;
 using ProjetAtrst.ViewModels.ProjectRequests;
 using System.Security.Claims;
-using ProjetAtrst.Enums;
 
 namespace ProjetAtrst.Controllers
 {
@@ -11,10 +13,12 @@ namespace ProjetAtrst.Controllers
     public class ProjectRequestController : Controller
     {
         private readonly IProjectRequestService _requestService;
+        private readonly IUserService _userService;
 
-        public ProjectRequestController(IProjectRequestService requestService)
+        public ProjectRequestController(IProjectRequestService requestService,IUserService userService)
         {
             _requestService = requestService;
+            _userService = userService;
         }
 
         public async Task<IActionResult> Incoming()
@@ -36,16 +40,18 @@ namespace ProjetAtrst.Controllers
             return View(requests);
         }
 
+      
         [HttpGet]
         public async Task<IActionResult> Send(int projectId, string receiverId, RequestType type)
         {
             var model = await _requestService.PrepareRequestModelAsync(projectId, receiverId, type);
-
             if (model == null)
-                return NotFound("المشروع غير موجود.");
-
-            return View(model);
+                return NotFound();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ViewBag.IsroleResearche = RoleType.Researcher == await _userService.GetRoleAsync(userId);
+            return PartialView("_SendRequestModalPartial", model);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -62,6 +68,7 @@ namespace ProjetAtrst.Controllers
                 "تم إرسال الدعوة بنجاح.";
 
             return RedirectToAction("SentJoinRequests", "ProjectRequest"); // أو SendInvitations
+            //return View();
         }
 
         public async Task<IActionResult> Accept(int id)
@@ -84,7 +91,12 @@ namespace ProjetAtrst.Controllers
             var request = await _requestService.GetByIdWithRelationsAsync(id);
             if (request == null) return NotFound();
 
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return PartialView("_ProjectRequestDetailsPartial", request);
+            }
             return View(request);
+           
         }
 
         [HttpGet]

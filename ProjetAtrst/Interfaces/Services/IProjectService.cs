@@ -33,5 +33,6 @@ namespace ProjetAtrst.Interfaces.Services
 
         Task<ProjectDetailsV2ViewModel?> GetProjectDetailsAsync(int projectId);
         //-------//
+        Task<bool> CanUserCreateProjectAsync(string userId);
     }
 }

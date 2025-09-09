@@ -6,10 +6,6 @@
 @{
     var user = await UserManager.GetUserAsync(User);
      var notifications = user != null ? await NotificationService.GetUnreadNotificationsAsync(user.Id) : new List<Notification>();
-    // var count = notifications.Count;
-    // var fullName = user?.FullName ?? "Utilisateur";
-    // var imagePath = user?.ProfilePicturePath;
-    // var initial = !string.IsNullOrEmpty(fullName) ? fullName.Trim()[0].ToString().ToUpper() : "?";
 }
 <!DOCTYPE html>
 <html lang="en">

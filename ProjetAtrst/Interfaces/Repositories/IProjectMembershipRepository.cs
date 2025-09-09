@@ -4,15 +4,15 @@ namespace ProjetAtrst.Interfaces.Repositories
 {
     public interface IProjectMembershipRepository : IGenericRepository<ProjectMembership>
     {
-        Task<IEnumerable<ProjectMembership>> GetAllByResearcherWithProjectsAsync(string researcherId);
+        Task<IEnumerable<ProjectMembership>> GetAllByUserWithProjectsAsync(string userId);
         Task<ProjectMembership?> GetByResearcherAndProjectAsync(string researcherId, int projectId);
 
-        //Not Verified
-       // Task<List<ProjectMembership>> GetProjectsByResearcherWithDetailsAsync(string researcherId);
         Task<bool> IsUserLeaderAsync(string researcherId, int projectId);
 
         Task<List<ProjectMembership>> GetMembersByProjectIdAsync(int projectId);
 
         Task<List<ProjectMembership>> GetProjectsByUserWithDetailsAsync(string userId);
+
+        Task<int> CountProjectsByUserIdAsync(string researcherId);
     }
 }

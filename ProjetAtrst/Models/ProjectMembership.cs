@@ -4,7 +4,8 @@
     {
         Leader,
         Member,
-        Viewer
+        Partner,
+        Associate
     }
    
 
@@ -17,7 +18,7 @@
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }
 
-        public Role Role { get; set; }   // Leader / Member
+        public Role Role { get; set; }   // Leader / Member ...
         public DateTime JoinedAt { get; set; }
 
 

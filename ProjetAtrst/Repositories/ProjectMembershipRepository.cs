@@ -9,10 +9,10 @@ namespace ProjetAtrst.Repositories
         public ProjectMembershipRepository (ApplicationDbContext context) : base(context) { }
         
         //Verified
-        public async Task<IEnumerable<ProjectMembership>> GetAllByResearcherWithProjectsAsync(string researcherId)
+        public async Task<IEnumerable<ProjectMembership>> GetAllByUserWithProjectsAsync(string userId)
         {
             return await _context.ProjectMemberships
-                .Where(pm => pm.UserId == researcherId)
+                .Where(pm => pm.UserId == userId)
                 .Include(pm => pm.Project)
                 .ToListAsync();
         }
@@ -22,19 +22,7 @@ namespace ProjetAtrst.Repositories
                 .Include(pm => pm.Project)
                 .FirstOrDefaultAsync(pm => pm.UserId == researcherId && pm.ProjectId == projectId);
         }
-        // Not Verified
-
-        //public async Task<List<ProjectMembership>> GetProjectsByResearcherWithDetailsAsync(string researcherId)
-        //{
-        //    return await _context.ProjectMemberships
-        //        .Where(pm => pm.UserId == researcherId)
-        //        .Include(pm => pm.Project)
-        //            .ThenInclude(p => p.ProjectMemberships)
-        //                .ThenInclude(m => m.Researcher)
-        //                    .ThenInclude(r => r.User)
-        //        .Include(pm => pm.Project.ProjectRequests)
-        //        .ToListAsync();
-        //}
+        
 
         public async Task<List<ProjectMembership>> GetProjectsByUserWithDetailsAsync(string userId)
         {
@@ -61,6 +49,15 @@ namespace ProjetAtrst.Repositories
                 .Include(pm => pm.User)
                 .Where(pm => pm.ProjectId == projectId)
                 .ToListAsync();
+        }
+
+        public async Task<int> CountProjectsByUserIdAsync(string userId)
+        {
+            return await _dbSet
+                .Where(pm => pm.UserId == userId)
+                .Select(pm => pm.ProjectId)   
+                .Distinct()                  
+                .CountAsync();
         }
 
     }

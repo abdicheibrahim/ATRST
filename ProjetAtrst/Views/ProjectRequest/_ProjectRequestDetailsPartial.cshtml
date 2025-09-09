@@ -1,0 +1,123 @@
+﻿@model ProjetAtrst.Models.ProjectRequest
+
+<!-- Modal Header -->
+<div class="modal-header bg-primary text-white">
+    <h5 class="modal-title">
+        <i class="bi bi-file-earmark-text me-2"></i> Détails de la demande
+    </h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<!-- Modal Body -->
+<div class="modal-body">
+    <div class="row g-3">
+
+        <!-- حالة الطلب -->
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light fw-bold">
+                    <i class="bi bi-info-circle me-1"></i> Statut de la demande
+                </div>
+                <div class="card-body">
+                    <span class="badge
+                        @(Model.Status == RequestStatus.Pending ? "bg-warning text-dark" :
+                                                    Model.Status == RequestStatus.Accepted ? "bg-success" : "bg-danger")">
+                        @(
+                                                Model.Status == RequestStatus.Pending ? "En attente" :
+                                                Model.Status == RequestStatus.Accepted ? "Accepté" :
+                                                "Refusé"
+                                                )
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- معلومات المرسل والمستلم -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-light fw-bold">
+                    <i class="bi bi-send me-1"></i> Expéditeur
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">
+                        <strong>Nom :</strong><br />
+                        @(string.IsNullOrWhiteSpace(Model.Sender?.FullName) ? "Inconnu" : Model.Sender.FullName)
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-light fw-bold">
+                    <i class="bi bi-envelope-arrow-down me-1"></i> Destinataire
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">
+                        <strong>Nom :</strong><br />
+                        @(string.IsNullOrWhiteSpace(Model.Receiver?.FullName) ? "Inconnu" : Model.Receiver.FullName)
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- نوع الطلب والمشروع -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-light fw-bold">
+                    <i class="bi bi-tag me-1"></i> Type de demande
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">@Model.Type.ToString()</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-light fw-bold">
+                    <i class="bi bi-folder me-1"></i> Titre du projet
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">
+                        @(string.IsNullOrWhiteSpace(Model.Project?.Title) ? "Non lié" : Model.Project.Title)
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- الرسالة -->
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light fw-bold">
+                    <i class="bi bi-chat-left-text me-1"></i> Message
+                </div>
+                <div class="card-body">
+                    <div class="bg-light p-3 rounded text-break Description" style="white-space: pre-line; border: 1px solid #eee;">
+                        @Html.Raw(Model.Message)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- تاريخ الإرسال -->
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light fw-bold">
+                    <i class="bi bi-calendar-event me-1"></i> Date d'envoi
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal Footer -->
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+        <i class="bi bi-x-circle me-1"></i> Fermer
+    </button>
+</div>

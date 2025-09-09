@@ -10,7 +10,7 @@ namespace ProjetAtrst.Interfaces.Repositories
         IQueryable<AvailableProjectDto> GetAvailableProjectsQuery(string researcherId);
         Task<ProjectDetailsDto?> GetProjectDetailsAsync(int projectId);
 
-        //---New methods for project management---
+        
         Task<Project?> GetProjectForEditAsync(int projectId);
         Task<bool> UpdateProjectAsync(Project project);
         Task<bool> IsUserProjectLeaderAsync(int projectId, string userId);

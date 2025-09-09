@@ -42,7 +42,15 @@ namespace ProjetAtrst.Controllers
             return RedirectToAction("EditProfile");
         }
 
-        
+        [HttpGet]
+        public async Task<IActionResult> Details(string partnerId)
+        {
+            var partnerDetails = await _partnerService.GetPartnerDetailsAsync(partnerId);
+            if (partnerDetails == null)
+                return NotFound();
+
+            return PartialView("_PartnerDetailsModal", partnerDetails);
+        }
 
     }
 }

@@ -100,7 +100,7 @@ public class ProjectContextController : ProjectContextBaseController
     {
         var projectId = HttpContext.Session.GetInt32("CurrentProjectId");
         if (projectId == null)
-            return RedirectToAction("Index");
+            return Forbid();
         var requests = await _projectService.GetJoinRequestsAsync(projectId.Value);
         return View(requests);
     }
@@ -133,9 +133,9 @@ public class ProjectContextController : ProjectContextBaseController
     [HttpPost]
     public async Task<IActionResult> RejectRequest(int requestId)
     {
-        await _requestService.RejectRequestAsync(requestId, RejectionType.Invitation);
+        await _requestService.RejectRequestAsync(requestId, RejectionType.JoinRequest);
 
-        TempData["Warning"] = "تم رفض الطلب.";
+        TempData["Warning"] = "La demande a été rejetée.";
         return RedirectToAction("Requests");
     }
 

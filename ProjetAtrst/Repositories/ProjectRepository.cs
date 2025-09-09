@@ -110,9 +110,14 @@ namespace ProjetAtrst.Repositories
                 {
                     Id = p.Id,
                     Title = p.Title,
-                    //Description = p.Description,
+                    Domain = p.Domain,
+                    Axis = p.Axis,
+                    Theme = p.Theme,
+                    Nature = p.Nature,
+                    PNR = p.PNR,
+                    TRL = p.TRL,
                     CreationDate = p.CreationDate,
-                    ImageUrl = p.LogoPath, // تأكد من اسم الخاصية عندك
+                    ImageUrl = p.LogoPath, 
                     LeaderId = p.ProjectMemberships
                         .Where(pm => pm.Role == Role.Leader)
                         .Select(pm => pm.UserId)
@@ -125,6 +130,7 @@ namespace ProjetAtrst.Repositories
                 .AsNoTracking()
                 .FirstOrDefaultAsync();
         }
+
 
         //--- New methods for project management ---//
         public async Task<Project?> GetProjectForEditAsync(int projectId)

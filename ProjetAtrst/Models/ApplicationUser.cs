@@ -28,6 +28,7 @@ namespace ProjetAtrst.Models
         public Researcher? Researcher { get; set; }
         public Partner? Partner { get; set; }
         public Associate? Associate { get; set; }
+        public ICollection<Notification>? Notifications { get; set; }
 
         public Admin? Admin { get; set; }
         public RoleType RoleType { get; set; }

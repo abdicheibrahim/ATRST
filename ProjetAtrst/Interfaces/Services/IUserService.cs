@@ -14,6 +14,7 @@ namespace ProjetAtrst.Interfaces.Services
         Task<EditProfileViewModel?> GetEditProfileViewModelAsync(string userId);
         Task EditProfileAsync(string userId, EditProfileViewModel model);
         Task<bool> IsProfileCompleteAsync(string userId);
+        Task<RoleType> GetRoleAsync(string userId);
     }
 
 }

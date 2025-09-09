@@ -8,7 +8,6 @@ namespace ProjetAtrst.Interfaces.Services
     {
         Task SendRequestAsync(ProjectRequestCreateViewModel model, string senderId);
         Task AcceptRequestAsync(int requestId);
-        //Task RejectRequestAsync(int requestId);
         Task RejectRequestAsync(int requestId, RejectionType rejectionType);
         Task<(IEnumerable<ProjectRequest> Incoming, IEnumerable<ProjectRequest> Sent)> GetRequestsForDashboardAsync(string userId);
         Task<ProjectRequest> GetByIdWithRelationsAsync(int userId);

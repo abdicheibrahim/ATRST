@@ -9,6 +9,7 @@ namespace ProjetAtrst.Interfaces.Services
         Task<EditPartnerProfileViewModel?> GetEditProfilePartnerAsync(string userId);
 
         Task EditProfilePartnerAsync(string userId, EditPartnerProfileViewModel model);
+        Task<PartnerDetailsViewModel?> GetPartnerDetailsAsync(string PartnerId);
 
     }
 }

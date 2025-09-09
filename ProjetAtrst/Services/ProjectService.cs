@@ -1,4 +1,5 @@
-﻿using ProjetAtrst.DTO;
+﻿using Microsoft.Extensions.Options;
+using ProjetAtrst.DTO;
 using ProjetAtrst.Helpers;
 using ProjetAtrst.Interfaces;
 using ProjetAtrst.Interfaces.Repositories;
@@ -13,18 +14,17 @@ namespace ProjetAtrst.Services
     public class ProjectService : IProjectService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IProjectRequestRepository _projectRequestRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly int _maxProjectsLimit;
 
-
-        public ProjectService(IUnitOfWork unitOfWork, IProjectRequestRepository projectRequestRepository, IWebHostEnvironment webHostEnvironment)
+        public ProjectService(IUnitOfWork unitOfWork, IProjectRequestRepository projectRequestRepository, IWebHostEnvironment webHostEnvironment, IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
-            _projectRequestRepository = projectRequestRepository;
             _webHostEnvironment = webHostEnvironment;
+            _maxProjectsLimit = int.Parse(configuration["MaxProjectsPerUser"] ?? "3");
         }
 
-        //new-------
+      
         public async Task CreateProjectAsync(ProjectCreateViewModel model, string researcherId)
         {
             if (model == null)
@@ -32,7 +32,10 @@ namespace ProjetAtrst.Services
 
             if (string.IsNullOrEmpty(researcherId))
                 throw new ArgumentException("Researcher ID cannot be null or empty.", nameof(researcherId));
-
+            if (!await CanUserCreateProjectAsync(researcherId))
+            {
+                throw new InvalidOperationException($"Sorry, you cannot create a new project. This feature is only available to researchers who have a maximum of {_maxProjectsLimit} projects.");
+            }
             try
             {
                 // معالجة المراجع
@@ -91,8 +94,6 @@ namespace ProjetAtrst.Services
             }
             catch (Exception ex)
             {
-                // يمكن تسجيل الخطأ هنا
-                // _logger?.LogError(ex, "Error creating project for researcher {ResearcherId}", researcherId);
                 throw new InvalidOperationException("Failed to create project.", ex);
             }
         }
@@ -121,20 +122,24 @@ namespace ProjetAtrst.Services
                           .ToList();
         }
 
-        // ✅ طريقة إضافية مفيدة للتحقق من صحة المشروع
-        public async Task<bool> CanUserCreateProjectAsync(string researcherId)
+
+        public async Task<bool> CanUserCreateProjectAsync(string userId)
         {
-            if (string.IsNullOrEmpty(researcherId))
+            if (string.IsNullOrEmpty(userId))
                 return false;
 
             try
             {
-                // يمكنك إضافة قواعد عمل هنا
-                // مثلاً: التحقق من عدد المشاريع الحالية للمستخدم
-                // var currentProjects = await _unitOfWork.Projects.CountAsync(p => p.Members.Any(m => m.ResearcherId == researcherId));
-               //  return currentProjects < MAX_PROJECTS_LIMIT;
+                
+                var userRole = await _unitOfWork.Users.GetRoleAsync(userId);
+                if (userRole != RoleType.Researcher)
+                    return false;
 
-                return true; // مؤقتاً
+                
+                var currentProjects = await _unitOfWork.ProjectMemberships
+                    .CountProjectsByUserIdAsync(userId);
+
+                return currentProjects < _maxProjectsLimit;
             }
             catch
             {
@@ -142,10 +147,11 @@ namespace ProjetAtrst.Services
             }
         }
 
-        public async Task<List<ProjectListViewModel>> GetProjectsForResearcherAsync(string researcherId)
+
+        public async Task<List<ProjectListViewModel>> GetProjectsForResearcherAsync(string userId)
         {
             var memberships = await _unitOfWork.ProjectMemberships
-                .GetAllByResearcherWithProjectsAsync(researcherId);
+                .GetAllByUserWithProjectsAsync(userId);
 
             return memberships.Select(pm => new ProjectListViewModel
             {
@@ -155,14 +161,15 @@ namespace ProjetAtrst.Services
                 Status = pm.Project.ProjectStatus.ToString(),
                 IsAcceptingJoinRequests = pm.Project.IsAcceptingJoinRequests,
                 LastActivity = pm.Project.LastActivity,
-                LogoPath = string.IsNullOrEmpty(pm.Project.LogoPath)
-               ? "/images/default-project.png"
-               : pm.Project.LogoPath,
+               // LogoPath = string.IsNullOrEmpty(pm.Project.LogoPath)
+               //? "/images/default-project.png"
+               //: pm.Project.LogoPath,
+               LogoPath = pm.Project.LogoPath,
                 Role = pm.Role switch
                 {
                     Role.Leader => Role.Leader,
                     Role.Member => Role.Member,
-                    _ => Role.Viewer,
+                   // _ => Role.Viewer,
 
                 }
 
@@ -188,62 +195,7 @@ namespace ProjetAtrst.Services
                 Role = membership.Role 
             };
         }
-        //public async Task<ProjectEditViewModel?> GetProjectForEditAsync(string researcherId, int projectId)
-        //{
-        //    var membership = await _unitOfWork.ProjectMemberships
-        //        .GetByResearcherAndProjectAsync(researcherId, projectId);
-
-        //    if (membership == null || membership.Role != Role.Leader)
-        //        return null;
-
-        //    var project = membership.Project;
-
-        //    return new ProjectEditViewModel
-        //    {
-        //        Id = project.Id,
-        //        Title = project.Title,
-        //        Description = project.Description,
-        //        CurrentLogoPath = string.IsNullOrEmpty(project.LogoPath)
-        //        ? "/images/default-project.png"
-        //        : project.LogoPath
-
-        //    };
-        //}
-        //public async Task<bool> UpdateProjectAsync(string researcherId, ProjectEditViewModel model)
-        //{
-        //    var membership = await _unitOfWork.ProjectMemberships
-        //        .GetByResearcherAndProjectAsync(researcherId, model.Id);
-
-        //    if (membership == null || membership.Role != Role.Leader)
-        //        return false;
-
-        //    var project = membership.Project;
-        //    project.Title = model.Title;
-        //    project.Description = model.Description;
-        //    project.LastActivity = DateTime.UtcNow;
-        //    project.LogoPath = model.CurrentLogoPath; // احفظ المسار القديم إذا كان موجودًا
-
-        //    // ✅ معالجة الصورة إذا تم رفعها
-        //    if (model.LogoFile != null && model.LogoFile.Length > 0)
-        //    {
-        //        var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "ProjectImages");
-        //        Directory.CreateDirectory(uploadsFolder); // تأكد أن المجلد موجود أو يتم إنشاؤه
-
-        //        var fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.LogoFile.FileName);
-        //        var filePath = Path.Combine(uploadsFolder, fileName);
-
-        //        using (var stream = new FileStream(filePath, FileMode.Create))
-        //        {
-        //            await model.LogoFile.CopyToAsync(stream);
-        //        }
-
-        //        // احفظ المسار النسبي الذي يمكن استخدامه في العرض
-        //        project.LogoPath = "/uploads/ProjectImages/" + fileName;
-        //    }
-
-        //    await _unitOfWork.SaveAsync();
-        //    return true;
-        //}
+      
 
         // ------------- السيناريو الأول: Paging عادي -------------
         public async Task<(List<AvailableProjectViewModel> Projects, int TotalCount)>
@@ -364,7 +316,12 @@ namespace ProjetAtrst.Services
             {
                 Id = dto.Id,
                 Title = dto.Title,
-                Description = dto.Description,
+                Domain= dto.Domain,
+                Axis= dto.Axis,
+                Theme= dto.Theme,
+                Nature= dto.Nature,
+                PNR= dto.PNR,
+                TRL= dto.TRL,
                 CreationDate = dto.CreationDate,
                 ImageUrl = dto.ImageUrl,
                 LeaderId = dto.LeaderId,
@@ -394,20 +351,21 @@ namespace ProjetAtrst.Services
         }
         public async Task<List<ProjectJoinRequestViewModel>> GetJoinRequestsAsync(int projectId)
         {
-            var requests = await _projectRequestRepository.GetJoinRequestsByProjectIdAsync(projectId);
+            var requests = await _unitOfWork.ProjectRequest.GetJoinRequestsByProjectIdAsync(projectId);
 
             return requests.Select(r => new ProjectJoinRequestViewModel
             {
                 RequestId = r.Id,
                 SenderId = r.SenderId,
                 SenderName = r.Sender.FullName,
+                SenderRole = r.Sender.RoleType,
                 Status = r.Status,
                 SentAt = r.CreatedAt
             }).ToList();
         }  
         public async Task<List<ProjectJoinRequestViewModel>> GetInvitationRequestsAsync(int projectId)
         {
-            var requests = await _projectRequestRepository.GetInvitationRequestsByProjectIdAsync(projectId);
+            var requests = await _unitOfWork.ProjectRequest.GetInvitationRequestsByProjectIdAsync(projectId);
 
             return requests.Select(r => new ProjectJoinRequestViewModel
             {

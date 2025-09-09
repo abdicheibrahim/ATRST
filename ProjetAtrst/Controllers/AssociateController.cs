@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProjetAtrst.Interfaces.Services;
+using ProjetAtrst.Services;
 using ProjetAtrst.ViewModels.Associate;
 using ProjetAtrst.ViewModels.Partner;
 using System.Security.Claims;
@@ -38,6 +39,16 @@ namespace ProjetAtrst.Controllers
                 return RedirectToAction("Login");
             await _associateService.EditProfileAssociateAsync(userId, model);
             return RedirectToAction("EditProfile");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Details(string Id)
+        {
+            var AssociateDetails = await _associateService.GetAssociateDetailsAsync(Id);
+            if (AssociateDetails == null)
+                return NotFound();
+
+            return PartialView("_AssociateDetailsModal", AssociateDetails);
         }
     }
 }

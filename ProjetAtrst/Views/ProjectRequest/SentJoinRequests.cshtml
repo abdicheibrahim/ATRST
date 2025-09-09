@@ -21,12 +21,11 @@
     <button class="btn btn-outline-danger status-filter" data-status="rejected">Rejeté</button>
 </div>
 <div class="table-responsive">
-    <table id="requestsTable" class="table table-bordered table-striped align-middle shadow-sm">
+    <table id="requestsTable" class="table table-bordered table-striped align-middle shadow-sm text-al">
         <thead class="table-success">
             <tr>
                 <th>Destinataire</th>
                 <th>Projet</th>
-                <th>Message</th>
                 <th>Statut</th>
                 <th>Date d'envoi</th>
                 <th>Options</th>
@@ -38,7 +37,6 @@
                 <tr>
                     <td>@req.Receiver?.FullName</td>
                     <td>@req.Project?.Title</td>
-                    <td>@req.Message</td>
                     <td>
                         @switch (req.Status)
                         {
@@ -56,10 +54,12 @@
                     <td data-sort="@req.CreatedAt.Ticks">@req.CreatedAt.ToString("yyyy-MM-dd")</td>
                     <td>
                         <div class="d-flex gap-1">
-                            <a asp-controller="ProjectRequest" asp-action="Details" asp-route-id="@req.Id" class="btn btn-outline-primary btn-sm" title="Détails">
+                            <button type="button"
+                                    class="btn btn-outline-primary btn-sm"
+                                    title="Détails"
+                                    onclick="loadProjectRequestDetails('@req.Id', this)">
                                 <i class="bi bi-eye"></i>
-                            </a>
-
+                            </button>
                             @if (req.Status == RequestStatus.Pending)
                             {
                                 <form asp-controller="ProjectRequest" asp-action="Accept" asp-route-id="@req.Id" method="post" class="d-inline">
@@ -81,7 +81,14 @@
         </tbody>
     </table>
 </div>
-
+<!-- Modal لتفاصيل طلب المشروع -->
+<div class="modal fade" id="projectRequestDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" id="projectRequestDetailsContent">
+            <!-- سيتم تحميل المحتوى هنا عبر AJAX -->
+        </div>
+    </div>
+</div>
 @section scripts {
     <!-- إضافة مكتبات DataTables -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
@@ -91,4 +98,92 @@
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
     <script src="~/js/datatablesincsr.js"></script>
+        @* Modal لتفاصيل طلب المشروع *@
+    <!-- Summernote CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.css  " rel="stylesheet">
+
+    <!-- Summernote JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.js  "></script>
+
+    <script>
+        $(function () {
+            // تتبع الزر الذي فتح المودال
+            let projectRequestDetailsModalTrigger = null;
+
+            // تحميل تفاصيل طلب المشروع داخل المودال
+            window.loadProjectRequestDetails = function (requestId, triggerButton = null) {
+                if (!requestId) {
+                    console.error("معرف طلب المشروع غير متوفر");
+                    return;
+                }
+
+                // حفظ الزر الذي فتح المودال
+                projectRequestDetailsModalTrigger = triggerButton;
+
+                $.ajax({
+                    url: '@Url.Action("Details", "ProjectRequest")',
+                    type: 'GET',
+                    data: { id: requestId }, // تأكد أن اسم الباراميتر مطابق للـ Action
+                    beforeSend: function () {
+                        $("#projectRequestDetailsContent").html(`
+                            <div class="text-center p-4">
+                                <i class="fas fa-spinner fa-spin"></i> جاري التحميل...
+                            </div>
+                        `);
+
+                        const modalEl = document.getElementById('projectRequestDetailsModal');
+                        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                        modal.show();
+                    },
+                    success: function (data) {
+                        $("#projectRequestDetailsContent").html(data);
+                         initializeProjectRequestDetails();
+                    },
+                    error: function (xhr) {
+                        const errorMessage = xhr.status === 404
+                            ? "تفاصيل الطلب غير متوفرة"
+                            : "حدث خطأ أثناء تحميل التفاصيل";
+
+                        $("#projectRequestDetailsContent").html(`
+                            <div class="alert alert-danger m-3">${errorMessage}</div>
+                        `);
+
+                        const modalEl = document.getElementById('projectRequestDetailsModal');
+                        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                        modal.show();
+                    }
+                });
+            };
+
+            // تهيئة إضافية بعد تحميل التفاصيل (اختياري)
+            function initializeProjectRequestDetails() {
+                 $(document).ready(function () {
+            $('.Description').summernote({
+                height: 300,
+                lang: 'fr-FR',
+              
+            });
+        });
+            }
+
+            // عند إغلاق المودال
+            $('#projectRequestDetailsModal').on('hidden.bs.modal', function () {
+                // تنظيف المحتوى
+                $('#projectRequestDetailsContent').empty();
+
+                // إعادة التركيز للزر
+                if (projectRequestDetailsModalTrigger) {
+                    setTimeout(() => {
+                        projectRequestDetailsModalTrigger.focus();
+                        projectRequestDetailsModalTrigger = null;
+                    }, 50);
+                }
+            });
+
+        });
+    </script>
+
+    
+    
+
 }

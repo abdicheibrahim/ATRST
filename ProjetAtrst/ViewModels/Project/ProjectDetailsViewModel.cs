@@ -9,6 +9,6 @@ namespace ProjetAtrst.ViewModels.Project
         public string Description { get; set; } = "";
         public DateTime CreationDate { get; set; }
         public string Status { get; set; } = "";
-        public Role Role { get; set; } = Role.Viewer;
+        public Role Role { get; set; } 
     }
 }

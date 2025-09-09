@@ -12,18 +12,36 @@
             <a class="btn btn-outline-success" asp-controller="Project" asp-action="AvailableProjects">
                 <i class="bi bi-person-plus"></i> Rejoindre un projet
             </a>
-            <a class="btn btn-outline-success" asp-controller="Project" asp-action="Create">
-                <i class="bi bi-plus-circle"></i> Créer un projet
-            </a>
+            @if (!ViewBag.CanCreateProject)
+            {
+                <button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="top"
+                        data-bs-title="Désolé, vous ne pouvez pas créer de nouveau projet. Cette fonctionnalité est réservée aux chercheurs n'ayant pas dépassé le nombre maximal de projets.">
+                    Créer un projet
+                </button>
+            }
+            else
+            {
+                <a class="btn btn-outline-success" asp-controller="Project" asp-action="Create">
+                    <i class="bi bi-plus-circle"></i> Créer un projet
+                </a>
+            }
+            
         </div>
     </div>
 </div>
+
+
+
+
+
+
+
 
 <div class="table-responsive">
     <table class="table table-bordered table-striped align-middle">
         <thead class="table-light">
             <tr>
-                <th>Image</th> <!-- ✅ العمود الجديد -->
+                <th>Image</th> 
                 <th>Titre</th>
                 <th>Date de création</th>
                 <th>Statut</th>
@@ -36,15 +54,24 @@
         <tbody>
             @foreach (var project in Model)
             {
-                var logo = string.IsNullOrEmpty(project.LogoPath)
-                ? Url.Content("~/images/default-project.png")
-                : Url.Content(project.LogoPath);
-
+                
+              
                 <tr>
                     <td>
-                        <img src="@logo"
-                             alt="Logo"
-                             style="height: 50px; width: 50px; object-fit: cover; border-radius: 6px;" />
+                        @if (!string.IsNullOrEmpty(project.LogoPath))
+                        {
+                            <img src="@project.LogoPath"
+                                 alt="Logo"
+                                 style="height: 50px; width: 50px; object-fit: cover; border-radius: 6px;" />
+                        }
+                        else
+                        {
+                            <div style="height: 50px; width: 50px; background-color: #000000; color: white;
+                            display: flex; align-items: center; justify-content: center;
+                            border-radius: 6px; font-weight: bold; font-size: 20px;">
+                                @(project.Title?.Trim().FirstOrDefault().ToString().ToUpper())
+                            </div>
+                        }
                     </td>
                     <td>@project.Title</td>
                     <td>@project.CreationDate.ToShortDateString()</td>
@@ -96,3 +123,13 @@
 
     </table>
 </div>
+@section Scripts {
+    <script>
+        // Initialize Bootstrap tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+
+    </script>
+}

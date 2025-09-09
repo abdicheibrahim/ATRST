@@ -1,0 +1,50 @@
+﻿@using ProjetAtrst.ViewModels.ProjectRequests
+@model ProjectRequestCreateViewModel
+
+<!-- Modal Header -->
+<div class="modal-header bg-primary text-white">
+    <h5 class="modal-title">
+        <i class="bi bi-send me-2"></i> Envoyer une demande
+    </h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<!-- Modal Body -->
+<div class="modal-body">
+    <form asp-action="Send" method="post" id="sendRequestForm">
+        @Html.AntiForgeryToken()
+
+        <input type="hidden" asp-for="ProjectId" />
+        <input type="hidden" asp-for="ReceiverId" />
+        <input type="hidden" asp-for="Type" />
+
+        <div class="mb-3">
+            <label asp-for="Message" class="form-label fw-bold">
+                <i class="bi bi-chat-left-text me-1"></i> Message
+            </label>
+            <textarea asp-for="Message" class="form-control Description" rows="4" placeholder="Écrivez votre message ici..."></textarea>
+            <span asp-validation-for="Message" class="text-danger small"></span>
+        </div>
+
+        @if (ViewBag.IsroleResearche)
+        {
+            <div class="mb-3">
+                <label asp-for="RelatedWorks" class="form-label fw-bold">
+                    <i class="bi bi-clipboard me-1"></i> Travaux liés
+                </label>
+                <textarea asp-for="RelatedWorks" class="form-control Description" rows="3" placeholder="Décrivez les travaux liés..."></textarea>
+                <span asp-validation-for="RelatedWorks" class="text-danger small"></span>
+            </div>
+        }
+    </form>
+</div>
+
+<!-- Modal Footer -->
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+        <i class="bi bi-x-circle me-1"></i> Annuler
+    </button>
+    <button type="submit" form="sendRequestForm" class="btn btn-primary">
+        <i class="bi bi-send me-1"></i> Envoyer 📨
+    </button>
+</div>

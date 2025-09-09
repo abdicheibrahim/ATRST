@@ -11,13 +11,16 @@ namespace ProjetAtrst.ViewModels.ProjectRequests
         [Display(Name = "رسالتك")]
         public string Message { get; set; }
 
-        [Required] // المستخدم المستقبل
+        [Required] 
         public string ReceiverId { get; set; }
 
         public RequestType Type { get; set; } // Join أو Invitation
 
         public string? ProjectTitle { get; set; }
         public string? LeaderFullName { get; set; }
+
+        [Display(Name = "Travaux en relation avec le projet proposé")]
+        public string? RelatedWorks { get; set; }
     }
 }
 

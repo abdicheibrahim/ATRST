@@ -34,8 +34,9 @@ document.addEventListener("DOMContentLoaded", function () {
         order: [[4, 'desc']],
 
         columnDefs: [
+           
             {
-                targets: 3, // عمود الحالة
+                targets: 2, // عمود الحالة
                 orderable: true,
                 render: function (data, type, row) {
                     if (type === 'filter') {
@@ -46,7 +47,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             },
             {
-                targets: 5, // العمود الأخير
+                targets: 4, // العمود الأخير
                 orderable: false
             }
         ]
@@ -64,9 +65,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // فلترة الجدول
         if (status === 'all') {
-            table.column(3).search('').draw();
+            table.column(2).search('').draw();
         } else {
-            table.column(3).search(status, true, false).draw();
+            table.column(2).search(status, true, false).draw();
         }
     });
 

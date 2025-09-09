@@ -1,0 +1,87 @@
+﻿@using ProjetAtrst.ViewModels.Partner
+@model PartnerDetailsViewModel
+
+<div class="modal-header bg-primary text-white">
+    <h5 class="modal-title">
+        <i class="bi bi-person-badge me-2"></i>Détails du partenaire
+    </h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body">
+    <div class="row g-3">
+
+        <!-- معلومات أساسية -->
+        <div class="col-md-12">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-light fw-bold">
+                    <i class="bi bi-info-circle me-1"></i> Informations personnelles
+                </div>
+                <div class="card-body">
+                    <p><strong>@Html.DisplayNameFor(m => m.FullName):</strong> @Model.FullName</p>
+                    <p><strong>@Html.DisplayNameFor(m => m.FullNameAr):</strong> @Model.FullNameAr</p>
+                    <p><strong>@Html.DisplayNameFor(m => m.Gender):</strong> @Model.Gender</p>
+                    <p><strong>@Html.DisplayNameFor(m => m.Birthday):</strong> @Model.Birthday.ToString("dd/MM/yyyy")</p>
+                    <p><strong>@Html.DisplayNameFor(m => m.Mobile):</strong> @Model.Mobile</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- معلومات أكاديمية -->
+        <div class="col-md-12">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-light fw-bold">
+                    <i class="bi bi-mortarboard me-1"></i> Parcours académique
+                </div>
+                <div class="card-body">
+                    <p><strong>@Html.DisplayNameFor(m => m.Baccalaureat):</strong> @Model.Baccalaureat</p>
+                    <p><strong>@Html.DisplayNameFor(m => m.Diploma):</strong> @Model.Diploma</p>
+                    <p><strong>@Html.DisplayNameFor(m => m.Profession):</strong> @Model.Profession</p>
+                    <p><strong>@Html.DisplayNameFor(m => m.Speciality):</strong> @Model.Speciality</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- مؤسسة -->
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light fw-bold">
+                    <i class="bi bi-building me-1"></i> Établissement
+                </div>
+                <div class="card-body">
+                    <p><strong>@Html.DisplayNameFor(m => m.Establishment):</strong> @Model.Establishment</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- مساهمات -->
+        <div class="col-md-12">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-light fw-bold">
+                    <i class="bi bi-clipboard-check me-1"></i> Programmes de recherche
+                </div>
+                <div class="card-body">
+                    <p>@Model.PartnerResearchPrograms</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-light fw-bold">
+                    <i class="bi bi-people-fill me-1"></i> Travaux socio-économiques
+                </div>
+                <div class="card-body">
+                    <p>@Model.PartnerSocioEconomicWorks</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+        <i class="bi bi-x-circle me-1"></i> Fermer
+    </button>
+</div>

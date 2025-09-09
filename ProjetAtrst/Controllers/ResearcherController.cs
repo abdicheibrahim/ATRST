@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProjetAtrst.Interfaces.Services;
+using ProjetAtrst.Services;
 using ProjetAtrst.ViewModels.Account;
 using ProjetAtrst.ViewModels.Researcher;
 using System.Security.Claims;
@@ -48,6 +49,15 @@ namespace ProjetAtrst.Controllers
             await _researcherService.EditProfileResearcherViewModelAsync(userId, model);
 
             return RedirectToAction("EditProfile");
+        }
+        [HttpGet]
+        public async Task<IActionResult> Details(string Id)
+        {
+            var ResearcherDetails = await _researcherService.GetResearcherDetailsAsync(Id);
+            if (ResearcherDetails == null)
+                return NotFound();
+
+            return PartialView("_ResearcherDetailsModal", ResearcherDetails);
         }
     }
 }

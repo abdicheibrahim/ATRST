@@ -1,14 +1,15 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using ProjetAtrst.Interfaces;
-using ProjetAtrst.Models;
-using System.Security.Claims;
-using ProjetAtrst.Interfaces.Services;
-using ProjetAtrst.ViewModels.Account;
-using ProjetAtrst.ViewModels.Researcher;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using ProjetAtrst.Helpers;
+using ProjetAtrst.Interfaces;
+using ProjetAtrst.Interfaces.Services;
+using ProjetAtrst.Models;
+using ProjetAtrst.ViewModels.Account;
+using ProjetAtrst.ViewModels.Partner;
+using ProjetAtrst.ViewModels.Researcher;
+using System.Collections.Generic;
+using System.Security.Claims;
 namespace ProjetAtrst.Services
 {
     public class ResearcherService : IResearcherService
@@ -48,32 +49,6 @@ namespace ProjetAtrst.Services
             _unitOfWork.Users.Update(user);
             await _unitOfWork.SaveAsync();
             
-            //if (!user.IsCompleted)
-            //{
-            //    user.IsCompleted = true;
-            //    _unitOfWork.Users.Update(user);
-            //    var notification = new Notification
-            //    {
-            //        UserId = userId,
-            //        Title = "Votre profil est complété",
-            //        Message = "Vos informations de compte sont complétées avec succès et sont en cours de vérification par l'administration."
-            //    };
-            //    _unitOfWork.Notifications.Create(notification);
-            //    await _unitOfWork.SaveAsync();
-            //}
-            //else
-            //{
-            //    _unitOfWork.Users.Update(user);
-            //    var notification = new Notification
-            //    {
-            //        UserId = userId,
-            //        Title = "Votre profil a été modifié.",
-            //        Message = "Les informations de votre compte ont été modifiées avec succès et sont actuellement en cours de vérification par l'administration."
-            //    };
-            //    _unitOfWork.Notifications.Create(notification);
-            //    await _unitOfWork.SaveAsync();
-            //}
-
 
         }
         public async Task<EditResearcherProfileViewModel?> GetEditProfileResearcherViewModelAsync(string userId)
@@ -111,5 +86,10 @@ namespace ProjetAtrst.Services
 
             return (mapped, totalCount);
         }
+
+        public async Task<ResearcherDetailsViewModel?> GetResearcherDetailsAsync(string researcherId)
+        {
+            return await _unitOfWork.Researchers.GetPartnerDetailsAsync(researcherId);
+        }
+    } 
     }
-}

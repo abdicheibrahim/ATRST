@@ -12,7 +12,6 @@ namespace ProjetAtrst.Controllers
     {
         private readonly IProjectService _projectService;
         private readonly StaticDataLoader _staticDataLoader;
-        // private readonly IProjectRequestService _projectRequestService;
         public ProjectController(IProjectService projectService, StaticDataLoader staticDataLoader)
         {
             _projectService = projectService;
@@ -54,7 +53,22 @@ namespace ProjetAtrst.Controllers
                 return View(model);
             }
         }
-       
+
+
+
+        [ServiceFilter(typeof(ProfileCompletionFilter))]
+        [HttpGet]
+        public async Task<IActionResult> MyProjects()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ViewBag.CanCreateProject = await _projectService.CanUserCreateProjectAsync(userId);
+
+            var projects = await _projectService.GetProjectsForResearcherAsync(userId);
+            return View(projects);
+        }
+
+
+
         [HttpGet]
         public IActionResult SearchDropdown(string type, string term, int take = 25)
         {
@@ -75,66 +89,15 @@ namespace ProjetAtrst.Controllers
                 return Json(new List<object>());
             }
         }
-        [ServiceFilter(typeof(ProfileCompletionFilter))]
-        [HttpGet]
-        public async Task<IActionResult> MyProjects()
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var projects = await _projectService.GetProjectsForResearcherAsync(userId);
-            return View(projects);
-        }
 
-        //public async Task<IActionResult> Details(int id)
-        //{
-        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        //    var model = await _projectService.GetProjectDetailsForResearcherAsync(userId, id);
-
-        //    if (model == null)
-        //        return NotFound();
-
-        //    return View(model);
-        //}
-
-        //public async Task<IActionResult> AvailableProjects(int page = 1, int pageSize = 6)
-        //{
-        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        //    var (projects, totalCount) = await _projectService.GetAvailableProjectsAsync(userId, page, pageSize);
-
-        //    var paginationModel = new PaginationModel
-        //    {
-        //        CurrentPage = page,
-        //        TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize),
-        //        ActionName = nameof(AvailableProjects)
-        //    };
-
-        //    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-        //    {
-        //        return Json(new
-        //        {
-        //            projects = projects,
-        //            pagination = paginationModel
-        //        });
-        //    }
-
-        //    var viewModel = new AvailableProjectsWithPaginationViewModel
-        //    {
-        //        Projects = projects,
-        //        Pagination = paginationModel
-        //    };
-        //    return View(viewModel);
-        //}
-
-        // View رئيسي (فيه جدول فارغ مبدئياً)
-
-        // يعرض الصفحة فقط (الجدول يكون فاضي ويمتلي عبر DataTables)
+        // Displays only the page (the table is blank and filled via DataTables)
         [ServiceFilter(typeof(ProfileCompletionFilter))]
         public IActionResult AvailableProjects() => View();
-
-        // يُستدعى من DataTables عبر AJAX (POST)
+        // Called from DataTables via AJAX (POST)
         [HttpPost]
         public async Task<IActionResult> LoadProjects()
         {
-            // باراميترات DataTables القياسية
+           
             var draw = Request.Form["draw"].FirstOrDefault();
 
             int start = int.TryParse(Request.Form["start"].FirstOrDefault(), out var s) ? s : 0;
@@ -153,7 +116,6 @@ namespace ProjetAtrst.Controllers
             if (string.IsNullOrEmpty(researcherId))
                 return Unauthorized();
 
-            // استدعاء الخدمة المجهزة لـ DataTables
             var resp = await _projectService.GetAvailableProjectsDataTableAsync(
                 researcherId: researcherId,
                 start: start,
@@ -164,7 +126,6 @@ namespace ProjetAtrst.Controllers
                 draw: draw
             );
 
-            // الشكل الذي تتوقعه DataTables
             return Json(new
             {
                 draw = resp.Draw,
@@ -173,6 +134,8 @@ namespace ProjetAtrst.Controllers
                 data = resp.Data
             });
         }
+
+
         [ServiceFilter(typeof(ProfileCompletionFilter))]
         [HttpGet]
         public async Task<IActionResult> Details(int id)
@@ -181,8 +144,9 @@ namespace ProjetAtrst.Controllers
             if (project == null)
                 return NotFound();
 
-            return Ok(project); // سيُرسل JSON للـ client
+            return PartialView("_ProjectDetails", project);
         }
-        
+
+
     }
 }

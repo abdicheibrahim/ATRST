@@ -27,7 +27,6 @@
             <tr>
                 <th>Expéditeur</th>
                 <th>Projet</th>
-                <th>Message</th>
                 <th>Statut</th>
                 <th>Date d'envoi</th>
                 <th>Options</th>
@@ -39,7 +38,6 @@
                 <tr>
                     <td>@req.Receiver?.FullName</td>
                     <td>@req.Project?.Title</td>
-                    <td>@req.Message</td>
                     <td>
                         @switch (req.Status)
                         {

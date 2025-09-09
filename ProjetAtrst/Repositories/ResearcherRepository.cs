@@ -1,5 +1,7 @@
-﻿using ProjetAtrst.Models;
-using ProjetAtrst.Interfaces.Repositories;
+﻿using ProjetAtrst.Interfaces.Repositories;
+using ProjetAtrst.Models;
+using ProjetAtrst.ViewModels.Partner;
+using ProjetAtrst.ViewModels.Researcher;
 using System.Linq;
 
 namespace ProjetAtrst.Repositories
@@ -8,23 +10,6 @@ namespace ProjetAtrst.Repositories
     {
         public ResearcherRepository(ApplicationDbContext context) : base(context) { }
 
-        //------------New Code----------------
-        //public async Task<List<Researcher>> GetAvailableResearchersForInvitationAsync(int projectId)
-        //{
-        //    var invitedResearchers = await _context.ProjectRequests
-        //        .Where(pr => pr.ProjectId == projectId && pr.Type == RequestType.Invitation)
-        //        .Select(pr => pr.ReceiverId)
-        //        .ToListAsync();
-
-        //    var currentMembers = await _context.ProjectMemberships
-        //        .Where(pm => pm.ProjectId == projectId)
-        //        .Select(pm => pm.ResearcherId)
-        //        .ToListAsync();
-
-        //    return await _context.Researchers
-        //        .Where(r => !invitedResearchers.Contains(r.Id) && !currentMembers.Contains(r.Id)).Include(s => s.User)
-        //        .ToListAsync();
-        //}
 
         public async Task<List<string>> GetInvitedOrMembersIdsAsync(int projectId)
         {
@@ -56,6 +41,30 @@ namespace ProjetAtrst.Repositories
             return await _context.Researchers
                 .CountAsync(r => !excludedIds.Contains(r.Id));
         }
+
+
+        public async Task<ResearcherDetailsViewModel?> GetPartnerDetailsAsync(string ResearcherId)
+        {
+            return await _context.Researchers
+                .Where(p => p.Id == ResearcherId)
+                .Select(p => new ResearcherDetailsViewModel
+                {
+
+                    FullName = p.User.FullName,
+                    FullNameAr = p.User.FirstNameAr + " " + p.User.LastNameAr,
+                    Gender = p.User.Gender,
+                    Birthday = p.User.Birthday,
+                    Mobile = p.User.Mobile,
+                    Diploma=p.Diploma,
+                    Grade=p.Grade,
+                    Speciality=p.Speciality,
+                    Establishment=p.Establishment,
+                    ParticipationPrograms = p.ParticipationPrograms
+
+                })
+                .FirstOrDefaultAsync();
+        }
+
     }
 
 }

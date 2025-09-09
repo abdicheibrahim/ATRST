@@ -8,6 +8,7 @@ namespace ProjetAtrst.Interfaces.Repositories
         Task<ApplicationUser?> GetUserWithResearcherAsync(string userId);
 
         Task<ApplicationUser?> GetUserWithDetailsAsync(string userId);
+        Task<RoleType> GetRoleAsync(string userId);
     }
 
 }

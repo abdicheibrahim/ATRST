@@ -31,7 +31,6 @@ namespace ProjetAtrst.Models
         public string? ApprovedByAdminId { get; set; }
         public Admin? ApprovedByAdmin { get; set; }
         // Relationships
-        public ICollection<Notification>? Notifications { get; set; }
         public ICollection<ProjectMembership>? ProjectMemberships { get; set; }
         public ICollection<ProjectRequest>? ProjectRequests { get; set; }
 

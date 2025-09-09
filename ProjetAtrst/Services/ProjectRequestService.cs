@@ -5,6 +5,7 @@ using ProjetAtrst.Interfaces.Services;
 using ProjetAtrst.Models;
 using ProjetAtrst.Repositories;
 using ProjetAtrst.ViewModels.ProjectRequests;
+using System.Data;
 using System.Text;
 
 public class ProjectRequestService : IProjectRequestService
@@ -45,7 +46,7 @@ public class ProjectRequestService : IProjectRequestService
         await _unitOfWork.ProjectRequest.CreateAsync(request);
         await _unitOfWork.SaveAsync();
 
-        // إرسال إشعار للمستلم
+        
       
         string senderName = (await _userRepository.GetByIdAsync(senderId))?.FullName ?? "Utilisateur";
         string projectTitle = (await _projectRepository.GetByIdAsync(model.ProjectId))?.Title ?? "Projet";
@@ -78,19 +79,27 @@ public class ProjectRequestService : IProjectRequestService
 
         request.Status = RequestStatus.Accepted;
         await _requestRepository.SaveChangesAsync();
-
-        // أضف العضو رسميًا إلى المشروع
+       
+        //add to Project membership
         var membership = new ProjectMembership
         {
             ProjectId = request.ProjectId,
             UserId = request.SenderId,
-            Role = Role.Member, // أو أي Enum معرف عندك
+            Role =  request.Sender.RoleType switch
+            {
+                RoleType.Researcher => Role.Member,
+                RoleType.Partner => Role.Partner,
+                RoleType.Associate => Role.Associate,
+                _ => Role.Member
+            },
             JoinedAt = DateTime.UtcNow
         };
+
+
         await _projectMembershipRepository.AddAsync(membership);
         await _unitOfWork.SaveAsync();
 
-        // إرسال إشعار
+        // Send notification
         await _notificationService.CreateNotificationAsync(
             request.SenderId,
             "Demande acceptée",
@@ -101,55 +110,51 @@ public class ProjectRequestService : IProjectRequestService
     }
 
 
-    //public async Task RejectRequestAsync(int requestId)
-    //{
-    //    var request = await _requestRepository.GetByIdAsync(requestId);
-    //    if (request == null || request.Status != RequestStatus.Pending)
-    //        return;
-
-    //    request.Status = RequestStatus.Rejected;
-    //    await _requestRepository.SaveChangesAsync();
-
-    //    await _notificationService.CreateNotificationAsync(
-    //        request.SenderId,
-    //        "تم رفض الطلب",
-    //        $"تم رفض طلبك المرتبط بمشروع: {request.Project?.Title}",
-    //        NotificationType.General,
-    //        request.Id
-    //    );
-    //}
-
     public async Task RejectRequestAsync(int requestId, RejectionType rejectionType)
     {
         var request = await _requestRepository.GetByIdAsync(requestId);
-        if (request == null || request.Status != RequestStatus.Pending)
-            return;
+        if (request == null)
+            throw new KeyNotFoundException($"Request with ID {requestId} not found.");
+
+        if (request.Status != RequestStatus.Pending)
+            throw new InvalidOperationException($"Request is already {request.Status}.");
 
         request.Status = RequestStatus.Rejected;
         await _requestRepository.SaveChangesAsync();
 
         var (title, message) = GetRejectionNotificationContent(request, rejectionType);
 
-        await _notificationService.CreateNotificationAsync(
-            request.SenderId,
-            title,
-            message,
-            NotificationType.General,
-            request.Id
-        );
+        var notificationType = rejectionType switch
+        {
+            RejectionType.JoinRequest => NotificationType.JoinRequestRejected,
+            RejectionType.Invitation => NotificationType.InvitationRejected,
+            _ => NotificationType.General
+        };
+
+        
+            await _notificationService.CreateNotificationAsync(
+                request.SenderId,
+                title,
+                message,
+                notificationType,
+                request.Id
+            );
+        
+        
     }
+
 
     private (string Title, string Message) GetRejectionNotificationContent(ProjectRequest request, RejectionType type)
     {
         return type switch
         {
             RejectionType.JoinRequest => (
-                "تم رفض الطلب",
-                $"تم رفض طلبك المرتبط بمشروع: {request.Project?.Title}"
+                "Rejeté",
+                $"Votre demande pour rejoindre le projet {request.Project?.Title} a été rejetée."
             ),
             RejectionType.Invitation => (
-                "تم إلغاء الدعوة",
-                $"تم إلغاء الدعوة التي أرسلتها للانضمام إلى المشروع: {request.Project?.Title}"
+                "Invitation refusée",
+               $" {request.Receiver.FullName} a refusé de rejoindre le projet {request.Project?.Title}."
             ),
             _ => ("", "")
         };
@@ -173,22 +178,7 @@ public class ProjectRequestService : IProjectRequestService
         return await _requestRepository.GetByIdWithRelationsAsync(userId); // get all by sender, ignoring project filter
     }
 
-    //public async Task<ProjectRequestCreateViewModel> PrepareRequestModelAsync(int projectId, string receiverId, RequestType type)
-    //{
-    //    var (title, leaderName) = await _projectRepository.GetProjectInfoAsync(projectId);
-
-    //    if (title == null)
-    //        return null;
-
-    //    return new ProjectRequestCreateViewModel
-    //    {
-    //        ProjectId = projectId,
-    //        ReceiverId = receiverId,
-    //        Type = type,
-    //        ProjectTitle = title,
-    //        LeaderFullName = leaderName
-    //    };
-    //}
+  
     public async Task<ProjectRequestCreateViewModel> PrepareRequestModelAsync(int projectId, string receiverId, RequestType type)
     {
         var (title, leaderName) = await _projectRepository.GetProjectInfoAsync(projectId);
@@ -220,10 +210,7 @@ public class ProjectRequestService : IProjectRequestService
     }
   
 
-    //public async Task<List<ProjectRequest>> GetSentInvitationsAsync(string leaderId)
-    //{
-    //    return await _requestRepository.GetInvitationsByLeaderAsync(leaderId);
-    //}
+    
     public Task<List<ProjectRequest>> GetMyInvitationsAsync(string userId)
     {
         return _unitOfWork.ProjectRequest.GetInvitationsForUserAsync(userId);

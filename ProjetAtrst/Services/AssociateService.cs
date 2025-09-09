@@ -42,5 +42,9 @@ namespace ProjetAtrst.Services
 
             };
         }
+        public Task<AssociateDetailsViewModel?> GetAssociateDetailsAsync(string AssociateId)
+        {
+            return _unitOfWork.Associates.GetAssociateDetailsAsync(AssociateId);
+        }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjetAtrst.Date;
 
@@ -11,9 +12,11 @@ using ProjetAtrst.Date;
 namespace ProjetAtrst.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250905083726_AddPartnerDbSet")]
+    partial class AddPartnerDbSet
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -303,6 +306,9 @@ namespace ProjetAtrst.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AssociateId")
+                        .HasColumnType("varchar(255)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
@@ -312,6 +318,9 @@ namespace ProjetAtrst.Migrations
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<string>("PartnerId")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<int?>("RelatedEntityId")
                         .HasColumnType("int");
@@ -328,6 +337,10 @@ namespace ProjetAtrst.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AssociateId");
+
+                    b.HasIndex("PartnerId");
 
                     b.HasIndex("UserId");
 
@@ -682,7 +695,15 @@ namespace ProjetAtrst.Migrations
 
             modelBuilder.Entity("ProjetAtrst.Models.Notification", b =>
                 {
-                    b.HasOne("ProjetAtrst.Models.ApplicationUser", "User")
+                    b.HasOne("ProjetAtrst.Models.Associate", null)
+                        .WithMany("Notifications")
+                        .HasForeignKey("AssociateId");
+
+                    b.HasOne("ProjetAtrst.Models.Partner", null)
+                        .WithMany("Notifications")
+                        .HasForeignKey("PartnerId");
+
+                    b.HasOne("ProjetAtrst.Models.Researcher", "User")
                         .WithMany("Notifications")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -819,8 +840,6 @@ namespace ProjetAtrst.Migrations
 
                     b.Navigation("Associate");
 
-                    b.Navigation("Notifications");
-
                     b.Navigation("Partner");
 
                     b.Navigation("Researcher");
@@ -828,6 +847,8 @@ namespace ProjetAtrst.Migrations
 
             modelBuilder.Entity("ProjetAtrst.Models.Associate", b =>
                 {
+                    b.Navigation("Notifications");
+
                     b.Navigation("ProjectMemberships");
 
                     b.Navigation("ProjectRequests");
@@ -835,6 +856,8 @@ namespace ProjetAtrst.Migrations
 
             modelBuilder.Entity("ProjetAtrst.Models.Partner", b =>
                 {
+                    b.Navigation("Notifications");
+
                     b.Navigation("ProjectMemberships");
 
                     b.Navigation("ProjectRequests");
@@ -849,6 +872,8 @@ namespace ProjetAtrst.Migrations
 
             modelBuilder.Entity("ProjetAtrst.Models.Researcher", b =>
                 {
+                    b.Navigation("Notifications");
+
                     b.Navigation("ProjectMemberships");
 
                     b.Navigation("ProjectRequests");

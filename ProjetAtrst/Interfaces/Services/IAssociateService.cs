@@ -1,5 +1,6 @@
 ﻿using ProjetAtrst.ViewModels.Associate;
 using ProjetAtrst.ViewModels.Partner;
+using ProjetAtrst.ViewModels.Researcher;
 
 namespace ProjetAtrst.Interfaces.Services
 {
@@ -8,5 +9,7 @@ namespace ProjetAtrst.Interfaces.Services
         Task<EditAssociateProfileViewModel?> GetEditProfileAssociateAsync(string userId);
 
         Task EditProfileAssociateAsync(string userId, EditAssociateProfileViewModel model);
+        Task<AssociateDetailsViewModel?> GetAssociateDetailsAsync(string AssociateId);
+
     }
 }

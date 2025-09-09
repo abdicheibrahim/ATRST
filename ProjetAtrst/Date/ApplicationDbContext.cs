@@ -10,6 +10,8 @@ namespace ProjetAtrst.Date
         }
         public DbSet<Admin> Admins { get; set; }
         public DbSet<Researcher> Researchers { get; set; }
+        public DbSet<Partner> Partners { get; set; }
+        public DbSet<Associate> Associates { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<ProjectRequest> ProjectRequests { get; set; }
         public DbSet<ProjectMembership> ProjectMemberships { get; set; }

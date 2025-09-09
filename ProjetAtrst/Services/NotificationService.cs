@@ -17,7 +17,7 @@ namespace ProjetAtrst.Services
         public async Task CreateNotificationAsync(string userId, string title, string message, NotificationType type = NotificationType.General, int? relatedId = null)
         {
             var notification = new Notification
-            {
+            { 
                 UserId = userId,
                 Title = title,
                 Message = message,

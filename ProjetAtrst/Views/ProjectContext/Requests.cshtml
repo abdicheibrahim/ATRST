@@ -2,16 +2,16 @@
 @model List<ProjectJoinRequestViewModel>
 @{
     ViewData["Title"] = "Demandes d'adhésion";
-}
-@{
     Layout = "_LayoutProject";
 }
+
 <h3>Demandes d'adhésion</h3>
 
 <table class="table table-bordered">
     <thead class="table-light">
         <tr>
             <th><i class="bi bi-person me-1"></i>Expéditeur</th>
+            <th><i class="bi bi-person me-1"></i>Type de compte</th>
             <th><i class="bi bi-info-circle me-1"></i>Statut</th>
             <th><i class="bi bi-calendar3 me-1"></i>Date</th>
             <th><i class="bi bi-gear me-1"></i>Actions</th>
@@ -22,6 +22,7 @@
         {
             <tr>
                 <td>@req.SenderName</td>
+                <td>@req.SenderRole</td>
                 <td>
                     @switch (req.Status)
                     {
@@ -43,7 +44,7 @@
                     }
                 </td>
                 <td>@req.SentAt.ToString("yyyy-MM-dd")</td>
-               <td>
+                <td>
                     @if (req.Status == RequestStatus.Pending)
                     {
                         <div class="d-flex gap-2">
@@ -59,6 +60,35 @@
                                     <i class="bi bi-x-lg"></i> Rejeter
                                 </button>
                             </form>
+                                    
+                            @switch (req.SenderRole)
+                            {
+                                case RoleType.Researcher:
+                                    <button type="button"
+                                            class="btn btn-sm btn-primary"
+                                            onclick="loadPartnerDetails('@req.SenderId', 'Researcher')">
+                                        <i class="bi bi-person-lines-fill"></i> Details
+                                    </button>
+                                    break;
+                                case RoleType.Partner:
+                                <button type="button"
+                                    class="btn btn-sm btn-primary"
+                                    onclick="loadPartnerDetails('@req.SenderId', 'Partner')">
+                                    <i class="bi bi-person-lines-fill"></i> Details
+                                </button>
+                                    break;
+                          
+                            case RoleType.Associate:
+                                    <button type="button"
+                                        class="btn btn-sm btn-primary"
+                                        onclick="loadPartnerDetails('@req.SenderId', 'Associate')">
+                                        <i class="bi bi-person-lines-fill"></i> Details
+                                    </button>
+                                    break;
+                            }
+
+
+
                         </div>
                     }
                     else
@@ -66,8 +96,102 @@
                         <span class="text-muted">Aucune action requise</span>
                     }
                 </td>
-
             </tr>
         }
     </tbody>
 </table>
+
+<!-- Modal -->
+<div class="modal fade" id="partnerDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg  modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" id="partnerDetailsContent">
+            <!-- سيتم تحميل المحتوى هنا عبر AJAX -->
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            // تتبع الزر الذي فتح مودال تفاصيل الشريك
+            let partnerDetailsModalTrigger = null;
+
+            // دالة للحصول على URL التفاصيل حسب النوع
+            function getDetailsUrl(role) {
+                switch(role.toLowerCase()) {
+                    case 'researcher':
+                        return '@Url.Action("Details", "Researcher")';
+                    case 'associate':
+                        return '@Url.Action("Details", "Associate")';
+                    default:
+                        return '@Url.Action("Details", "Partner")';
+                }
+            }
+
+            // تحميل تفاصيل الشريك (PartialView داخل المودال)
+            window.loadPartnerDetails = function (Id, senderRole, triggerButton = null) {
+                if (!Id) {
+                    console.error("معرف الشريك غير متوفر");
+                    return;
+                }
+
+                // حفظ الزر الذي فتح المودال
+                partnerDetailsModalTrigger = triggerButton;
+
+                $.ajax({
+                    url: getDetailsUrl(senderRole),
+                    type: 'GET',
+                    data: { Id: Id },
+                    beforeSend: function () {
+                        $("#partnerDetailsContent").html(`
+                            <div class="text-center p-4">
+                                <i class="fas fa-spinner fa-spin"></i> جاري التحميل...
+                            </div>
+                        `);
+
+                        const modalEl = document.getElementById('partnerDetailsModal');
+                        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                        modal.show();
+                    },
+                    success: function (data) {
+                        $("#partnerDetailsContent").html(data);
+                        initializePartnerDetails();
+                    },
+                    error: function (xhr) {
+                        const errorMessage = xhr.status === 404
+                            ? "تفاصيل الحساب غير متوفرة"
+                            : "حدث خطأ أثناء تحميل التفاصيل";
+
+                        $("#partnerDetailsContent").html(`
+                            <div class="alert alert-danger m-3">${errorMessage}</div>
+                        `);
+
+                        const modalEl = document.getElementById('partnerDetailsModal');
+                        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                        modal.show();
+                    }
+                });
+            };
+
+            // تهيئة إضافية بعد تحميل التفاصيل
+            function initializePartnerDetails() {
+                console.log("تم تحميل تفاصيل الحساب");
+                // أضف هنا أي سكريبت إضافي
+            }
+
+            // إعادة التركيز للزر بعد إغلاق المودال
+            $('#partnerDetailsModal').on('hidden.bs.modal', function () {
+                // تنظيف المحتوى
+                $('#partnerDetailsContent').empty();
+
+                // إرجاع التركيز للزر بعد إغلاق المودال بشكل كامل
+                if (partnerDetailsModalTrigger) {
+                    setTimeout(() => {
+                        partnerDetailsModalTrigger.focus();
+                        partnerDetailsModalTrigger = null;
+                    }, 50);
+                }
+            });
+        });
+    </script>
+}

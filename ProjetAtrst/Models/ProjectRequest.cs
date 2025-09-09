@@ -37,11 +37,6 @@
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
 
-        //public string SenderId { get; set; } // المستخدم الذي أرسل الطلب (باحث أو قائد)
-        //public Researcher Sender { get; set; }
-
-        //public string ReceiverId { get; set; } // المستخدم المستهدف بالطلب (قائد أو باحث)
-        //public Researcher Receiver { get; set; }
 
     }
 

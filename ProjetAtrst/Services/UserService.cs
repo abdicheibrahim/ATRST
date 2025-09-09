@@ -236,6 +236,11 @@ namespace ProjetAtrst.Services
                 return false;
             return user.IsCompleted;
         }
+
+        public async Task<RoleType> GetRoleAsync(string userId)
+        {
+            return await _unitOfWork.Users.GetRoleAsync(userId);
+        }
     }
 
 }
