@@ -19,7 +19,7 @@
         public ApplicationUser User { get; set; }
 
         public Role Role { get; set; }   // Leader / Member ...
-        public DateTime JoinedAt { get; set; }
+        public DateOnly JoinedAt { get; set; }
 
 
 

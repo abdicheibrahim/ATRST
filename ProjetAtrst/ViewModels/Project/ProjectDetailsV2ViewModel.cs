@@ -10,7 +10,7 @@
         public string? Nature { get; set; }
         public string? PNR { get; set; }
         public string? TRL { get; set; }
-        public DateTime CreationDate { get; set; }
+        public DateOnly CreationDate { get; set; }
         public string? ImageUrl { get; set; }
         public string? LeaderId { get; set; }
         public string? LeaderFullName { get; set; }

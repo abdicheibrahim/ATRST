@@ -23,6 +23,6 @@ namespace ProjetAtrst.ViewModels.Account
 
         public bool IsCompleted { get; set; }
         public bool IsApprovedByAdmin { get; set; }
-        public DateTime RegisterDate { get; set; } = DateTime.UtcNow;
+        public DateOnly RegisterDate { get; set; }
     }
 }

@@ -7,7 +7,7 @@ namespace ProjetAtrst.ViewModels.ProjectMembership
         public string Name { get; set; }
         public string Email { get; set; }
         public Role Role { get; set; }
-        public DateTime JoinedAt { get; set; }
+        public DateOnly JoinedAt { get; set; }
     }
 
 }

@@ -69,7 +69,7 @@ namespace ProjetAtrst.Services
             user.Gender = model.PersonalInformation.Gender;
             user.Birthday = model.PersonalInformation.Birthday;
             user.Mobile = model.PersonalInformation.Mobile;
-            user.RegisterDate = DateTime.UtcNow;
+            user.RegisterDate = DateOnly.FromDateTime(DateTime.UtcNow);
             user.RoleType = model.RoleType;
             if (user.RoleType == RoleType.Researcher)
             {
@@ -240,6 +240,39 @@ namespace ProjetAtrst.Services
         public async Task<RoleType> GetRoleAsync(string userId)
         {
             return await _unitOfWork.Users.GetRoleAsync(userId);
+        }
+
+
+        // Method جديدة للحصول على جميع الباحثين المتاحين (بدون ترقيم)
+        public async Task<List<string>> GetInvitedOrMembersIdsAsync(int projectId)
+        {
+            return await _unitOfWork.Projects.GetInvitedOrMembersIdsAsync(projectId);
+        }
+
+        public async Task<List<ApplicationUser>> GetAvailableUsersAsync(List<string> excludedIds, int start, int pageSize)
+        {
+            return await _unitOfWork.Users.GetAvailableUsersAsync(excludedIds, start, pageSize);
+        }
+
+        public async Task<int> GetAvailableUsersCountAsync(List<string> excludedIds)
+        {
+            return await _unitOfWork.Users.GetAvailableUsersCountAsync(excludedIds);
+        }
+
+        public async Task<List<ApplicationUser>> GetAllAvailableUsersAsync(int projectId)
+        {
+            var excludedIds = await GetInvitedOrMembersIdsAsync(projectId);
+            return await _unitOfWork.Users.GetAllAvailableUsersAsync(excludedIds);
+        }
+
+        public async Task<List<ApplicationUser>> GetAvailableUsersAsync(List<string> excludedIds, int start, int pageSize, string searchValue = null, string sortColumn = null, string sortDirection = null)
+        {
+            return await _unitOfWork.Users.GetAvailableUsersAsync(excludedIds, start, pageSize, searchValue, sortColumn, sortDirection);
+        }
+
+        public async Task<int> GetAvailableUsersCountAsync(List<string> excludedIds, string searchValue = null)
+        {
+            return await _unitOfWork.Users.GetAvailableUsersCountAsync(excludedIds, searchValue);
         }
     }
 

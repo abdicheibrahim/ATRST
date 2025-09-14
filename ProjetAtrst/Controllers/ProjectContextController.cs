@@ -4,6 +4,7 @@ using ProjetAtrst.Enums;
 using ProjetAtrst.Helpers;
 using ProjetAtrst.Interfaces.Services;
 using ProjetAtrst.Models;
+using ProjetAtrst.Services;
 using ProjetAtrst.ViewModels.Project;
 using ProjetAtrst.ViewModels.Researcher;
 using System.Security.Claims;
@@ -13,13 +14,15 @@ public class ProjectContextController : ProjectContextBaseController
     private readonly IProjectService _projectService;
     private readonly IProjectRequestService _requestService;
     private readonly IResearcherService _researcherService;
+    private readonly IUserService _userService;
+
    
-    public ProjectContextController(IProjectService projectService, IProjectRequestService requestService, IResearcherService researcherService)
+    public ProjectContextController(IProjectService projectService, IProjectRequestService requestService, IResearcherService researcherService, IUserService userService)
     {
         _projectService = projectService;
         _requestService = requestService;
         _researcherService = researcherService;
-      
+        _userService = userService;
     }
 
     public IActionResult Enter(int projectId)
@@ -78,7 +81,7 @@ public class ProjectContextController : ProjectContextBaseController
         TempData["SuccessTitle"] = "Parfait !";
         TempData["SuccessMessage"] = "Les données ont été modifiées avec succès.";
 
-        // إعادة تحميل النموذج للحصول على البيانات المحدثة
+        // Reload the form to get updated data
         var updatedModel = await _projectService.GetProjectForEditAsync(userId, model.Id);
         ViewData["Title"] = $"Modifier le projet: {updatedModel?.Title ?? model.Title}";
 
@@ -139,34 +142,34 @@ public class ProjectContextController : ProjectContextBaseController
         return RedirectToAction("Requests");
     }
 
-    [HttpGet]
-    public async Task<IActionResult> SendInvitations(int page = 1, int pageSize = 6)
-    {
-        var projectId = HttpContext.Session.GetInt32("CurrentProjectId");
-        if (projectId == null)
-            return RedirectToAction("Index");
+    //[HttpGet]
+    //public async Task<IActionResult> SendInvitations(int page = 1, int pageSize = 6)
+    //{
+    //    var projectId = HttpContext.Session.GetInt32("CurrentProjectId");
+    //    if (projectId == null)
+    //        return RedirectToAction("Index");
 
-        var (researchers, totalCount) = await _researcherService.GetAvailableResearchersForInvitationAsync(projectId.Value, page, pageSize);
+    //    var (researchers, totalCount) = await _researcherService.GetAvailableResearchersForInvitationAsync(projectId.Value, page, pageSize);
 
-        var paginationModel = new PaginationModel
-        {
-            CurrentPage = page,
-            TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize)
-        };
+    //    var paginationModel = new PaginationModel
+    //    {
+    //        CurrentPage = page,
+    //        TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize)
+    //    };
 
-        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-        {
-            return Json(new { researchers, pagination = paginationModel });
-        }
+    //    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    //    {
+    //        return Json(new { researchers, pagination = paginationModel });
+    //    }
 
-        var viewModel = new SendInvitationViewModel
-        {
-            Researchers = researchers,
-            Pagination = paginationModel,
-            CurrentProjectId = projectId.Value
-        };
-        return View(viewModel);
-    }
+    //    var viewModel = new SendInvitationViewModel
+    //    {
+    //        Researchers = researchers,
+    //        Pagination = paginationModel,
+    //        CurrentProjectId = projectId.Value
+    //    };
+    //    return View(viewModel);
+    //}
 
     [HttpPost]
     public async Task<IActionResult> SendInvitation(string researcherId)
@@ -176,9 +179,78 @@ public class ProjectContextController : ProjectContextBaseController
             return RedirectToAction("Index");
 
         await _requestService.SendInvitationAsync(projectId.Value, researcherId);
-        TempData["Success"] = "تم إرسال الدعوة بنجاح.";
+        TempData["Success"] = "Invitation sent successfully.";
         return RedirectToAction("SendInvitations");
     }
 
-    
+    //......
+    [HttpGet]
+    public async Task<IActionResult> SendInvitations(int draw = 1, int start = 0, int length = 10, string search = null, string sortColumn = null, string sortDirection = null)
+    {
+        var projectId = HttpContext.Session.GetInt32("CurrentProjectId");
+        if (projectId == null)
+            return RedirectToAction("Index");
+
+        // For AJAX requests from DataTables
+        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+        {
+            var searchValue = Request.Query["search[value]"].FirstOrDefault();
+            var orderColumnIndex = Request.Query["order[0][column]"].FirstOrDefault();
+            var orderDirection = Request.Query["order[0][dir]"].FirstOrDefault();
+
+            // Determine sort column
+            var columnNames = new[] { "profilePicturePath", "fullName", "gender", "id" };
+            var columnName = orderColumnIndex != null && int.Parse(orderColumnIndex) < columnNames.Length
+                ? columnNames[int.Parse(orderColumnIndex)]
+                : "fullName";
+
+            var excludedIds = await _userService.GetInvitedOrMembersIdsAsync(projectId.Value);
+            var totalCount = await _userService.GetAvailableUsersCountAsync(excludedIds);
+            var filteredCount = await _userService.GetAvailableUsersCountAsync(excludedIds, searchValue);
+
+            var users = await _userService.GetAvailableUsersAsync(excludedIds, start, length, searchValue, columnName, orderDirection);
+
+            var data = users.Select(u => new
+            {
+                profilePicturePath = string.IsNullOrEmpty(u.ProfilePicturePath)
+                    ? "/images/default-project.png"
+                    : u.ProfilePicturePath,
+                fullName = u.FullName,
+                gender = u.Gender.ToString(),
+                id = u.Id
+            }).ToList();
+
+            return Json(new
+            {
+                draw = draw,
+                recordsTotal = totalCount,
+                recordsFiltered = filteredCount,
+                data = data
+            });
+        }
+
+        // For normal request (initial page load)
+        var excludedIdsForInitial = await _userService.GetInvitedOrMembersIdsAsync(projectId.Value);
+        var initialUsers = await _userService.GetAvailableUsersAsync(excludedIdsForInitial, 0, 6);
+        var totalCountInitial = await _userService.GetAvailableUsersCountAsync(excludedIdsForInitial);
+
+        var viewModel = new SendInvitationViewModel
+        {
+            Researchers = initialUsers.Select(u => new ResearcherViewModel
+            {
+                Id = u.Id,
+                FullName = u.FullName,
+                Gender = u.Gender,
+                ProfilePicturePath = u.ProfilePicturePath
+            }).ToList(),
+            CurrentProjectId = projectId.Value,
+            Pagination = new PaginationModel
+            {
+                CurrentPage = 1,
+                TotalPages = (int)Math.Ceiling(totalCountInitial / 6.0)
+            }
+        };
+
+        return View(viewModel);
+    }
 }

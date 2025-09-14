@@ -195,7 +195,7 @@ else
         <div class="col-md-6">
             <label class="form-label">Établissement</label>
             <select class="form-select" id="partenaireEstablishmentSelect"></select>
-            <input type="text" id="customEstablishment" class="form-control mt-2 d-none"
+            <input type="text" id="customEstablishmentPartner" class="form-control mt-2 d-none"
                    placeholder="Entrez le nom de l'établissement manuellement" />
             <span asp-validation-for="Partner.Establishment" class="text-danger"></span>
         </div>
@@ -311,7 +311,7 @@ else
     });
 </script>
     <!-- Select2 -->
-<script>
+    <script>
         // مزامنة القيم مع الحقول المخفية -- وتجاهل placeholder كنص مرسل
         function syncField(selectId, inputId, hiddenId) {
             const $sel = $('#' + selectId);
@@ -386,7 +386,7 @@ else
 
             if (isOther) {
                 $sel.prop('disabled', true);
-                $inp.removeClass('d-none').attr('required', 'required');
+                $inp.removeClass('d-none').attr('required', 'required').focus();
             } else {
                 $sel.prop('disabled', false);
                 $inp.addClass('d-none').removeAttr('required');
@@ -404,48 +404,78 @@ else
             // 1) تهيئة القوائم
             initSelect2('#establishmentSelect', 'Establishments', '-- Sélectionnez l\'établissement --', true, 2);
             initSelect2('#partenaireEstablishmentSelect', 'Establishments', '-- Sélectionnez l\'établissement --', true, 2);
-            initSelect2('#gradeSelect', 'Grades', '-- Sélectionnez un grade / diplôme --', true, 0); // صفر لعرض بدون كتابة
-           // initSelect2('#statutSelect', 'Statuts', '-- Sélectionnez un statut --', true, 2);
+            initSelect2('#gradeSelect', 'Grades', '-- Sélectionnez un grade / diplôme --', true, 0);
 
             // 2) قيم ابتدائية من الموديل
             const initEst = @Html.Raw(JsonSerializer.Serialize(Model.Researcher.Establishment));
             const initEstPartner = @Html.Raw(JsonSerializer.Serialize(Model.Partner.Establishment));
             const initGrade = @Html.Raw(JsonSerializer.Serialize(Model.Researcher.Grade));
-           // const initStatut = Html.Raw(JsonSerializer.Serialize(Model.Statut));
 
             setInitialValue('#establishmentSelect', initEst);
             setInitialValue('#partenaireEstablishmentSelect', initEstPartner);
             setInitialValue('#gradeSelect', initGrade);
-           // setInitialValue('#statutSelect', initStatut);
-            
+
             // 3) تفعيل/تعطيل الإدخال اليدوي حسب القيمة الحالية
             toggleCustomInput('establishmentSelect', 'customEstablishment');
-            toggleCustomInput('partenaireEstablishmentSelect', 'customEstablishment');
+            toggleCustomInput('partenaireEstablishmentSelect', 'customEstablishmentPartner');
             toggleCustomInput('gradeSelect', 'customGrade');
-            //toggleCustomInput('statutSelect', 'customStatut');
 
             $('#establishmentSelect').on('change', function () {
                 toggleCustomInput('establishmentSelect', 'customEstablishment');
             });
             $('#partenaireEstablishmentSelect').on('change', function () {
-                toggleCustomInput('partenaireEstablishmentSelect', 'customEstablishment');
+                toggleCustomInput('partenaireEstablishmentSelect', 'customEstablishmentPartner');
             });
             $('#gradeSelect').on('change', function () {
                 toggleCustomInput('gradeSelect', 'customGrade');
             });
-            // $('#statutSelect').on('change', function () {
-            //     toggleCustomInput('statutSelect', 'customStatut');
-            // });
 
-            // 4) مزامنة قبل الإرسال (نمنع إرسال نص placeholder)
+            // 4) مزامنة قبل الإرسال
             $('form').on('submit', function () {
                 syncField('establishmentSelect', 'customEstablishment', 'establishmentHidden');
-                syncField('partenaireEstablishmentSelect', 'customEstablishment', 'partenaireEstablishmentHidden');
+                syncField('partenaireEstablishmentSelect', 'customEstablishmentPartner', 'partenaireEstablishmentHidden');
                 syncField('gradeSelect', 'customGrade', 'gradeHidden');
-                // syncField('statutSelect', 'customStatut', 'statutHidden');
             });
-        });
+
+            // ✅ حفظ القيمة السابقة قبل المسح (للتعرف إذا كانت "Autre")
+            $('#establishmentSelect, #partenaireEstablishmentSelect, #gradeSelect').on('select2:clearing', function (e) {
+                const $select = $(this);
+                $select.data('prev-value', $select.val());
+            });
+
+            // ✅ ✅ ✅ حدث مضمون: select2:clear (بعد المسح) + تأخير 100ms لضمان استقرار الواجهة
+            $('#establishmentSelect, #partenaireEstablishmentSelect, #gradeSelect').on('select2:clear', function (e) {
+                const $select = $(this);
+                const wasOther = $select.data('prev-value') === 'Autre' || $select.data('prev-value') === 'Other';
+
+                if (wasOther) {
+                    // إخفاء الحقل اليدوي المرتبط
+                    if ($select.is('#establishmentSelect')) {
+                        $('#customEstablishment').addClass('d-none').removeAttr('required').val('');
+                    } else if ($select.is('#partenaireEstablishmentSelect')) {
+                        $('#customEstablishmentPartner').addClass('d-none').removeAttr('required').val('');
+                    } else if ($select.is('#gradeSelect')) {
+                        $('#customGrade').addClass('d-none').removeAttr('required').val('');
+                    }
+
+                    // ✅ الحل المضمون: إعادة فتح القائمة بعد تأخير بسيط
+                    setTimeout(function () {
+                        // الطريقة 1: استخدام open (جربها أولاً)
+                        $select.select2('open');
+
+                        // ⚠️ إذا لم تنجح الطريقة أعلاه، فعّل هذا السطر بدلها:
+                        // $select.next('.select2-container').find('.select2-selection').trigger('mousedown');
+                    }, 100);
+                }
+
+                // تنظيف البيانات المؤقتة
+                $select.removeData('prev-value');
+            });
+
+        }); // نهاية $(document).ready
+
     </script>
+
     <!-- keywords -->
 <script>
         $(document).ready(function() {

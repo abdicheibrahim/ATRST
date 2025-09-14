@@ -31,7 +31,7 @@ namespace ProjetAtrst.Models
         [Key]
         public int Id { get; set; }
 
-        // === 1. Informations de base ===
+        // === 1. Basic Information ===
         [Required]
         public string Title { get; set; } = string.Empty;
 
@@ -49,35 +49,35 @@ namespace ProjetAtrst.Models
 
         public string? HostInstitution { get; set; }
 
-        // === 2. Présentation du projet ===
-        public string? CurrentState { get; set; }    // Etat des lieux
+        // === 2. Project Presentation ===
+        public string? CurrentState { get; set; }    
         public string? Motivation { get; set; }
         public string? Methodology { get; set; }
 
-        // === 3. Résultats attendus & Impact ===
+        // === 3. Expected Results & Impact ===
         public string? SocioEconomicPartner { get; set; }
         public string? ExpectedResults { get; set; }
         public string? TargetSectors { get; set; }
         public string? Impact { get; set; }
 
-        // === 4. Références ===
-        public string? ReferencesJson { get; set; }  // Liste des références en JSON
+        // === 4. References ===
+        public string? ReferencesJson { get; set; }  // List of references in JSON
 
-        // === 5. Fichiers ou logo ===
+        // === 5. Files or logo ===
         public string? LogoPath { get; set; }
 
-        // === 6. État administratif du projet ===
+        // === 6. Project Administrative Status ===
         public bool IsCompleted { get; set; } = false;
         public ProjectApprovalStatus ProjectApprovalStatus { get; set; } = ProjectApprovalStatus.Pending;
         public ProjectStatus ProjectStatus { get; set; } = ProjectStatus.Open;
 
-        public DateTime CreationDate { get; set; } = DateTime.UtcNow;
-        public DateTime LastActivity { get; set; } = DateTime.UtcNow;
+        public DateOnly CreationDate { get; set; } 
+        public DateOnly LastActivity { get; set; } 
 
         public string? ApprovedByAdminId { get; set; }
         public Admin? ApprovedByAdmin { get; set; }
 
-        // === 7. Relations ===
+        // === 7. Relationships ===
         public ICollection<ProjectMembership> ProjectMemberships { get; set; } = new List<ProjectMembership>();
         public ICollection<ProjectRequest>? ProjectRequests { get; set; }
     }

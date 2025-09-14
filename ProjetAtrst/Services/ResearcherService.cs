@@ -40,7 +40,6 @@ namespace ProjetAtrst.Services
             if (user == null || user.Researcher == null)
                 return;
 
-            //user.RegisterDate = DateTime.UtcNow;
             user.Researcher.Establishment = model.Establishment;
             user.Researcher.Grade = model.Grade;
             user.Researcher.Speciality = model.Speciality;
@@ -69,6 +68,7 @@ namespace ProjetAtrst.Services
                
             };
         }
+       
         public async Task<(List<ResearcherViewModel> Researchers, int TotalCount)> GetAvailableResearchersForInvitationAsync(int projectId, int page, int pageSize)
         {
             var excludedIds = await _unitOfWork.Researchers.GetInvitedOrMembersIdsAsync(projectId);

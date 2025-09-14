@@ -6,9 +6,9 @@ namespace ProjetAtrst.ViewModels.Project
     {
         public int Id { get; set; }
         public string Title { get; set; }
-        public DateTime CreationDate { get; set; }
+        public DateOnly CreationDate { get; set; }
         public string Status { get; set; }
-        public DateTime LastActivity { get; set; }
+        public DateOnly LastActivity { get; set; }
         public Role Role { get; set; }
         public string? LogoPath { get; set; } 
         public bool IsAcceptingJoinRequests { get; set; } 

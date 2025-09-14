@@ -18,7 +18,7 @@ namespace ProjetAtrst.Helpers
             _env = env ?? throw new ArgumentNullException(nameof(env));
         }
 
-        // تحميل القائمة كاملة من الكاش/الملف
+        // Load complete list from cache/file
         public List<SelectListItem> LoadList(string type)
         {
             if (string.IsNullOrWhiteSpace(type))
@@ -46,26 +46,26 @@ namespace ProjetAtrst.Helpers
                                    .ToList();
                     }
 
-                    // إضافة "Autre" لأنواع محددة
+                    // Add "Autre" for specific types
                     AddAutreOption(list, key);
 
                     return list;
                 }
                 catch (Exception ex)
                 {
-                    // تسجيل الخطأ في السجلات
+                    // Log error in records
                     // _logger?.LogError(ex, "Error loading static data for type: {Type}", key);
                     return new List<SelectListItem>();
                 }
             });
         }
 
-        // بحث مع حد أقصى للنتائج
+        // Search with maximum results limit
         public List<SelectListItem> SearchList(string type, string? term, int take = 25)
         {
-            // التحقق من صحة المدخلات
+            // Validate inputs
             if (take <= 0) take = 25;
-            if (take > 100) take = 100; // حد أقصى معقول
+            if (take > 100) take = 100; // Reasonable maximum limit
 
             var source = LoadList(type);
 
@@ -82,7 +82,7 @@ namespace ProjetAtrst.Helpers
 
         private static void AddAutreOption(List<SelectListItem> list, string type)
         {
-            var typesWithAutre = new[] { "Domains", "Nature", "Theme" }; // إضافة الأنواع التي تحتاج "Autre"
+            var typesWithAutre = new[] { "Domains", "Nature", "Theme" }; // Add types that need "Autre"
 
             if (typesWithAutre.Contains(type, StringComparer.OrdinalIgnoreCase) &&
                 !list.Any(i => i.Value?.Equals("Autre", StringComparison.OrdinalIgnoreCase) == true))
@@ -113,7 +113,7 @@ namespace ProjetAtrst.Helpers
             }
             catch
             {
-                // في حالة حدوث خطأ في التطبيع، نعيد النص الأصلي بحروف صغيرة
+                // In case of normalization error, return original text in lowercase
                 return input.ToLowerInvariant();
             }
         }
@@ -123,18 +123,18 @@ namespace ProjetAtrst.Helpers
             if (string.IsNullOrWhiteSpace(fileName))
                 return string.Empty;
 
-            // إزالة الأحرف غير المسموح بها في أسماء الملفات
+            // Remove invalid characters from file names
             var invalidChars = Path.GetInvalidFileNameChars();
             return string.Join("_", fileName.Split(invalidChars, StringSplitOptions.RemoveEmptyEntries)).Trim();
         }
 
-        // طريقة إضافية لمسح الكاش (مفيد للتطوير)
+        // Additional method to clear cache (useful for development)
         public void ClearCache()
         {
             _cache.Clear();
         }
 
-        // طريقة للحصول على جميع الأنواع المتاحة
+        // Method to get all available types
         public IEnumerable<string> GetAvailableTypes()
         {
             return _cache.Keys;

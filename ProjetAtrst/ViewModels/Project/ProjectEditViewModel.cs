@@ -3,9 +3,9 @@
     public class ProjectEditViewModel
     {
         public int Id { get; set; }
-        // ✅ لإستقبال صورة جديدة
+        // ✅ To receive new image
         public IFormFile? LogoFile { get; set; }
-        // ✅ لعرض الصورة الحالية (اختياري)
+        // ✅ To display current image (optional)
         public string? CurrentLogoPath { get; set; } = "~/images/default-project.png";
 
         [Required(ErrorMessage = "Le titre du projet est obligatoire.")]

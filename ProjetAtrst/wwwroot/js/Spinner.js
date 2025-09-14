@@ -4,48 +4,48 @@
     const spinner = document.getElementById("spinner");
     const btnText = document.getElementById("btnText");
 
-    // ✅ تحديد النص حسب الصفحة الحالية
+    // ✅ Determine text based on current page
     const pageButtonTitles = {
         '/Account/Login': 'Se connecter',
         '/Account/Register': 'Créer',
         '/Account/ForgotPassword': 'Réinitialiser'
-        // أضف صفحات أخرى حسب الحاجة
+        // Add other pages as needed
     };
 
-    // ✅ الحصول على النص الصحيح للزر
+    // ✅ Get correct text for button
     function getButtonDefaultText() {
         const currentPath = window.location.pathname;
         return pageButtonTitles[currentPath] || 'Soumettre';
     }
 
-    // دالة لإعادة تعيين الزر
+    // Function to reset button
     function resetSubmitButton() {
         btn.disabled = false;
         spinner.classList.add("d-none");
         btnText.textContent = getButtonDefaultText();
     }
 
-    // دالة لإظهار التحميل
+    // Function to show loading
     function showLoading() {
         btn.disabled = true;
         spinner.classList.remove("d-none");
         btnText.textContent = "s'il vous plaît, attendez...";
     }
 
-    // التحقق من وجود أخطاء عند تحميل الصفحة
+    // Check for errors when page loads
     function hasValidationErrors() {
         return document.querySelectorAll(".text-danger:not(:empty)").length > 0;
     }
 
-    // إعادة تعيين الزر إذا كان هناك أخطاء
+    // Reset button if there are errors
     if (hasValidationErrors()) {
         resetSubmitButton();
     }
 
-    // إدارة إرسال النموذج
+    // Manage form submission
     if (form) {
         form.addEventListener("submit", function (e) {
-            // التحقق من صحة النموذج
+            // Validate form
             if (form.checkValidity()) {
                 showLoading();
             } else {
@@ -54,7 +54,7 @@
             }
         });
 
-        // إعادة تعيين الزر عند تغيير أي حقل
+        // Reset button when any field changes
         form.addEventListener("input", function () {
             if (btn.disabled) {
                 resetSubmitButton();

@@ -26,11 +26,11 @@
 </table>
 
 
-<!-- Modal لتفاصيل طلب المشروع -->
+<!-- Modal for project request details -->
 <div class="modal fade" id="projectDetailsModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content" id="projectDetailsContent">
-            <!-- سيتم تحميل المحتوى هنا عبر AJAX -->
+            <!-- Content will be loaded here via AJAX -->
         </div>
     </div>
 </div>
@@ -38,7 +38,7 @@
 <div class="modal fade" id="sendRequestModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog  modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content" id="sendRequestContent">
-            <!-- سيتم تحميل الفورم هنا -->
+            <!-- Form will be loaded here -->
         </div>
     </div>
 </div>
@@ -46,18 +46,18 @@
     <!-- DataTables Core + Bootstrap 5 Integration -->
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js" defer></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js" defer></script>
-    @* Modal لتفاصيل طلب المشروع *@
+    @* Modal for project request details *@
     <!-- Summernote CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.css" rel="stylesheet">
 
     <!-- Summernote JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.js"></script>
 
-    <!-- ترجمة الفرنسية (اختياري لكن موصى به) -->
+    <!-- French translation (optional but recommended) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/lang/summernote-fr-FR.min.js"></script>
     <script>
         $(function () {
-            // تتبع الأزرار التي فتحت المودالات لتحسين إمكانية الوصول
+            // Track buttons that opened modals to improve accessibility
             let projectDetailsModalTrigger = null;
             let sendRequestModalTrigger = null;
 
@@ -124,12 +124,12 @@
                 }
             });
 
-            // 📄 تفاصيل المشروع في المودال
+            // 📄 Project details in modal
             $(document).on('click', '.btn-details', function (e) {
                 e.preventDefault();
                 var id = $(this).data('id');
                 if (!id) {
-                    console.error("معرف المشروع غير متوفر");
+                    console.error("Project ID not available");
                     return;
                 }
 
@@ -161,14 +161,14 @@
                 });
             });
 
-                    // ✉️ إرسال طلب انضمام (فتح المودال)
+                    // ✉️ Send join request (open modal)
         $(document).on("click", ".btn-join", function () {
             var projectId = $(this).data("project-id");
             var receiverId = $(this).data("receiver-id");
             var type = $(this).data("type");
 
             if (!projectId || !receiverId) {
-                console.error("بيانات المشروع أو المستلم غير متوفرة");
+                console.error("Project or receiver data not available");
                 return;
             }
 
@@ -191,7 +191,7 @@
                 },
                 success: function (data) {
                     $("#sendRequestContent").html(data);
-                    initializeProjectRequestDetails(); // ← هنا يتم تهيئة Summernote
+                    initializeProjectRequestDetails(); // ← Summernote is initialized here
                 },
                 error: function () {
                     $("#sendRequestContent").html(`
@@ -201,7 +201,7 @@
             });
         });
 
-        // ✅ تهيئة Summernote بعد تحميل المحتوى
+        // ✅ Initialize Summernote after content loading
         function initializeProjectRequestDetails() {
             const $textarea = $('#sendRequestContent').find('textarea.Description');
             if ($textarea.length) {
@@ -227,7 +227,7 @@
             }
         }
 
-        // 🧹 تدمير Summernote عند إغلاق المودال
+        // 🧹 Destroy Summernote when closing modal
         $('#sendRequestModal').on('hidden.bs.modal', function () {
             const $textarea = $('#sendRequestContent').find('textarea.Description');
             if ($textarea.length && $textarea.summernote) {
@@ -238,9 +238,9 @@
             $('#sendRequestContent').empty();
             sendRequestModalTrigger = null;
         });
-            // 🔄 معالجة إغلاق مودال تفاصيل المشروع
+            // 🔄 Handle closing project details modal
             $('#projectDetailsModal').on('hidden.bs.modal', function () {
-                $('#projectDetailsContent').empty(); // تنظيف المحتوى
+                $('#projectDetailsContent').empty(); // Clear content
                 if (projectDetailsModalTrigger) {
                     setTimeout(() => {
                         projectDetailsModalTrigger.focus();
@@ -249,9 +249,9 @@
                 }
             });
 
-            // 🔄 معالجة إغلاق مودال إرسال الطلب
+            // 🔄 Handle closing send request modal
             $('#sendRequestModal').on('hidden.bs.modal', function () {
-                $('#sendRequestContent').empty(); // تنظيف المحتوى
+                $('#sendRequestContent').empty(); // Clear content
                 if (sendRequestModalTrigger) {
                     setTimeout(() => {
                         sendRequestModalTrigger.focus();
@@ -260,7 +260,7 @@
                 }
             });
 
-            // ✅ إغلاق المودال عبر أزرار داخلية (btn-close أو زر إغلاق)
+            // ✅ Close modal via internal buttons (btn-close or close button)
             $(document).on('click', '[data-bs-dismiss="modal"], .btn-close', function () {
                 const modalEl = $(this).closest('.modal')[0];
                 if (!modalEl) return;
@@ -268,7 +268,7 @@
                 const modal = bootstrap.Modal.getInstance(modalEl);
                 if (!modal) return;
 
-                // تحديد الزر الذي فتح المودال
+                // Determine which button opened the modal
                 let triggerButton = null;
                 if (modalEl.id === 'projectDetailsModal') {
                     triggerButton = projectDetailsModalTrigger;
@@ -276,14 +276,14 @@
                     triggerButton = sendRequestModalTrigger;
                 }
 
-                // إغلاق المودال أولًا
+                // Close modal first
                 modal.hide();
 
-                // ثم إعادة التركيز بعد الإغلاق
+                // Then refocus after closing
                 if (triggerButton) {
                     setTimeout(() => {
                         triggerButton.focus();
-                    }, 100); // 100ms لضمان الإغلاق الكامل
+                    }, 100); // 100ms to ensure complete closure
                 }
             });
 

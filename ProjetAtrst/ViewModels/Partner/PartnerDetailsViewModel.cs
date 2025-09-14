@@ -12,7 +12,7 @@
         public string Gender { get; set; } = string.Empty;
 
         [Display(Name = "Date de naissance")]
-        public DateTime Birthday { get; set; }
+        public DateOnly Birthday { get; set; }
 
         [Display(Name = "Numéro de téléphone")]
         public string? Mobile { get; set; }

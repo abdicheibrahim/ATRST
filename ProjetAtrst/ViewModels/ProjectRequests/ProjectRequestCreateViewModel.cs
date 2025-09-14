@@ -8,13 +8,13 @@ namespace ProjetAtrst.ViewModels.ProjectRequests
 
         [Required]
         [StringLength(500)]
-        [Display(Name = "رسالتك")]
+        [Display(Name = "Your Message")]
         public string Message { get; set; }
 
         [Required] 
         public string ReceiverId { get; set; }
 
-        public RequestType Type { get; set; } // Join أو Invitation
+        public RequestType Type { get; set; } // Join or Invitation
 
         public string? ProjectTitle { get; set; }
         public string? LeaderFullName { get; set; }

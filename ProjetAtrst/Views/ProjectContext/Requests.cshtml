@@ -60,35 +60,13 @@
                                     <i class="bi bi-x-lg"></i> Rejeter
                                 </button>
                             </form>
-                                    
-                            @switch (req.SenderRole)
-                            {
-                                case RoleType.Researcher:
-                                    <button type="button"
-                                            class="btn btn-sm btn-primary"
-                                            onclick="loadPartnerDetails('@req.SenderId', 'Researcher')">
-                                        <i class="bi bi-person-lines-fill"></i> Details
-                                    </button>
-                                    break;
-                                case RoleType.Partner:
-                                <button type="button"
-                                    class="btn btn-sm btn-primary"
-                                    onclick="loadPartnerDetails('@req.SenderId', 'Partner')">
-                                    <i class="bi bi-person-lines-fill"></i> Details
-                                </button>
-                                    break;
-                          
-                            case RoleType.Associate:
-                                    <button type="button"
-                                        class="btn btn-sm btn-primary"
-                                        onclick="loadPartnerDetails('@req.SenderId', 'Associate')">
-                                        <i class="bi bi-person-lines-fill"></i> Details
-                                    </button>
-                                    break;
-                            }
 
-
-
+                            <button type="button"
+                                    class="btn btn-sm btn-primary btn-details"
+                                    data-id="@req.SenderId"
+                                    data-role="@req.SenderRole">
+                                <i class="bi bi-person-lines-fill"></i> Détails
+                            </button>
                         </div>
                     }
                     else
@@ -96,6 +74,7 @@
                         <span class="text-muted">Aucune action requise</span>
                     }
                 </td>
+
             </tr>
         }
     </tbody>
@@ -113,78 +92,57 @@
 @section Scripts {
     <script>
         $(function () {
-            // تتبع الزر الذي فتح مودال تفاصيل الشريك
             let partnerDetailsModalTrigger = null;
 
-            // دالة للحصول على URL التفاصيل حسب النوع
             function getDetailsUrl(role) {
-                switch(role.toLowerCase()) {
-                    case 'researcher':
-                        return '@Url.Action("Details", "Researcher")';
-                    case 'associate':
-                        return '@Url.Action("Details", "Associate")';
-                    default:
-                        return '@Url.Action("Details", "Partner")';
+                switch (role.toLowerCase()) {
+                    case "researcher": return '@Url.Action("Details", "Researcher")';
+                    case "associate": return '@Url.Action("Details", "Associate")';
+                    default: return '@Url.Action("Details", "Partner")';
                 }
             }
 
-            // تحميل تفاصيل الشريك (PartialView داخل المودال)
-            window.loadPartnerDetails = function (Id, senderRole, triggerButton = null) {
-                if (!Id) {
+            // 📄 عند الضغط على زر التفاصيل
+            $(document).on("click", ".btn-details", function (e) {
+                e.preventDefault();
+                const id = $(this).data("id");
+                const role = $(this).data("role");
+                if (!id) {
                     console.error("معرف الشريك غير متوفر");
                     return;
                 }
 
-                // حفظ الزر الذي فتح المودال
-                partnerDetailsModalTrigger = triggerButton;
+                partnerDetailsModalTrigger = this;
 
                 $.ajax({
-                    url: getDetailsUrl(senderRole),
-                    type: 'GET',
-                    data: { Id: Id },
+                    url: getDetailsUrl(role),
+                    type: "GET",
+                    data: { Id: id },
                     beforeSend: function () {
                         $("#partnerDetailsContent").html(`
                             <div class="text-center p-4">
-                                <i class="fas fa-spinner fa-spin"></i> جاري التحميل...
+                                <i class="fas fa-spinner fa-spin"></i> Chargement...
                             </div>
                         `);
 
-                        const modalEl = document.getElementById('partnerDetailsModal');
+                        const modalEl = document.getElementById("partnerDetailsModal");
                         const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
                         modal.show();
                     },
                     success: function (data) {
                         $("#partnerDetailsContent").html(data);
-                        initializePartnerDetails();
                     },
-                    error: function (xhr) {
-                        const errorMessage = xhr.status === 404
-                            ? "تفاصيل الحساب غير متوفرة"
-                            : "حدث خطأ أثناء تحميل التفاصيل";
-
+                    error: function () {
                         $("#partnerDetailsContent").html(`
-                            <div class="alert alert-danger m-3">${errorMessage}</div>
+                            <div class="alert alert-danger m-3">Erreur lors du chargement des détails.</div>
                         `);
-
-                        const modalEl = document.getElementById('partnerDetailsModal');
-                        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-                        modal.show();
                     }
                 });
-            };
+            });
 
-            // تهيئة إضافية بعد تحميل التفاصيل
-            function initializePartnerDetails() {
-                console.log("تم تحميل تفاصيل الحساب");
-                // أضف هنا أي سكريبت إضافي
-            }
-
-            // إعادة التركيز للزر بعد إغلاق المودال
+            // 🧹 تنظيف المودال وإرجاع التركيز بعد الغلق
             $('#partnerDetailsModal').on('hidden.bs.modal', function () {
-                // تنظيف المحتوى
                 $('#partnerDetailsContent').empty();
-
-                // إرجاع التركيز للزر بعد إغلاق المودال بشكل كامل
                 if (partnerDetailsModalTrigger) {
                     setTimeout(() => {
                         partnerDetailsModalTrigger.focus();

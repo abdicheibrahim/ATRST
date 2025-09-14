@@ -167,5 +167,20 @@ namespace ProjetAtrst.Repositories
                 .FirstOrDefaultAsync(p => p.Id == projectId);
         }
         //-------------------//
+
+        public async Task<List<string>> GetInvitedOrMembersIdsAsync(int projectId)
+        {
+            var invited = await _context.ProjectRequests
+                .Where(pr => pr.ProjectId == projectId && pr.Type == RequestType.Invitation)
+                .Select(pr => pr.ReceiverId)
+                .ToListAsync();
+
+            var members = await _context.ProjectMemberships
+                .Where(pm => pm.ProjectId == projectId)
+                .Select(pm => pm.UserId)
+                .ToListAsync();
+
+            return invited.Union(members).ToList();
+        }
     }
 }

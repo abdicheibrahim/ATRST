@@ -1,6 +1,6 @@
 ﻿
 document.addEventListener("DOMContentLoaded", function () {
-    // تهيئة جدول DataTables
+    // Initialize DataTables
     var table = $('#requestsTable').DataTable({
         language: {
             "sProcessing": "Traitement en cours...",
@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
         columnDefs: [
            
             {
-                targets: 2, // عمود الحالة
+                targets: 2, // Status column
                 orderable: true,
                 render: function (data, type, row) {
                     if (type === 'filter') {
@@ -47,23 +47,23 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             },
             {
-                targets: 4, // العمود الأخير
+                targets: 4, // Last column
                 orderable: false
             }
         ]
     });
 
-    // فلترة حسب الأزرار + تفعيل زر نشط
+    // Filter by buttons + activate active button
     $('.status-filter').on('click', function () {
         var status = $(this).data('status');
 
-        // إزالة active من كل الأزرار
+        // Remove active from all buttons
         $('.status-filter').removeClass('active');
 
-        // إضافة active للزر المضغوط
+        // Add active to pressed button
         $(this).addClass('active');
 
-        // فلترة الجدول
+        // Filter table
         if (status === 'all') {
             table.column(2).search('').draw();
         } else {
@@ -71,6 +71,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // افتراضياً: تفعيل زر "Tous"
+    // By default: activate "Tous" button
     $('.status-filter[data-status="all"]').addClass('active');
 });

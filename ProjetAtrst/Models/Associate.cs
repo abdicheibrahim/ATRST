@@ -21,9 +21,5 @@ namespace ProjetAtrst.Models
         public ApprovalStatus PartenaireApprovalStatus { get; set; } = ApprovalStatus.Pending;
         public string? ApprovedByAdminId { get; set; }
         public Admin? ApprovedByAdmin { get; set; }
-
-        // Relationships
-        public ICollection<ProjectMembership>? ProjectMemberships { get; set; }
-        public ICollection<ProjectRequest>? ProjectRequests { get; set; }
     }
 }

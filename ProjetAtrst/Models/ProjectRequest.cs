@@ -3,8 +3,8 @@
     // ✅ Enums
     public enum RequestType
     {
-        Join,       // طلب انضمام من باحث إلى مشروع
-        Invitation  // دعوة من قائد المشروع إلى باحث
+        Join,       // Join request from researcher to project
+        Invitation  // Invitation from project leader to researcher
     }
 
     public enum RequestStatus
@@ -14,7 +14,7 @@
         Rejected
     }
 
-    // ✅ الكيان الموحد ProjectRequest
+    // ✅ Unified ProjectRequest entity
     public class ProjectRequest
     {
         public int Id { get; set; }
@@ -23,19 +23,18 @@
         public Project Project { get; set; }
 
 
-        // المرسل
+        // Sender
         public string SenderId { get; set; }
         public ApplicationUser Sender { get; set; }
 
-        // المستقبِل
+        // Receiver
         public string ReceiverId { get; set; }
         public ApplicationUser Receiver { get; set; }
 
-        public string Message { get; set; } // رسالة مرفقة بالطلب أو الدعوة
-        public RequestType Type { get; set; } // نوع الطلب (انضمام أم دعوة)
+        public string Message { get; set; } // Message attached to request or invitation
+        public RequestType Type { get; set; } // Request type (join or invitation)
         public RequestStatus Status { get; set; } = RequestStatus.Pending;
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
+        public DateOnly CreatedAt { get; set; } 
 
 
     }

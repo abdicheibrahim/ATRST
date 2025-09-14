@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using ProjetAtrst.Models;
 using ProjetAtrst.Repositories;
 using ProjetAtrst.Interfaces;
@@ -15,17 +15,25 @@ namespace ProjetAtrst
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            //var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-            //    ?? throw new InvalidOperationException("No connection string was found");
-            //builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            //    options.UseSqlServer(connectionString));
-
-            // Add services to the container.
-            var connectionString = builder.Configuration.GetConnectionString("MySqlConnection")
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
                 ?? throw new InvalidOperationException("No connection string was found");
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseMySql(connectionString,ServerVersion.AutoDetect(connectionString))
-            );
+                options.UseSqlServer(connectionString));
+
+            //Add services to the container.
+            //var connectionString = builder.Configuration.GetConnectionString("MySqlConnection")
+            //    ?? throw new InvalidOperationException("No connection string was found");
+            // builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            //     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
+            // );
+
+            //var connectionString = builder.Configuration.GetConnectionString("PostgresConnection")
+            //    ?? throw new InvalidOperationException("No connection string was found");
+
+            //builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            //    options.UseNpgsql(connectionString)   // ? Postgres
+            //);
+
 
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {

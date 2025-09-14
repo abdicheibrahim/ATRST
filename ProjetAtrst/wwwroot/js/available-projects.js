@@ -52,12 +52,12 @@ function renderPagination(pagination) {
 
     const prevDisabled = pagination.currentPage === 1 ? 'disabled' : '';
     html += `<li class="page-item ${prevDisabled}">
-                <a href="#" class="page-link pagination-link" data-page="${pagination.currentPage - 1}">السابق</a>
+                <a href="#" class="page-link pagination-link" data-page="${pagination.currentPage - 1}">Previous</a>
              </li>`;
 
     const total = pagination.totalPages;
     const current = pagination.currentPage;
-    const delta = 2; // عدد الصفحات التي تظهر قبل وبعد الحالية
+    const delta = 2; // Number of pages to show before and after current
     let range = [];
 
     for (let i = Math.max(2, current - delta); i <= Math.min(total - 1, current + delta); i++) {
@@ -87,7 +87,7 @@ function renderPagination(pagination) {
 
     const nextDisabled = current === total ? 'disabled' : '';
     html += `<li class="page-item ${nextDisabled}">
-                <a href="#" class="page-link pagination-link" data-page="${current + 1}">التالي</a>
+                <a href="#" class="page-link pagination-link" data-page="${current + 1}">Next</a>
              </li>`;
 
     html += '</ul></nav>';

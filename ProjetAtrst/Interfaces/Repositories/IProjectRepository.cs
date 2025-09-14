@@ -15,5 +15,8 @@ namespace ProjetAtrst.Interfaces.Repositories
         Task<bool> UpdateProjectAsync(Project project);
         Task<bool> IsUserProjectLeaderAsync(int projectId, string userId);
         Task<Project?> GetProjectWithMembersAsync(int projectId);
+        //...
+
+        Task<List<string>> GetInvitedOrMembersIdsAsync(int projectId);
     }
 }

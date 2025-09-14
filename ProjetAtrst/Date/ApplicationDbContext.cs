@@ -39,24 +39,24 @@ namespace ProjetAtrst.Date
 
 
             //         < --User-- >
-            //  User -> ProjectRequests
+            // User -> SentRequests
             modelBuilder.Entity<ProjectRequest>()
-                .HasOne(j => j.Sender)
-                .WithMany()
-                .HasForeignKey(j => j.SenderId)
+                .HasOne(r => r.Sender)
+                .WithMany(u => u.SentRequests)
+                .HasForeignKey(r => r.SenderId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            //  User -> ProjectRequest
+            // User -> ReceivedRequests
             modelBuilder.Entity<ProjectRequest>()
-                .HasOne(j => j.Receiver)
-                .WithMany()
-                .HasForeignKey(j => j.ReceiverId)
+                .HasOne(r => r.Receiver)
+                .WithMany(u => u.ReceivedRequests)
+                .HasForeignKey(r => r.ReceiverId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             //  User -> ProjectMembership
             modelBuilder.Entity<ProjectMembership>()
                 .HasOne(pm => pm.User)
-                .WithMany() 
+                .WithMany(pm => pm.ProjectMemberships) 
                 .HasForeignKey(pm => pm.UserId);
 
             //         < --Relationships-- >

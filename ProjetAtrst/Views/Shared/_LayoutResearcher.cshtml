@@ -88,10 +88,10 @@
             <a asp-controller="Project" asp-action="MyProjects" class="nav-link @(IsActive("Project","MyProjects"))">
                 <i class="bi bi-briefcase"></i> Mes projets
             </a>
-            <a asp-controller="ProjectRequest" asp-action="SentInvitations" class="nav-link @(IsActive("ProjectRequest","SentInvitations"))">
+            <a asp-controller="ProjectRequest" asp-action="Incoming" class="nav-link @(IsActive("ProjectRequest", "Incoming"))">
                 <i class="bi bi-envelope-arrow-down"></i>Demandes reçues
             </a>
-            <a asp-controller="ProjectRequest" asp-action="SentJoinRequests" class="nav-link @(IsActive("ProjectRequest","SentJoinRequests"))">
+            <a asp-controller="ProjectRequest" asp-action="Outgoing" class="nav-link @(IsActive("ProjectRequest", "Outgoing"))">
                 <i class="bi bi-envelope-arrow-up"></i> Requêtes envoyées
             </a>
            

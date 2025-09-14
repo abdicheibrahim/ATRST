@@ -31,7 +31,7 @@
         [Required(ErrorMessage = "Birthday is required")]
         [DataType(DataType.Date)]
         [Display(Name = "Birthday")]
-        public DateTime Birthday { get; set; }
+        public DateOnly Birthday { get; set; }
 
         [Phone(ErrorMessage = "Invalid phone number format")]
         [Display(Name = "Mobile")]

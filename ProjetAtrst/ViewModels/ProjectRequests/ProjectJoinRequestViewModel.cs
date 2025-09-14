@@ -9,7 +9,7 @@ namespace ProjetAtrst.ViewModels.ProjectRequests
         public string SenderName { get; set; }
         public RoleType SenderRole { get; set; }    
         public RequestStatus Status { get; set; }
-        public DateTime SentAt { get; set; }
+        public DateOnly SentAt { get; set; }
     }
 
 }

@@ -20,7 +20,7 @@
             <tr>
                 <td>@n.Title</td>
                 <td>@n.Message</td>
-                <td>@n.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+                <td>@n.CreatedAt.ToString("yyyy-MM-dd")</td>
                 <td>
                     @if (n.IsRead)
                     {

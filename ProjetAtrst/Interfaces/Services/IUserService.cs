@@ -15,6 +15,14 @@ namespace ProjetAtrst.Interfaces.Services
         Task EditProfileAsync(string userId, EditProfileViewModel model);
         Task<bool> IsProfileCompleteAsync(string userId);
         Task<RoleType> GetRoleAsync(string userId);
+        //....
+       Task<List<ApplicationUser>> GetAllAvailableUsersAsync(int projectId);
+        Task<List<string>> GetInvitedOrMembersIdsAsync(int projectId);
+        Task<List<ApplicationUser>> GetAvailableUsersAsync(List<string> excludedIds, int start, int pageSize);
+        Task<int> GetAvailableUsersCountAsync(List<string> excludedIds);
+        Task<List<ApplicationUser>> GetAvailableUsersAsync(List<string> excludedIds, int start, int pageSize, string searchValue = null, string sortColumn = null, string sortDirection = null);
+        Task<int> GetAvailableUsersCountAsync(List<string> excludedIds, string searchValue = null);
+       
     }
 
 }

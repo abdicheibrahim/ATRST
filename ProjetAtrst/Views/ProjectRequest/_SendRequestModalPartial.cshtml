@@ -26,7 +26,7 @@
             <span asp-validation-for="Message" class="text-danger small"></span>
         </div>
 
-        @if (ViewBag.IsroleResearche)
+        @if (ViewBag.IsroleResearche && Model.Type == RequestType.Join)
         {
             <div class="mb-3">
                 <label asp-for="RelatedWorks" class="form-label fw-bold">

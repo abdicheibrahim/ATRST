@@ -19,8 +19,8 @@ namespace ProjetAtrst.Models
         public string? LastNameAr { get; set; } = default!;
         public string? FullName { get; set; }
         public string? Gender { get; set; } = default!;
-        public DateTime RegisterDate { get; set; } = DateTime.UtcNow;
-        public DateTime Birthday { get; set; }
+        public DateOnly RegisterDate { get; set; } 
+        public DateOnly Birthday { get; set; }
         public string? Mobile { get; set; }
         public string? ProfilePicturePath { get; set; }
         public bool IsCompleted { get; set; } = false;
@@ -29,7 +29,9 @@ namespace ProjetAtrst.Models
         public Partner? Partner { get; set; }
         public Associate? Associate { get; set; }
         public ICollection<Notification>? Notifications { get; set; }
-
+        public ICollection<ProjectMembership>? ProjectMemberships { get; set; }
+        public ICollection<ProjectRequest> SentRequests { get; set; }
+        public ICollection<ProjectRequest> ReceivedRequests { get; set; }
         public Admin? Admin { get; set; }
         public RoleType RoleType { get; set; }
 

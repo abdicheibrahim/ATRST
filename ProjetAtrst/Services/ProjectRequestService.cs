@@ -1,4 +1,4 @@
-using ProjetAtrst.Enums;
+﻿using ProjetAtrst.Enums;
 using ProjetAtrst.Interfaces;
 using ProjetAtrst.Interfaces.Repositories;
 using ProjetAtrst.Interfaces.Services;
@@ -40,7 +40,7 @@ public class ProjectRequestService : IProjectRequestService
             Message = model.Message,
             Type = model.Type,
             Status = RequestStatus.Pending,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow)
         };
 
         await _unitOfWork.ProjectRequest.CreateAsync(request);
@@ -92,7 +92,7 @@ public class ProjectRequestService : IProjectRequestService
                 RoleType.Associate => Role.Associate,
                 _ => Role.Member
             },
-            JoinedAt = DateTime.UtcNow
+            JoinedAt = DateOnly.FromDateTime(DateTime.UtcNow)
         };
 
 
@@ -224,7 +224,7 @@ public class ProjectRequestService : IProjectRequestService
             ReceiverId = researcherId,
             Status = RequestStatus.Pending,
             Type = RequestType.Invitation,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow)
         };
 
         await _unitOfWork.ProjectRequest.CreateAsync (invitation);

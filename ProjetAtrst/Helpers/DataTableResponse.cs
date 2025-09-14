@@ -3,8 +3,8 @@
     public class DataTableResponse<T>
     {
         public string? Draw { get; set; }
-        public int RecordsTotal { get; set; }     // قبل البحث
-        public int RecordsFiltered { get; set; }  // بعد البحث
+        public int RecordsTotal { get; set; }     // Before search
+        public int RecordsFiltered { get; set; }  // After search
         public List<T> Data { get; set; } = new();
     }
 }

@@ -1,16 +1,16 @@
-﻿/* صغر حجم المودال */
+﻿/* Reduce modal size */
 .modal-sm {
     max-width: 350px;
 }
 
-/* تحسين شكل المودال */
+/* Improve modal appearance */
 .modal-content {
     border-radius: 20px;
     padding: 20px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
-    /* تكبير الأيقونة قليلاً بدون مبالغة */
+    /* Slightly enlarge icon without exaggeration */
     .modal-content svg {
         width: 80px;
         height: 80px;
@@ -18,7 +18,7 @@
         margin: 0 auto;
     }
 
-/* تحكم في الأنيميشن */
+/* Animation control */
 .path {
     stroke-dasharray: 1000;
     stroke-dashoffset: 0;
@@ -33,7 +33,7 @@
         animation: dash-check 0.95s 0.35s ease-in-out forwards;
     }
 
-/* العناوين والنص */
+/* Titles and text */
 .modal-body h4 {
     font-size: 1.25rem;
     font-weight: bold;
@@ -44,14 +44,14 @@
     color: #555;
 }
 
-/* الزر */
+/* Button */
 .modal-body .btn {
     min-width: 80px;
     font-size: 0.9rem;
     border-radius: 10px;
 }
 
-/* الحركة */
+/* Animation */
 @keyframes dash {
     0% {
         stroke-dashoffset: 1000;
@@ -72,7 +72,7 @@
     }
 }
 
-/* تحكم في الإخفاء الناعم */
+/* Control smooth hiding */
 .modal.fade.custom-fade .modal-dialog {
     transition: opacity 0.5s ease-out, transform 0.5s ease-out;
     opacity: 0;

@@ -38,20 +38,20 @@ namespace ProjetAtrst.Services
             }
             try
             {
-                // معالجة المراجع
+                // Process references
                 var referencesList = ProcessReferences(model.References);
                 string referencesJson = JsonSerializer.Serialize(referencesList);
 
-                // إنشاء المشروع
+                // Create project
                 var project = new Project
                 {
                     Title = model.Title?.Trim(),
                     IsAcceptingJoinRequests = model.IsAcceptingJoinRequests,
 
-                    // معالجة الكلمات المفتاحية
+                    // Process keywords
                     Keywords = ProcessKeywords(model.Keywords),
 
-                    // الحقول الأخرى مع معالجة null
+                    // Other fields with null handling
                     Domain = model.Domain?.Trim(),
                     Axis = model.Axis?.Trim(),
                     Theme = model.Theme?.Trim(),
@@ -61,7 +61,7 @@ namespace ProjetAtrst.Services
                     DurationInMonths = model.DurationInMonths,
                     HostInstitution = model.HostInstitution?.Trim(),
 
-                    // الوصف مع معالجة null
+                    // Description with null handling
                     CurrentState = model.CurrentState?.Trim(),
                     Motivation = model.Motivation?.Trim(),
                     Methodology = model.Methodology?.Trim(),
@@ -72,21 +72,21 @@ namespace ProjetAtrst.Services
                     Impact = model.Impact?.Trim(),
 
                     ReferencesJson = referencesJson,
-                    CreationDate = DateTime.UtcNow,
-                    LastActivity = DateTime.UtcNow
+                    CreationDate = DateOnly.FromDateTime(DateTime.UtcNow),
+                    LastActivity = DateOnly.FromDateTime(DateTime.UtcNow)
                 };
 
-                // حفظ المشروع
+                // Save project
                 await _unitOfWork.Projects.AddAsync(project);
                 await _unitOfWork.SaveAsync();
 
-                // إنشاء العضوية
+                // Create membership
                 var membership = new ProjectMembership
                 {
                     ProjectId = project.Id,
                     UserId = researcherId,
                     Role = Role.Leader,
-                    JoinedAt = DateTime.UtcNow
+                    JoinedAt = DateOnly.FromDateTime(DateTime.UtcNow)
                 };
 
                 await _unitOfWork.ProjectMemberships.AddAsync(membership);
@@ -98,7 +98,7 @@ namespace ProjetAtrst.Services
             }
         }
 
-        // ✅ طريقة خاصة لمعالجة المراجع
+        // ✅ Special method for processing references
         private List<string> ProcessReferences(string references)
         {
             if (string.IsNullOrWhiteSpace(references))
@@ -110,7 +110,7 @@ namespace ProjetAtrst.Services
                             .ToList();
         }
 
-        // ✅ طريقة خاصة لمعالجة الكلمات المفتاحية
+        // ✅ Special method for processing keywords
         private List<string> ProcessKeywords(List<string> keywords)
         {
             if (keywords == null || !keywords.Any())
@@ -118,7 +118,7 @@ namespace ProjetAtrst.Services
 
             return keywords.Where(k => !string.IsNullOrWhiteSpace(k))
                           .Select(k => k.Trim())
-                          .Distinct() // إزالة التكرار
+                          .Distinct() // Remove duplicates
                           .ToList();
         }
 
@@ -130,12 +130,12 @@ namespace ProjetAtrst.Services
 
             try
             {
-                
+                // Check user role
                 var userRole = await _unitOfWork.Users.GetRoleAsync(userId);
                 if (userRole != RoleType.Researcher)
                     return false;
 
-                
+                // Count current projects
                 var currentProjects = await _unitOfWork.ProjectMemberships
                     .CountProjectsByUserIdAsync(userId);
 
@@ -169,7 +169,9 @@ namespace ProjetAtrst.Services
                 {
                     Role.Leader => Role.Leader,
                     Role.Member => Role.Member,
-                   // _ => Role.Viewer,
+                    Role.Partner => Role.Partner,
+                    Role.Associate => Role.Associate,
+                    //_ => Role.Viewer,
 
                 }
 
@@ -197,7 +199,7 @@ namespace ProjetAtrst.Services
         }
       
 
-        // ------------- السيناريو الأول: Paging عادي -------------
+        // ------------- Scenario 1: Regular Paging -------------
         public async Task<(List<AvailableProjectViewModel> Projects, int TotalCount)>
             GetAvailableProjectsPageAsync(string researcherId, int pageNumber, int pageSize)
         {
@@ -208,7 +210,7 @@ namespace ProjetAtrst.Services
             return (vms, totalCount);
         }
 
-        // ------------- السيناريو الثاني: DataTables Server-Side -------------
+        // ------------- Scenario 2: DataTables Server-Side -------------
         public async Task<DataTableResponse<AvailableProjectViewModel>> GetAvailableProjectsDataTableAsync(
             string researcherId,
             int start,
@@ -221,19 +223,19 @@ namespace ProjetAtrst.Services
             if (length <= 0) length = 10;
             if (start < 0) start = 0;
 
-            // الاستعلام الأساسي (بعد شروط "المتاح للانضمام")
+            // Base query (after "available for joining" conditions)
             var baseQuery = _unitOfWork.Projects.GetAvailableProjectsQuery(researcherId);
 
-            // إجمالي السجلات قبل البحث
+            // Total records before search
             var totalRecords = await baseQuery.CountAsync();
 
-            // تطبيق البحث
+            // Apply search
             var filteredQuery = ApplySearch(baseQuery, searchValue);
 
-            // إجمالي بعد البحث
+            // Total after search
             var filteredRecords = await filteredQuery.CountAsync();
 
-            // تطبيق الترتيب
+            // Apply sorting
             var sortedQuery = ApplySorting(filteredQuery, sortColumn, sortDirection);
 
             // Paging
@@ -242,7 +244,7 @@ namespace ProjetAtrst.Services
                 .Take(length)
                 .ToListAsync();
 
-            // تحويل إلى ViewModel
+            // Convert to ViewModel
             var data = page.Select(MapToVm).ToList();
 
             return new DataTableResponse<AvailableProjectViewModel>
@@ -273,8 +275,8 @@ namespace ProjetAtrst.Services
             string? sortColumn,
             string? sortDirection)
         {
-            // الأعمدة المسموحة (طابق أسماء DataTables "columns[i].name")
-            // مثال: name="Title" / "LeaderFullName" / "CreationDate"
+            // Allowed columns (match DataTables "columns[i].name")
+            // Example: name="Title" / "LeaderFullName" / "CreationDate"
             var dirDesc = string.Equals(sortDirection, "desc", StringComparison.OrdinalIgnoreCase);
 
             switch (sortColumn)
@@ -292,7 +294,7 @@ namespace ProjetAtrst.Services
                                    : query.OrderBy(p => p.CreationDate);
 
                 default:
-                    // ترتيب افتراضي ثابت
+                    // Fixed default sorting
                     return query.OrderByDescending(p => p.CreationDate);
             }
         }
@@ -389,7 +391,7 @@ namespace ProjetAtrst.Services
 
             var project = membership.Project;
 
-            // تحويل المراجع من JSON إلى نص
+            // Convert references from JSON to text
             var references = new List<string>();
             if (!string.IsNullOrEmpty(project.ReferencesJson))
             {
@@ -399,7 +401,7 @@ namespace ProjetAtrst.Services
                 }
                 catch
                 {
-                    // في حالة خطأ في التحليل، نقسم النص بالسطور
+                    // In case of parsing error, split text by lines
                     references = project.ReferencesJson.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
                                                      .Select(r => r.Trim())
                                                      .Where(r => !string.IsNullOrWhiteSpace(r))
@@ -447,11 +449,11 @@ namespace ProjetAtrst.Services
 
             try
             {
-                // معالجة المراجع
+                // Process references
                 var referencesList = ProcessReferences(model.References);
                 string referencesJson = JsonSerializer.Serialize(referencesList);
 
-                // تحديث الحقول الأساسية
+                // Update basic fields
                 project.Title = model.Title?.Trim();
                 project.PNR = model.PNR?.Trim();
                 project.Nature = model.Nature?.Trim();
@@ -464,7 +466,7 @@ namespace ProjetAtrst.Services
                 project.DurationInMonths = model.DurationInMonths;
                 project.IsAcceptingJoinRequests = model.IsAcceptingJoinRequests;
 
-                // تحديث الحقول الوصفية
+                // Update descriptive fields
                 project.CurrentState = model.CurrentState?.Trim();
                 project.Motivation = model.Motivation?.Trim();
                 project.Methodology = model.Methodology?.Trim();
@@ -474,7 +476,7 @@ namespace ProjetAtrst.Services
                 project.Impact = model.Impact?.Trim();
                 project.ReferencesJson = referencesJson;
 
-                // تحديث الصورة إذا تم رفع واحدة جديدة
+                // Update image if a new one was uploaded
                 if (model.LogoFile != null && model.LogoFile.Length > 0)
                 {
                     var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "ProjectImages");
@@ -491,7 +493,7 @@ namespace ProjetAtrst.Services
                     project.LogoPath = "/uploads/ProjectImages/" + fileName;
                 }
 
-                project.LastActivity = DateTime.UtcNow;
+                project.LastActivity = DateOnly.FromDateTime(DateTime.UtcNow);
 
                 await _unitOfWork.SaveAsync();
                 return true;

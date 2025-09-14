@@ -2,7 +2,7 @@
 {
     public enum RejectionType
     {
-        JoinRequest, // رفض طلب انضمام
-        Invitation   // إلغاء دعوة
+        JoinRequest, // Reject join request
+        Invitation   // Cancel invitation
     }
 }

@@ -7,7 +7,7 @@ public class AuthorizeProjectLeaderAttribute : Attribute, IAsyncActionFilter
 {
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
-        // جلب projectId من الـ Route
+        // Get projectId from Route
         if (!context.ActionArguments.TryGetValue("projectId", out var projectIdObj) || projectIdObj == null)
         {
             context.Result = new BadRequestResult();
@@ -16,7 +16,7 @@ public class AuthorizeProjectLeaderAttribute : Attribute, IAsyncActionFilter
 
         var projectId = (int)projectIdObj;
 
-        // جلب معرف المستخدم الحالي
+        // Get current user ID
         var userId = context.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         if (string.IsNullOrEmpty(userId))
@@ -25,26 +25,26 @@ public class AuthorizeProjectLeaderAttribute : Attribute, IAsyncActionFilter
             return;
         }
 
-        // استدعاء الخدمة من DI Container
+        // Call service from DI Container
         var projectService = context.HttpContext.RequestServices
             .GetService(typeof(IProjectService)) as IProjectService;
 
         if (projectService == null)
         {
-            context.Result = new StatusCodeResult(500); // خطأ في التهيئة
+            context.Result = new StatusCodeResult(500); // Initialization error
             return;
         }
 
-        // التحقق هل هو القائد
+        // Check if user is leader
         var isLeader = await projectService.IsUserLeaderAsync(userId, projectId);
 
         if (!isLeader)
         {
-            context.Result = new ForbidResult(); // أو Redirect إلى صفحة صلاحيات
+            context.Result = new ForbidResult(); // Or redirect to permissions page
             return;
         }
 
-        // السماح بالوصول
+        // Allow access
         await next();
     }
 }

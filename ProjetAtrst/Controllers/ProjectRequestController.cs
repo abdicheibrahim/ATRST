@@ -21,24 +21,7 @@ namespace ProjetAtrst.Controllers
             _userService = userService;
         }
 
-        public async Task<IActionResult> Incoming()
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var (incoming, sent) = await _requestService.GetRequestsForDashboardAsync(userId);
-            var viewModel = new RequestsDashboardViewModel
-            {
-                IncomingRequests = incoming,
-                SentRequests = sent
-            };
-            return View(viewModel);
-        }
-
-        public async Task<IActionResult> Outgoing()
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var requests = await _requestService.GetOutgoingRequestsAsync(userId);
-            return View(requests);
-        }
+       
 
       
         [HttpGet]
@@ -62,13 +45,16 @@ namespace ProjetAtrst.Controllers
 
             var senderId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             await _requestService.SendRequestAsync(model, senderId);
-
-            TempData["Success"] = model.Type == RequestType.Join ?
-                "تم إرسال طلب الانضمام بنجاح." :
-                "تم إرسال الدعوة بنجاح.";
-
-            return RedirectToAction("SentJoinRequests", "ProjectRequest"); // أو SendInvitations
-            //return View();
+            if (model.Type == RequestType.Join) {
+                TempData["Success"] = "تم إرسال طلب الانضمام بنجاح.";
+                return RedirectToAction("SentJoinRequests", "ProjectRequest");
+            }
+            else
+            {
+                TempData["Success"] = "تم إرسال الدعوة بنجاح.";
+                return RedirectToAction("SentInvitations", "ProjectRequest");
+            };
+            
         }
 
         public async Task<IActionResult> Accept(int id)
@@ -100,7 +86,7 @@ namespace ProjetAtrst.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> SentJoinRequests()
+        public async Task<IActionResult> Outgoing()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var requests = await _requestService.GetSentJoinRequestsAsync(userId);
@@ -108,14 +94,14 @@ namespace ProjetAtrst.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> SentInvitations()
+        public async Task<IActionResult> Incoming()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var invitations = await _requestService.GetMyInvitationsAsync(userId);
             return View(invitations);
         }
+       
 
-        //Invitations to join
     }
 
 }
