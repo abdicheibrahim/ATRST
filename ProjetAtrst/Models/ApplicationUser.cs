@@ -5,7 +5,9 @@ namespace ProjetAtrst.Models
     {
         Researcher, //  Chercheur
         Partner, //  Partenaire
-        Associate //  Associe
+        Associate, //  Associe
+        Admin,
+        SuperAdmin
     }
     public class ApplicationUser: IdentityUser
     {
@@ -32,6 +34,7 @@ namespace ProjetAtrst.Models
         public ICollection<ProjectMembership>? ProjectMemberships { get; set; }
         public ICollection<ProjectRequest> SentRequests { get; set; }
         public ICollection<ProjectRequest> ReceivedRequests { get; set; }
+        public ICollection<ProjectTaskAssignment> TaskAssignments { get; set; }
         public Admin? Admin { get; set; }
         public RoleType RoleType { get; set; }
 

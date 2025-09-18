@@ -16,9 +16,10 @@ namespace ProjetAtrst.Repositories
         public IProjectRepository Projects { get; }
         public IProjectMembershipRepository ProjectMemberships { get; }
         public IProjectRequestRepository ProjectRequest { get; }
+        public IProjectTaskRepository ProjectTasks { get; set; }
         public UnitOfWork(ApplicationDbContext context, IResearcherRepository researcherRepository, IUserRepository userRepository,
             INotificationRepository NotificationRepository, IProjectRepository projectRepository, IProjectMembershipRepository ProjectMembershipRepository ,
-            IProjectRequestRepository ProjectRequestRepository, IPartnerRepository partners, IAssociateRepository associates)
+            IProjectRequestRepository ProjectRequestRepository, IPartnerRepository partners, IAssociateRepository associates,IProjectTaskRepository projectTask )
         {
             _context = context;
             Researchers = researcherRepository;
@@ -29,6 +30,7 @@ namespace ProjetAtrst.Repositories
             ProjectRequest = ProjectRequestRepository;
             Partners = partners;
             Associates = associates;
+            ProjectTasks = projectTask;
         }
 
         public async Task<int> SaveAsync()

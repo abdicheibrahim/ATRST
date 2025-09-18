@@ -80,5 +80,6 @@ namespace ProjetAtrst.Models
         // === 7. Relationships ===
         public ICollection<ProjectMembership> ProjectMemberships { get; set; } = new List<ProjectMembership>();
         public ICollection<ProjectRequest>? ProjectRequests { get; set; }
+        public ICollection<ProjectTask>? Tasks { get; set; }
     }
 }

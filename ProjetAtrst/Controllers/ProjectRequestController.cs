@@ -47,12 +47,12 @@ namespace ProjetAtrst.Controllers
             await _requestService.SendRequestAsync(model, senderId);
             if (model.Type == RequestType.Join) {
                 TempData["Success"] = "تم إرسال طلب الانضمام بنجاح.";
-                return RedirectToAction("SentJoinRequests", "ProjectRequest");
+                return RedirectToAction("AvailableProjects", "Project");
             }
             else
             {
                 TempData["Success"] = "تم إرسال الدعوة بنجاح.";
-                return RedirectToAction("SentInvitations", "ProjectRequest");
+                return RedirectToAction("SendInvitations", "ProjectContext");
             };
             
         }
@@ -77,11 +77,9 @@ namespace ProjetAtrst.Controllers
             var request = await _requestService.GetByIdWithRelationsAsync(id);
             if (request == null) return NotFound();
 
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-            {
+           
                 return PartialView("_ProjectRequestDetailsPartial", request);
-            }
-            return View(request);
+           
            
         }
 

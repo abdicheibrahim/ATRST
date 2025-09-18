@@ -79,18 +79,21 @@ public class ProjectRequestService : IProjectRequestService
 
         request.Status = RequestStatus.Accepted;
         await _requestRepository.SaveChangesAsync();
-       
+
         //add to Project membership
+        var user = request.Type == RequestType.Join ? request.Sender : request.Receiver;
+        var userId = request.Type == RequestType.Join ? request.SenderId : request.ReceiverId;
+
         var membership = new ProjectMembership
         {
             ProjectId = request.ProjectId,
-            UserId = request.SenderId,
-            Role =  request.Sender.RoleType switch
+            UserId = userId,
+            Role = user.RoleType switch
             {
                 RoleType.Researcher => Role.Member,
                 RoleType.Partner => Role.Partner,
                 RoleType.Associate => Role.Associate,
-                _ => Role.Member
+                //_ => Role.Member
             },
             JoinedAt = DateOnly.FromDateTime(DateTime.UtcNow)
         };

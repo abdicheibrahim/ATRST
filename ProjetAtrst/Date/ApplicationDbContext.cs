@@ -16,6 +16,9 @@ namespace ProjetAtrst.Date
         public DbSet<ProjectRequest> ProjectRequests { get; set; }
         public DbSet<ProjectMembership> ProjectMemberships { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+        public DbSet<ProjectTask> ProjectTasks { get; set; }
+        public DbSet<ProjectTaskAssignment> ProjectTaskAssignments { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -33,6 +36,13 @@ namespace ProjetAtrst.Date
             modelBuilder.Entity<ProjectMembership>()
                 .HasOne(r => r.Project)
                 .WithMany(p => p.ProjectMemberships)
+                .HasForeignKey(r => r.ProjectId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            //   Project -> ProjectTask
+            modelBuilder.Entity<ProjectTask>()
+                .HasOne(r => r.Project)
+                .WithMany(p => p.Tasks)
                 .HasForeignKey(r => r.ProjectId)
                 .OnDelete(DeleteBehavior.Restrict);
 
@@ -58,6 +68,13 @@ namespace ProjetAtrst.Date
                 .HasOne(pm => pm.User)
                 .WithMany(pm => pm.ProjectMemberships) 
                 .HasForeignKey(pm => pm.UserId);
+
+            //  User -> ProjectTaskAssignment
+            modelBuilder.Entity<ProjectTaskAssignment>()
+                .HasOne(pm => pm.AssignedUser)
+                .WithMany(pm => pm.TaskAssignments) 
+                .HasForeignKey(pm => pm.AssignedUserId);
+
 
             //         < --Relationships-- >
             //  ApplicationUser 1 <-> 1 Researcher
@@ -118,6 +135,14 @@ namespace ProjetAtrst.Date
             // Key ProjectMembership
             modelBuilder.Entity<ProjectMembership>()
                 .HasKey(pm => new { pm.UserId, pm.ProjectId });
+
+
+            //  Admin -> Project
+            modelBuilder.Entity<ProjectTaskAssignment>()
+                .HasOne(p => p.Task)
+                .WithMany(a => a.Assignments)
+                .HasForeignKey(p => p.TaskId)
+                .OnDelete(DeleteBehavior.Restrict);
 
         }
 

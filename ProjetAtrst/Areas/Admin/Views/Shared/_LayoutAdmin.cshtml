@@ -1,0 +1,107 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@using ProjetAtrst.Interfaces.Services;
+@inject SignInManager<ApplicationUser> _SignInManager;
+@inject INotificationService NotificationService
+@inject UserManager<ApplicationUser> UserManager
+@{
+    var user = await UserManager.GetUserAsync(User);
+    var notifications = user != null ? await NotificationService.GetUnreadNotificationsAsync(user.Id) : new List<Notification>();
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ATRST  @ViewData["title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@yaireo/tagify/dist/tagify.css" />
+    <link href="~/css/site.css" rel="stylesheet" />
+    @RenderSection("Styles", required: false)
+
+</head>
+<body>
+    <!-- Spinner Overlay -->
+    <div id="globalSpinner" class="hidden">
+        <div class="spinner-container">
+            <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2" style="color: #333;">Loading...</p>
+        </div>
+    </div>
+
+    <!--  Top bar -->
+    <div class="topbar d-flex align-items-center justify-content-between px-3 py-2 shadow-sm bg-white border-bottom">
+        <!-- Sidebar toggle (Mobile only) -->
+        <button type="button" class="btn btn-light d-md-none" id="toggleSidebar" title="القائمة">
+            <i class="bi bi-list fs-4"></i>
+        </button>
+
+        <!-- Logo and project title -->
+        <a asp-controller="Home" asp-action="Index" class="d-flex align-items-center text-decoration-none text-dark">
+            <img src="~/images/logo-mini.png" alt="ATRST Logo" class="me-2" style="height: 40px;" />
+            <span class="fw-semibold fs-5 d-none d-sm-inline">ATRST Project</span>
+        </a>
+         @await Component.InvokeAsync("AdminInfo") 
+
+    </div>
+
+
+    <!--  Sidebar -->
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-links">
+
+            <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="nav-link @(IsActive("Dashboard", "Index"))">
+                <i class="bi bi-speedometer2"></i> Accueil
+            </a>
+            <a asp-area="Admin" asp-controller="AdminUsers" asp-action="Index" class="nav-link @(IsActive("AdminUsers", "Index"))">
+                <i class="bi bi-person-lines-fill"></i>Liste admin
+            </a>
+
+            <a asp-area="Admin" asp-controller="AdminUsers" asp-action="Create" class="nav-link @(IsActive("AdminUsers", "Create"))">
+                <i class="bi bi-person-add"></i>Add admin
+            </a>
+            <hr />
+        </div>
+
+        <!-- Logout link fixed at the bottom -->
+        <a asp-area="" asp-controller="Account" asp-action="Logout" class="nav-link logout-link @(IsActive("Account", "Logout"))">
+            <i class="bi bi-box-arrow-right"></i> Deconnexion
+        </a>
+
+    </div>
+
+
+    <!--  Overlay layer when menu is open -->
+    <div class="overlay" id="overlay"></div>
+    <div class="content ">
+        @* @await Component.InvokeAsync("ApprovalStatus")   *@
+        @RenderBody()
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@@yaireo/tagify"></script>
+    <script src="~/js/site.js"></script>
+    @functions {
+        private string IsActive(string controller, string action)
+        {
+            var currentController = Context.Request.RouteValues["controller"]?.ToString();
+            var currentAction = Context.Request.RouteValues["action"]?.ToString();
+            var currentArea = Context.Request.RouteValues["area"]?.ToString();
+            return (currentController == controller &&
+            currentAction == action &&
+            currentArea == "Admin") ? "active" : "";
+        }
+    }
+
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>

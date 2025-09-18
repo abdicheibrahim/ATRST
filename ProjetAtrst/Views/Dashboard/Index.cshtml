@@ -1,4 +1,4 @@
-@model ProjetAtrst.ViewModels.Dashboard.DashboardViewModel
+﻿@model ProjetAtrst.ViewModels.Dashboard.DashboardViewModel
 
 @{
     Layout = "_LayoutResearcher";
@@ -9,7 +9,7 @@
 }
 
 <div class="container mt-4">
-    <h2 class="mb-4"> Projets que je dirige 📘</h2>
+    <h2 class="mb-4">_projets que je dirige 📘</h2>
 
     @if (Model.LeaderProjects.Any())
     {
@@ -17,7 +17,10 @@
             @foreach (var project in Model.LeaderProjects)
             {
                 <div class="col">
-                    <div class="card h-100 shadow-sm">
+                    <div class="card h-100 shadow-sm project-card"
+                         style="cursor: pointer;"
+                         data-project-id="@project.ProjectId"
+                         data-is-leader="true">
                         <div class="row g-0">
                             <div class="col-3 d-flex align-items-center justify-content-center bg-light" style="min-height: 64px;">
                                 @if (!string.IsNullOrEmpty(project.ImageUrl))
@@ -64,7 +67,7 @@
 
     <hr class="my-5">
 
-    <h2 class="mb-4"> Projets dont je suis membre 📒</h2>
+    <h2 class="mb-4">_projets dont je suis membre 📒</h2>
 
     @if (Model.JoinedProjects.Any())
     {
@@ -72,7 +75,12 @@
             @foreach (var project in Model.JoinedProjects)
             {
                 <div class="col">
-                    <div class="card h-100 shadow-sm">
+                    <div class="card h-100 shadow-sm project-card"
+                         style="cursor: pointer;"
+                         data-project-id="@project.ProjectId"
+                         data-is-leader="false"
+                         data-bs-toggle="modal"
+                         data-bs-target="#projectDetailsModal">
                         <div class="row g-0">
                             <div class="col-3 d-flex align-items-center justify-content-center bg-light" style="min-height: 64px;">
                                 @if (!string.IsNullOrEmpty(project.ImageUrl))
@@ -91,7 +99,6 @@
                                 <div class="card-body">
                                     <h5 class="card-title">@project.ProjectTitle</h5>
                                     <p class="card-text"> 👤 Le leader: <strong>@project.LeaderFullName</strong></p>
-                                    <a href="@Url.Action("Details", "Project", new { id = project.ProjectId })" class="stretched-link"></a>
                                 </div>
                             </div>
                         </div>
@@ -105,3 +112,145 @@
         <p class="text-muted">Il n'y a aucun projet dont vous êtes actuellement membre.</p>
     }
 </div>
+
+<!-- Modal لتفاصيل المشروع -->
+<div class="modal fade" id="projectDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" id="projectDetailsContent">
+            <!-- سيتم تحميل المحتوى هنا عبر AJAX -->
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <!-- Summernote CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.css" rel="stylesheet">
+
+    <!-- Summernote JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.js"></script>
+
+    <script>
+        $(function () {
+            let projectDetailsModalTrigger = null;
+
+            // التعامل مع النقر على الكروت
+            $('.project-card').on('click', function (e) {
+                // منع النقر إذا تم النقر على رابط أو زر داخل الكارد
+                if ($(e.target).is('a') || $(e.target).closest('a').length > 0) {
+                    return;
+                }
+
+                const isLeader = $(this).data('is-leader');
+                const projectId = $(this).data('project-id');
+
+                if (isLeader) {
+                    // إذا كان leader، ننتقل للدخول للمشروع
+                    const url = '@Url.Action("Enter", "ProjectContext")' + '?projectId=' + projectId;
+                    window.location.href = url;
+                } else {
+                    // إذا كان عضو، نفتح Modal
+                    projectDetailsModalTrigger = this;
+                    loadProjectDetails(projectId);
+                }
+            });
+
+            window.loadProjectDetails = function (projectId) {
+                if (!projectId) {
+                    console.error("معرف المشروع غير متوفر");
+                    return;
+                }
+
+                $.ajax({
+                    url: '@Url.Action("Details", "Project")',
+                    type: 'GET',
+                    data: { id: projectId },
+                    beforeSend: function () {
+                        $("#projectDetailsContent").html(`
+                            <div class="text-center p-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Chargement...</span>
+                                </div>
+                                <p class="mt-2">Chargement des détails du projet...</p>
+                            </div>
+                        `);
+
+                        const modalEl = document.getElementById('projectDetailsModal');
+                        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                        modal.show();
+                    },
+                    success: function (data) {
+                        $("#projectDetailsContent").html(data);
+                        initializeProjectDetails();
+                    },
+                    error: function (xhr) {
+                        let errorMessage = "Une erreur s'est produite lors du chargement des détails";
+
+                        if (xhr.status === 404) {
+                            errorMessage = "Les détails du projet ne sont pas disponibles";
+                        } else if (xhr.status === 403) {
+                            errorMessage = "Vous n'avez pas l'autorisation d'accéder à ce projet";
+                        }
+
+                        $("#projectDetailsContent").html(`
+                            <div class="modal-header">
+                                <h5 class="modal-title">Erreur</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="alert alert-danger">
+                                    <i class="bi bi-exclamation-triangle"></i> ${errorMessage}
+                                </div>
+                            </div>
+                        `);
+                    }
+                });
+            };
+
+            function initializeProjectDetails() {
+                if ($('.summernote').length > 0) {
+                    $('.summernote').summernote({
+                        height: 200,
+                        lang: 'fr-FR',
+                        toolbar: [
+                            ['style', ['style']],
+                            ['font', ['bold', 'underline', 'clear']],
+                            ['para', ['ul', 'ol', 'paragraph']],
+                            ['table', ['table']],
+                            ['insert', ['link']],
+                            ['view', ['fullscreen', 'codeview', 'help']]
+                        ]
+                    });
+                }
+
+                if (typeof bootstrap !== 'undefined') {
+                    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                        return new bootstrap.Tooltip(tooltipTriggerEl);
+                    });
+                }
+            }
+
+            $('#projectDetailsModal').on('hidden.bs.modal', function () {
+                $('#projectDetailsContent').empty();
+
+                $('.summernote').each(function () {
+                    if ($(this).hasClass('note-editor')) {
+                        $(this).summernote('destroy');
+                    }
+                });
+
+                if (projectDetailsModalTrigger) {
+                    setTimeout(() => {
+                        projectDetailsModalTrigger.focus();
+                        projectDetailsModalTrigger = null;
+                    }, 50);
+                }
+            });
+
+            // منع النقر على العناصر الداخلية من التسبب في فتح Modal أو الانتقال
+            $(document).on('click', '.card a, .card button', function(e) {
+                e.stopPropagation();
+            });
+        });
+    </script>
+}

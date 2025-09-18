@@ -12,8 +12,8 @@ using ProjetAtrst.Date;
 namespace ProjetAtrst.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250913135908_Insal")]
-    partial class Insal
+    [Migration("20250918141958_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -543,6 +543,76 @@ namespace ProjetAtrst.Migrations
                     b.ToTable("ProjectRequests");
                 });
 
+            modelBuilder.Entity("ProjetAtrst.Models.ProjectTask", b =>
+                {
+                    b.Property<int>("TaskId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TaskId"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateOnly>("EndDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Progress")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TaskName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("TaskId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("ProjectTasks");
+                });
+
+            modelBuilder.Entity("ProjetAtrst.Models.ProjectTaskAssignment", b =>
+                {
+                    b.Property<int>("ProjectTaskAssignmentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProjectTaskAssignmentId"));
+
+                    b.Property<string>("AssignedUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TaskId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProjectTaskAssignmentId");
+
+                    b.HasIndex("AssignedUserId");
+
+                    b.HasIndex("TaskId");
+
+                    b.ToTable("ProjectTaskAssignments");
+                });
+
             modelBuilder.Entity("ProjetAtrst.Models.Researcher", b =>
                 {
                     b.Property<string>("Id")
@@ -739,6 +809,36 @@ namespace ProjetAtrst.Migrations
                     b.Navigation("Sender");
                 });
 
+            modelBuilder.Entity("ProjetAtrst.Models.ProjectTask", b =>
+                {
+                    b.HasOne("ProjetAtrst.Models.Project", "Project")
+                        .WithMany("Tasks")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("ProjetAtrst.Models.ProjectTaskAssignment", b =>
+                {
+                    b.HasOne("ProjetAtrst.Models.ApplicationUser", "AssignedUser")
+                        .WithMany("TaskAssignments")
+                        .HasForeignKey("AssignedUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProjetAtrst.Models.ProjectTask", "Task")
+                        .WithMany("Assignments")
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AssignedUser");
+
+                    b.Navigation("Task");
+                });
+
             modelBuilder.Entity("ProjetAtrst.Models.Researcher", b =>
                 {
                     b.HasOne("ProjetAtrst.Models.Admin", "ApprovedByAdmin")
@@ -781,6 +881,8 @@ namespace ProjetAtrst.Migrations
                     b.Navigation("Researcher");
 
                     b.Navigation("SentRequests");
+
+                    b.Navigation("TaskAssignments");
                 });
 
             modelBuilder.Entity("ProjetAtrst.Models.Project", b =>
@@ -788,6 +890,13 @@ namespace ProjetAtrst.Migrations
                     b.Navigation("ProjectMemberships");
 
                     b.Navigation("ProjectRequests");
+
+                    b.Navigation("Tasks");
+                });
+
+            modelBuilder.Entity("ProjetAtrst.Models.ProjectTask", b =>
+                {
+                    b.Navigation("Assignments");
                 });
 #pragma warning restore 612, 618
         }

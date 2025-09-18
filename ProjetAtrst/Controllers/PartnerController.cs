@@ -43,9 +43,9 @@ namespace ProjetAtrst.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Details(string partnerId)
+        public async Task<IActionResult> Details(string Id)
         {
-            var partnerDetails = await _partnerService.GetPartnerDetailsAsync(partnerId);
+            var partnerDetails = await _partnerService.GetPartnerDetailsAsync(Id);
             if (partnerDetails == null)
                 return NotFound();
 

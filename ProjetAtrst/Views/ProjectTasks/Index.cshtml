@@ -1,0 +1,133 @@
+﻿@{
+    ViewData["Title"] = "les tâches";
+    Layout = "_LayoutProject";
+}
+
+<div class="mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
+        <h2 class="mb-0">les tâches</h2>
+        <div class="d-flex flex-column flex-sm-row gap-2">
+            <!-- زر فتح الـ Modal -->
+            <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#createTaskModal">
+                <i class="bi bi-plus-square"></i> Add Task
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- الـ Modal لإنشاء المهمة -->
+<div class="modal fade" id="createTaskModal" tabindex="-1" aria-labelledby="createTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="createTaskModalLabel">
+                    <i class="fas fa-plus-circle me-2"></i> Créer une nouvelle tâche
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @await Html.PartialAsync("_CreateTaskPartial", new ProjetAtrst.ViewModels.ProjectTask.ProjectTaskViewModel())
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Synchronize progress range slider with number input
+        document.addEventListener('DOMContentLoaded', function () {
+            const progressRange = document.getElementById('progressRange');
+            const progressInput = document.getElementById('progressInput');
+
+            if (progressRange && progressInput) {
+                progressRange.addEventListener('input', function () {
+                    progressInput.value = this.value;
+                });
+
+                progressInput.addEventListener('input', function () {
+                    progressRange.value = this.value;
+                    if (this.value < 0) this.value = 0;
+                    if (this.value > 100) this.value = 100;
+                });
+            }
+
+            // Date validation logic
+            const startDate = document.querySelector('input[name="StartDate"]');
+            const endDate = document.querySelector('input[name="EndDate"]');
+
+            if (startDate) {
+                startDate.addEventListener('change', function () {
+                    if (endDate && endDate.value && new Date(this.value) > new Date(endDate.value)) {
+                        alert('La date de début ne peut pas être postérieure à la date de fin');
+                        this.value = '';
+                    }
+                });
+            }
+
+            if (endDate) {
+                endDate.addEventListener('change', function () {
+                    if (startDate && startDate.value && new Date(this.value) < new Date(startDate.value)) {
+                        alert('La date de fin ne peut pas être antérieure à la date de début');
+                        this.value = '';
+                    }
+                });
+            }
+
+            // Auto-resize textarea
+            const textarea = document.querySelector('textarea[name="Description"]');
+            if (textarea) {
+                textarea.addEventListener('input', function () {
+                    this.style.height = 'auto';
+                    this.style.height = this.scrollHeight + 'px';
+                });
+            }
+
+            // Form submission handling with AJAX
+            const form = document.getElementById('createTaskForm');
+            if (form) {
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    const formData = new FormData(this);
+                    const submitButton = this.querySelector('button[type="submit"]');
+                    const originalText = submitButton.innerHTML;
+                    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Création...';
+                    submitButton.disabled = true;
+
+                    fetch(this.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            // إغلاق الـ Modal
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('createTaskModal'));
+                            modal.hide();
+
+                            // إعادة تحميل الصفحة أو تحديث القائمة
+                            location.reload();
+                        } else {
+                            return response.text().then(text => {
+                                // عرض الأخطاء في الـ Modal
+                                console.error('Error:', text);
+                                alert('Une erreur est survenue lors de la création de la tâche.');
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Une erreur est survenue lors de la création de la tâche.');
+                    })
+                    .finally(() => {
+                        submitButton.innerHTML = originalText;
+                        submitButton.disabled = false;
+                    });
+                });
+            }
+        });
+    </script>
+}

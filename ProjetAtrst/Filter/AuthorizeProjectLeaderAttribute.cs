@@ -2,49 +2,61 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using ProjetAtrst.Interfaces.Services;
 using System.Security.Claims;
-
 public class AuthorizeProjectLeaderAttribute : Attribute, IAsyncActionFilter
 {
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
-        // Get projectId from Route
-        if (!context.ActionArguments.TryGetValue("projectId", out var projectIdObj) || projectIdObj == null)
+        // محاولة الحصول على projectId من ActionArguments أولاً
+        int projectId;
+
+        if (context.ActionArguments.TryGetValue("projectId", out var projectIdObj) && projectIdObj != null)
         {
-            context.Result = new BadRequestResult();
-            return;
+            projectId = (int)projectIdObj;
+        }
+        else
+        {
+            // إذا لم يكن موجوداً في ActionArguments، نحاول من Route أو Query
+            if (!context.RouteData.Values.TryGetValue("projectId", out var routeProjectId) ||
+                !int.TryParse(routeProjectId?.ToString(), out projectId))
+            {
+                var query = context.HttpContext.Request.Query;
+                if (!query.TryGetValue("projectId", out var queryProjectId) ||
+                    !int.TryParse(queryProjectId, out projectId))
+                {
+                    context.Result = new BadRequestResult(); // 400
+                    return;
+                }
+            }
         }
 
-        var projectId = (int)projectIdObj;
-
-        // Get current user ID
+        // الحصول على معرف المستخدم
         var userId = context.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         if (string.IsNullOrEmpty(userId))
         {
-            context.Result = new ForbidResult();
+            context.Result = new ForbidResult(); // 403
             return;
         }
 
-        // Call service from DI Container
-        var projectService = context.HttpContext.RequestServices
-            .GetService(typeof(IProjectService)) as IProjectService;
+        // الحصول على خدمة المشروع
+        var projectService = context.HttpContext.RequestServices.GetService<IProjectService>();
 
         if (projectService == null)
         {
-            context.Result = new StatusCodeResult(500); // Initialization error
+            context.Result = new StatusCodeResult(500); // خطأ داخلي
             return;
         }
 
-        // Check if user is leader
+        // التحقق من أن المستخدم هو القائد
         var isLeader = await projectService.IsUserLeaderAsync(userId, projectId);
 
         if (!isLeader)
         {
-            context.Result = new ForbidResult(); // Or redirect to permissions page
+            context.Result = new ForbidResult(); // 403
             return;
         }
 
-        // Allow access
+        // السماح بالوصول
         await next();
     }
 }

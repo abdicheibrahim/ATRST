@@ -63,8 +63,18 @@ namespace ProjetAtrst.Controllers
 
             var success = await _userService.LoginAsync(model);
             if (success)
-                return RedirectToAction("Index", "Dashboard");
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (userId == null)
+                    return RedirectToAction("Login");
 
+                var role = await _userService.GetRoleAsync(userId);
+                if (role == RoleType.Admin|| role==RoleType.SuperAdmin)
+                {
+                    return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+                }
+                return RedirectToAction("Index", "Dashboard");
+            }
             ModelState.AddModelError("", "Invalid login attempt.");
             return View(model);
         }

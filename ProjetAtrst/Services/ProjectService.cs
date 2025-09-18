@@ -161,9 +161,6 @@ namespace ProjetAtrst.Services
                 Status = pm.Project.ProjectStatus.ToString(),
                 IsAcceptingJoinRequests = pm.Project.IsAcceptingJoinRequests,
                 LastActivity = pm.Project.LastActivity,
-               // LogoPath = string.IsNullOrEmpty(pm.Project.LogoPath)
-               //? "/images/default-project.png"
-               //: pm.Project.LogoPath,
                LogoPath = pm.Project.LogoPath,
                 Role = pm.Role switch
                 {

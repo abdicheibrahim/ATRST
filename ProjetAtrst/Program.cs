@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using ProjetAtrst.Models;
+using ProjetAtrst.Date;
 using ProjetAtrst.Repositories;
 using ProjetAtrst.Interfaces;
 using ProjetAtrst.Interfaces.Services;
@@ -73,10 +73,9 @@ namespace ProjetAtrst
             builder.Services.AddScoped<IProjectMembershipRepository, ProjectMembershipRepository>();
             builder.Services.AddScoped<IProjectRequestService, ProjectRequestService>();
             builder.Services.AddScoped<IProjectRequestRepository, ProjectRequestRepository>();
-            //builder.Services.AddScoped<IInvitationRequestRepository, InvitationRequestRepository>();
             builder.Services.AddScoped<IDashboardService, DashboardService>();
-            //builder.Services.AddScoped<IJoinRequestRepository, JoinRequestRepository>();
-            //builder.Services.AddScoped<IInvitationRequestService, InvitationRequestService>();
+            builder.Services.AddScoped<IProjectTaskRepository, ProjectTaskRepository>();
+            builder.Services.AddScoped<IProjectTaskService, ProjectTaskService>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<ProfileCompletionFilter>();
@@ -93,6 +92,15 @@ namespace ProjetAtrst
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+                var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+
+                
+                DbSeeder.SeedSuperAdminAsync(userManager, roleManager).GetAwaiter().GetResult();
+            }
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -103,9 +111,14 @@ namespace ProjetAtrst
             app.UseAuthorization();
 
             app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Dashboard}/{action=Index}/{id?}");
+            name: "areas",
+            pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
 
+            app.MapControllerRoute(
+            name: "default",
+            pattern: "{controller=Dashboard}/{action=Index}/{id?}");
+
+           
             app.Run();
         }
     }

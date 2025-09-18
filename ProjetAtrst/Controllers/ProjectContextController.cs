@@ -9,6 +9,7 @@ using ProjetAtrst.ViewModels.Project;
 using ProjetAtrst.ViewModels.Researcher;
 using System.Security.Claims;
 
+[Authorize]
 public class ProjectContextController : ProjectContextBaseController
 {
     private readonly IProjectService _projectService;
@@ -24,7 +25,7 @@ public class ProjectContextController : ProjectContextBaseController
         _researcherService = researcherService;
         _userService = userService;
     }
-
+    
     public IActionResult Enter(int projectId)
     {
         HttpContext.Session.SetInt32("CurrentProjectId", projectId);
@@ -93,7 +94,7 @@ public class ProjectContextController : ProjectContextBaseController
     {
         var projectId = HttpContext.Session.GetInt32("CurrentProjectId");
         if (projectId == null)
-            return RedirectToAction("Index");
+            return RedirectToAction("Enter");
         var members = await _projectService.GetProjectMembersAsync(projectId.Value);
         return View(members);
     }
@@ -113,7 +114,7 @@ public class ProjectContextController : ProjectContextBaseController
     {
         var projectId = HttpContext.Session.GetInt32("CurrentProjectId");
         if (projectId == null)
-            return RedirectToAction("Index");
+            return RedirectToAction("Enter");
         ViewBag.CurrentProjectId = projectId.Value;
         var requests = await _projectService.GetInvitationRequestsAsync(projectId.Value);
         return View(requests);
@@ -142,35 +143,6 @@ public class ProjectContextController : ProjectContextBaseController
         return RedirectToAction("Requests");
     }
 
-    //[HttpGet]
-    //public async Task<IActionResult> SendInvitations(int page = 1, int pageSize = 6)
-    //{
-    //    var projectId = HttpContext.Session.GetInt32("CurrentProjectId");
-    //    if (projectId == null)
-    //        return RedirectToAction("Index");
-
-    //    var (researchers, totalCount) = await _researcherService.GetAvailableResearchersForInvitationAsync(projectId.Value, page, pageSize);
-
-    //    var paginationModel = new PaginationModel
-    //    {
-    //        CurrentPage = page,
-    //        TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize)
-    //    };
-
-    //    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-    //    {
-    //        return Json(new { researchers, pagination = paginationModel });
-    //    }
-
-    //    var viewModel = new SendInvitationViewModel
-    //    {
-    //        Researchers = researchers,
-    //        Pagination = paginationModel,
-    //        CurrentProjectId = projectId.Value
-    //    };
-    //    return View(viewModel);
-    //}
-
     [HttpPost]
     public async Task<IActionResult> SendInvitation(string researcherId)
     {
@@ -183,7 +155,6 @@ public class ProjectContextController : ProjectContextBaseController
         return RedirectToAction("SendInvitations");
     }
 
-    //......
     [HttpGet]
     public async Task<IActionResult> SendInvitations(int draw = 1, int start = 0, int length = 10, string search = null, string sortColumn = null, string sortDirection = null)
     {
