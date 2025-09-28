@@ -1,4 +1,4 @@
-@using ProjetAtrst.ViewModels.Account
+﻿@using ProjetAtrst.ViewModels.Account
 @using System.Text.Json
 @model CompleteProfileViewModel
 
@@ -104,9 +104,10 @@ else
         </div>
         <div class="col-md-6">
             <label asp-for="PersonalInformation.Birthday" class="form-label">Date de naissance</label>
-            <input type="date" class="form-control input" asp-for="PersonalInformation.Birthday" value="" placeholder="JJ/MM/AAAA">
+            <input type="date" class="form-control input" asp-for="PersonalInformation.Birthday"  placeholder="JJ/MM/AAAA">
             <span asp-validation-for="PersonalInformation.Birthday"></span>
         </div>
+
         <div class="col-md-6">
             <label asp-for="PersonalInformation.Mobile" class="form-label">Téléphone mobile</label>
             <input type="text" class="form-control input" asp-for="PersonalInformation.Mobile">

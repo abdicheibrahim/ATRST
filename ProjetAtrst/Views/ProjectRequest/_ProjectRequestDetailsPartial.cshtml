@@ -1,4 +1,5 @@
-﻿@model ProjetAtrst.Models.ProjectRequest
+﻿@using ProjetAtrst.ViewModels.ProjectRequests
+@model ProjectRequestDetailsViewModel
 
 <!-- Modal Header -->
 <div class="modal-header bg-primary text-white">
@@ -21,12 +22,12 @@
                 <div class="card-body">
                     <span class="badge
                         @(Model.Status == RequestStatus.Pending ? "bg-warning text-dark" :
-                                                    Model.Status == RequestStatus.Accepted ? "bg-success" : "bg-danger")">
+                        Model.Status == RequestStatus.Accepted ? "bg-success" : "bg-danger")">
                         @(
-                                                Model.Status == RequestStatus.Pending ? "En attente" :
-                                                Model.Status == RequestStatus.Accepted ? "Accepté" :
-                                                "Refusé"
-                                                )
+                        Model.Status == RequestStatus.Pending ? "En attente" :
+                            Model.Status == RequestStatus.Accepted ? "Accepté" :
+                        "Refusé"
+                        )
                     </span>
                 </div>
             </div>
@@ -41,7 +42,7 @@
                 <div class="card-body">
                     <p class="mb-0">
                         <strong>Nom :</strong><br />
-                        @(string.IsNullOrWhiteSpace(Model.Sender?.FullName) ? "Inconnu" : Model.Sender.FullName)
+                        @(string.IsNullOrWhiteSpace(Model.SenderName) ? "Inconnu" : Model.SenderName)
                     </p>
                 </div>
             </div>
@@ -55,7 +56,7 @@
                 <div class="card-body">
                     <p class="mb-0">
                         <strong>Nom :</strong><br />
-                        @(string.IsNullOrWhiteSpace(Model.Receiver?.FullName) ? "Inconnu" : Model.Receiver.FullName)
+                        @(string.IsNullOrWhiteSpace(Model.ReceiverName) ? "Inconnu" : Model.ReceiverName)
                     </p>
                 </div>
             </div>
@@ -80,7 +81,7 @@
                 </div>
                 <div class="card-body">
                     <p class="mb-0">
-                        @(string.IsNullOrWhiteSpace(Model.Project?.Title) ? "Non lié" : Model.Project.Title)
+                        @(string.IsNullOrWhiteSpace(Model.ProjectTitle) ? "Non lié" : Model.ProjectTitle)
                     </p>
                 </div>
             </div>
@@ -99,6 +100,22 @@
                 </div>
             </div>
         </div>
+
+        @if (!string.IsNullOrWhiteSpace(Model.RelatedWorks))
+        {
+            <div class="col-md-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light fw-bold">
+                        <i class="bi bi-chat-left-text me-1"></i> Travaux en relation avec le projet proposé
+                    </div>
+                    <div class="card-body">
+                        <div class="bg-light p-3 rounded text-break Description" style="white-space: pre-line; border: 1px solid #eee;">
+                            @Model.RelatedWorks
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
 
         <!-- تاريخ الإرسال -->
         <div class="col-md-12">

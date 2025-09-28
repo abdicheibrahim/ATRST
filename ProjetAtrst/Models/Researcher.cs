@@ -2,12 +2,7 @@
 
 namespace ProjetAtrst.Models
 {
-    public enum ApprovalStatus
-    {
-        Pending,
-        Accepted,
-        Rejected
-    }
+ 
  
     public class Researcher
     {
@@ -25,13 +20,6 @@ namespace ProjetAtrst.Models
         public string? Establishment { get; set; }
         public List<string>? ParticipationPrograms { get; set; } = new List<string>();
        
-
-        // Administrative approval
-        public ApprovalStatus ResearcherApprovalStatus { get; set; } = ApprovalStatus.Pending;
-        public string? ApprovedByAdminId { get; set; }
-        public Admin? ApprovedByAdmin { get; set; }
-       
-
     }
 
 }

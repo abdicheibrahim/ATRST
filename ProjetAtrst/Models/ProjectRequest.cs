@@ -32,6 +32,8 @@
         public ApplicationUser Receiver { get; set; }
 
         public string Message { get; set; } // Message attached to request or invitation
+
+        public string? RelatedWorks { get; set; }
         public RequestType Type { get; set; } // Request type (join or invitation)
         public RequestStatus Status { get; set; } = RequestStatus.Pending;
         public DateOnly CreatedAt { get; set; } 

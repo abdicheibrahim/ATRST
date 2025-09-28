@@ -41,7 +41,11 @@ namespace ProjetAtrst.Repositories
         }
         public async Task<List<ApplicationUser>> GetAvailableUsersAsync(List<string> excludedIds, int start, int pageSize, string searchValue = null, string sortColumn = null, string sortDirection = null)
         {
-            var query = _context.Users.Where(u => !excludedIds.Contains(u.Id));
+            //var query = _context.Users.Where(u => !excludedIds.Contains(u.Id));
+            var query = _context.Users
+                .Where(u => !excludedIds.Contains(u.Id)
+                && u.RoleType != RoleType.Admin
+                && u.RoleType != RoleType.SuperAdmin);
 
             // تطبيق البحث
             if (!string.IsNullOrEmpty(searchValue))
@@ -88,6 +92,57 @@ namespace ProjetAtrst.Repositories
 
             return await query.CountAsync();
         }
+
+        // Methods for Admin to manage users (excluding Admin and SuperAdmin)
+        public async Task<List<ApplicationUser>> GetUsersForAdminAsync(int start, int pageSize, string searchValue = null, string sortColumn = null, string sortDirection = null)
+        {
+            var query = _context.Users
+                .Where(u => u.RoleType != RoleType.Admin && u.RoleType != RoleType.SuperAdmin);
+
+            if (!string.IsNullOrEmpty(searchValue))
+            {
+                query = query.Where(u => u.FullName.Contains(searchValue) ||
+                                         u.UserName.Contains(searchValue) ||
+                                         u.Email.Contains(searchValue));
+            }
+
+            // sorting
+            if (!string.IsNullOrEmpty(sortColumn))
+            {
+                switch (sortColumn.ToLower())
+                {
+                    case "fullname":
+                        query = sortDirection == "asc" ? query.OrderBy(u => u.FullName) : query.OrderByDescending(u => u.FullName);
+                        break;
+                    case "email":
+                        query = sortDirection == "asc" ? query.OrderBy(u => u.Email) : query.OrderByDescending(u => u.Email);
+                        break;
+                    case "gender":
+                        query = sortDirection == "asc" ? query.OrderBy(u => u.Gender) : query.OrderByDescending(u => u.Gender);
+                        break;
+                    default:
+                        query = query.OrderBy(u => u.FullName);
+                        break;
+                }
+            }
+
+            return await query.Skip(start).Take(pageSize).ToListAsync();
+        }
+
+        public async Task<int> GetUsersCountForAdminAsync(string searchValue = null)
+        {
+            var query = _context.Users.Where(u => u.RoleType != RoleType.Admin && u.RoleType != RoleType.SuperAdmin);
+
+            if (!string.IsNullOrEmpty(searchValue))
+            {
+                query = query.Where(u => u.FullName.Contains(searchValue) ||
+                                         u.UserName.Contains(searchValue) ||
+                                         u.Email.Contains(searchValue));
+            }
+
+            return await query.CountAsync();
+        }
+
     }
 
 

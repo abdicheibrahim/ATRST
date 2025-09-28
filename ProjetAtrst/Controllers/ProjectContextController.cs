@@ -170,7 +170,7 @@ public class ProjectContextController : ProjectContextBaseController
             var orderDirection = Request.Query["order[0][dir]"].FirstOrDefault();
 
             // Determine sort column
-            var columnNames = new[] { "profilePicturePath", "fullName", "gender", "id" };
+            var columnNames = new[] { "profilePicturePath", "fullName", "Role", "id" };
             var columnName = orderColumnIndex != null && int.Parse(orderColumnIndex) < columnNames.Length
                 ? columnNames[int.Parse(orderColumnIndex)]
                 : "fullName";
@@ -187,7 +187,7 @@ public class ProjectContextController : ProjectContextBaseController
                     ? "/images/default-project.png"
                     : u.ProfilePicturePath,
                 fullName = u.FullName,
-                gender = u.Gender.ToString(),
+                gender = u.RoleType.ToString(),
                 id = u.Id
             }).ToList();
 

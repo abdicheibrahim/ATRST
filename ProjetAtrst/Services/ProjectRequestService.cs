@@ -176,7 +176,7 @@ public class ProjectRequestService : IProjectRequestService
     {
         return await _requestRepository.GetBySenderIdAsync(userId); 
     }
-    public async Task<ProjectRequest> GetByIdWithRelationsAsync(int userId)
+    public async Task<ProjectRequestDetailsViewModel> GetByIdWithRelationsAsync(int userId)
     {
         return await _requestRepository.GetByIdWithRelationsAsync(userId); // get all by sender, ignoring project filter
     }

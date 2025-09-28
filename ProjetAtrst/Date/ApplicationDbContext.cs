@@ -98,6 +98,12 @@ namespace ProjetAtrst.Date
                 .HasForeignKey<Associate>(p => p.Id)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            ////  ApplicationUser 1 <-> 1 admin
+            //modelBuilder.Entity<ApplicationUser>()
+            //    .HasOne(a => a.Admin)
+            //    .WithOne(p => p.User)
+            //    .HasForeignKey<Admin>(p => p.Id)
+            //    .OnDelete(DeleteBehavior.Cascade);
 
 
             //         < --Notification-- >
@@ -110,26 +116,21 @@ namespace ProjetAtrst.Date
 
 
             //         < --Admin-- >
-            //  Admin -> Researcher
-            modelBuilder.Entity<Researcher>()
-                .HasOne(r => r.ApprovedByAdmin)
-                .WithMany(p => p.ApprovedResearchers)
-                .HasForeignKey(r => r.ApprovedByAdminId)
-                .OnDelete(DeleteBehavior.Restrict);
+            ////  Admin -> User
+            //modelBuilder.Entity<ApplicationUser>()
+            //    .HasOne(r => r.ApprovedByAdmin)
+            //    .WithMany(p => p.ApprovedUsers)
+            //    .HasForeignKey(r => r.ApprovedByAdminId)
+            //    .OnDelete(DeleteBehavior.Restrict)
+            //    .IsRequired(false);
 
-            //  Admin -> Project
-            modelBuilder.Entity<Project>()
-                .HasOne(p => p.ApprovedByAdmin)
-                .WithMany(a => a.ApprovedProjects)
-                .HasForeignKey(p => p.ApprovedByAdminId)
-                .OnDelete(DeleteBehavior.Restrict);
+            ////  Admin -> Project
+            //modelBuilder.Entity<Project>()
+            //    .HasOne(p => p.ApprovedByAdmin)
+            //    .WithMany(a => a.ApprovedProjects)
+            //    .HasForeignKey(p => p.ApprovedByAdminId)
+            //    .OnDelete(DeleteBehavior.Restrict);
 
-            //  ApplicationUser 1 <-> 1 Admin
-            modelBuilder.Entity<ApplicationUser>()
-                .HasOne(a => a.Admin)
-                .WithOne(r => r.User)
-                .HasForeignKey<Admin>(r => r.Id)
-                .OnDelete(DeleteBehavior.Cascade);
            
 
             // Key ProjectMembership

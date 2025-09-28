@@ -42,7 +42,7 @@
         </button>
 
         <!-- Logo and project title -->
-        <a asp-controller="Home" asp-action="Index" class="d-flex align-items-center text-decoration-none text-dark">
+        <a asp-controller="Dashboard" asp-action="Index" class="d-flex align-items-center text-decoration-none text-dark">
             <img src="~/images/logo-mini.png" alt="ATRST Logo" class="me-2" style="height: 40px;" />
             <span class="fw-semibold fs-5 d-none d-sm-inline">ATRST Project</span>
         </a>
@@ -59,13 +59,18 @@
             <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="nav-link @(IsActive("Dashboard", "Index"))">
                 <i class="bi bi-speedometer2"></i> Accueil
             </a>
-            <a asp-area="Admin" asp-controller="AdminUsers" asp-action="Index" class="nav-link @(IsActive("AdminUsers", "Index"))">
-                <i class="bi bi-person-lines-fill"></i>Liste admin
+           
+            @if (user.RoleType == RoleType.SuperAdmin)
+            {
+                <a asp-area="Admin" asp-controller="AdminUsers" asp-action="Index" class="nav-link @(IsActive("AdminUsers", "Index"))">
+                    <i class="bi bi-person-lines-fill"></i>Liste admin
+                </a>
+              
+            }
+            <a asp-area="Admin" asp-controller="Users" asp-action="Index" class="nav-link @(IsActive("Users", "Index"))">
+                <i class="bi bi-person-lines-fill"></i>Liste user
             </a>
-
-            <a asp-area="Admin" asp-controller="AdminUsers" asp-action="Create" class="nav-link @(IsActive("AdminUsers", "Create"))">
-                <i class="bi bi-person-add"></i>Add admin
-            </a>
+           
             <hr />
         </div>
 

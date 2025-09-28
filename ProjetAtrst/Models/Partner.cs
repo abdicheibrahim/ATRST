@@ -23,6 +23,6 @@ namespace ProjetAtrst.Models
         // Administrative approval
         public ApprovalStatus PartenaireApprovalStatus { get; set; } = ApprovalStatus.Pending;
         public string? ApprovedByAdminId { get; set; }
-        public Admin? ApprovedByAdmin { get; set; }
+        //public Admin? ApprovedByAdmin { get; set; }
     }
 }

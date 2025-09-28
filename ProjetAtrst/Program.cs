@@ -76,6 +76,7 @@ namespace ProjetAtrst
             builder.Services.AddScoped<IDashboardService, DashboardService>();
             builder.Services.AddScoped<IProjectTaskRepository, ProjectTaskRepository>();
             builder.Services.AddScoped<IProjectTaskService, ProjectTaskService>();
+            builder.Services.AddScoped<IAdminRepository, AdminRepository>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<ProfileCompletionFilter>();

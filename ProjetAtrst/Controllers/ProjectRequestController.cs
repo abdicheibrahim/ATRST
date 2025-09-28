@@ -74,11 +74,11 @@ namespace ProjetAtrst.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
-            var request = await _requestService.GetByIdWithRelationsAsync(id);
-            if (request == null) return NotFound();
+            var ProjectRequestDetails = await _requestService.GetByIdWithRelationsAsync(id);
+            if (ProjectRequestDetails == null) return NotFound();
 
            
-                return PartialView("_ProjectRequestDetailsPartial", request);
+                return PartialView("_ProjectRequestDetailsPartial", ProjectRequestDetails);
            
            
         }

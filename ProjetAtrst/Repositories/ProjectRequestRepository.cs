@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using ProjetAtrst.Interfaces.Repositories;
 using ProjetAtrst.Models;
+using ProjetAtrst.ViewModels.ProjectRequests;
 
 namespace ProjetAtrst.Repositories
 {
@@ -106,14 +107,31 @@ namespace ProjetAtrst.Repositories
                 .ToListAsync();
         }
         //------------------------------------------------
-        public async Task<ProjectRequest> GetByIdWithRelationsAsync(int Id)
+        //public async Task<ProjectRequest> GetByIdWithRelationsAsync(int Id)
+        //{
+        //    return await _context.ProjectRequests
+        //    .Include(r => r.Sender)
+        //    .Include(r => r.Receiver)
+        //    .Include(r => r.Project)
+        //    .FirstOrDefaultAsync(r => r.Id == Id);
+
+        //}
+        public async Task<ProjectRequestDetailsViewModel?> GetByIdWithRelationsAsync(int id)
         {
             return await _context.ProjectRequests
-            .Include(r => r.Sender)
-            .Include(r => r.Receiver)
-            .Include(r => r.Project)
-            .FirstOrDefaultAsync(r => r.Id == Id);
-
+                .Where(r => r.Id == id)
+                .Select(r => new ProjectRequestDetailsViewModel
+                {
+                    ProjectTitle = r.Project.Title,
+                    SenderName = r.Sender.FullName,
+                    ReceiverName = r.Receiver.FullName,
+                    Message = r.Message,
+                    RelatedWorks = r.RelatedWorks,
+                    Type = r.Type,
+                    Status = r.Status,
+                    CreatedAt = r.CreatedAt
+                })
+                .FirstOrDefaultAsync();
         }
         public async Task SaveChangesAsync()
         {

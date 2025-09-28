@@ -7,9 +7,9 @@
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
         <h2 class="mb-0">Liste des admins 👤</h2>
         <div class="d-flex flex-column flex-sm-row gap-2">
-            <a class="btn btn-outline-success" asp-area="Admin" asp-controller="AdminUsers" asp-action="Create">
+            <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addAdminModal">
                 <i class="bi bi-person-plus"></i> Ajouter un admin
-            </a>
+            </button>
         </div>
     </div>
 </div>
@@ -20,6 +20,7 @@
             <tr>
                 <th>Email</th>
                 <th>Nom d'utilisateur</th>
+                <th>Nam et pronem</th>
                 <th>Options</th>
             </tr>
         </thead>
@@ -29,6 +30,7 @@
                 <tr>
                     <td>@admin.Email</td>
                     <td>@admin.UserName</td>
+                    <td>@admin.FullName</td>
                     <td>
                         <div class="d-flex gap-1">
                             <a asp-action="Edit" asp-route-id="@admin.Id" class="btn btn-outline-primary btn-sm" title="Modifier">
@@ -47,7 +49,66 @@
         </tbody>
     </table>
 </div>
+<!-- Modal -->
+<div class="modal fade" id="addAdminModal" tabindex="-1" aria-labelledby="addAdminModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
 
+            <!-- Modal Header -->
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="addAdminModalLabel">
+                    <i class="bi bi-person-plus me-2"></i> Ajouter un nouvel administrateur
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <div class="row g-4">
+
+                    <!-- البطاقة الأساسية للنموذج -->
+                    <div class="col-12">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-light fw-bold">
+                                <i class="bi bi-pencil-square me-1"></i> Informations de l'administrateur
+                            </div>
+                            <div class="card-body">
+                                <form asp-action="Create" method="post" id="createAdminForm">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Adresse e-mail</label>
+                                            <input type="email" name="email" class="form-control" required  />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Nom et prénom</label>
+                                            <input type="text" name="FullName" class="form-control" required  />
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label">Mot de passe</label>
+                                            <input type="password" name="password" class="form-control" required  />
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i> Annuler
+                </button>
+                <button type="submit" form="createAdminForm" class="btn btn-success">
+                    <i class="bi bi-save me-1"></i> Enregistrer
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
 @section scripts {
     <!-- إضافة مكتبات DataTables -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
@@ -91,7 +152,7 @@
 
                 columnDefs: [
                     {
-                        targets: 2, // العمود الأخير (الخيارات)
+                        targets: 3, // العمود الأخير (الخيارات)
                         orderable: false
                     }
                 ]

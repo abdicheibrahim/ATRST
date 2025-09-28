@@ -8,19 +8,19 @@ namespace ProjetAtrst.Date
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager)
         {
-            // 1️⃣ التأكد من وجود الدور "SuperAdmin"
+            
             if (!await roleManager.RoleExistsAsync("SuperAdmin"))
             {
                 await roleManager.CreateAsync(new IdentityRole("SuperAdmin"));
             }
 
-            // 2️⃣ التأكد من وجود الدور "Admin" (لأننا نستعمله لاحقًا)
+           
             if (!await roleManager.RoleExistsAsync("Admin"))
             {
                 await roleManager.CreateAsync(new IdentityRole("Admin"));
             }
 
-            // 3️⃣ إنشاء مستخدم SuperAdmin إذا غير موجود
+           
             var superAdminEmail = "superadmin@atrst.com";
             var existingUser = await userManager.FindByEmailAsync(superAdminEmail);
 
@@ -31,10 +31,11 @@ namespace ProjetAtrst.Date
                     UserName = superAdminEmail,
                     Email = superAdminEmail,
                     RoleType = RoleType.SuperAdmin,
+                    IsCompleted = true,
                     EmailConfirmed = true
                 };
 
-                // كلمة سر افتراضية (تقدر تبدلها)
+               
                 var result = await userManager.CreateAsync(superAdmin, "SuperAdmin123@");
 
                 if (result.Succeeded)

@@ -1,4 +1,5 @@
-﻿using ProjetAtrst.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using ProjetAtrst.Interfaces;
 using ProjetAtrst.Interfaces.Repositories;
 using ProjetAtrst.Interfaces.Services;
 using ProjetAtrst.ViewModels.ProjectTask;
@@ -7,35 +8,93 @@ namespace ProjetAtrst.Services
 {
     public class ProjectTaskService : IProjectTaskService
     {
-        private readonly IProjectTaskRepository _repo;
-        private readonly IUnitOfWork _uow;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IProjectTaskRepository _taskRepository;
 
-        public ProjectTaskService(IProjectTaskRepository repo, IUnitOfWork uow)
+        public ProjectTaskService(IUnitOfWork unitOfWork, IProjectTaskRepository taskRepository)
         {
-            _repo = repo;
-            _uow = uow;
+            _unitOfWork = unitOfWork;
+            _taskRepository = taskRepository;
         }
 
-        public async Task<ProjectTask> CreateAsync(ProjectTaskViewModel dto)
+        public async Task<IEnumerable<ProjectTask>> GetTasksByProjectIdAsync(int projectId)
         {
-            
-            var task = new ProjectTask
+            return await _taskRepository.GetByProjectIdAsync(projectId);
+        }
+
+        public async Task<ProjectTask?> GetTaskByIdAsync(int Id)
+        {
+            return await _taskRepository.GetByIdAsync(Id);
+        }
+
+        public async Task<bool> CreateAsync(ProjectTaskViewModel taskViewModel)
+        {
+            try
             {
-                ProjectId = dto.ProjectId,
-                TaskName = dto.TaskName,
-                Description = dto.Description,
-                Status = string.IsNullOrWhiteSpace(dto.Status) ? "Pending" : dto.Status,
-                Priority = dto.Priority,
-                StartDate = dto.StartDate ?? DateOnly.FromDateTime(DateTime.UtcNow),
-                EndDate = dto.EndDate ?? (dto.StartDate.HasValue ? dto.StartDate.Value.AddDays(7) : DateOnly.FromDateTime(DateTime.UtcNow).AddDays(7)),
-                Progress = dto.Progress
-            };
+                var task = new ProjectTask
+                {
+                    TaskName = taskViewModel.TaskName,
+                    Description = taskViewModel.Description,
+                    Status = taskViewModel.Status,
+                    Priority = taskViewModel.Priority,
+                    Progress = taskViewModel.Progress,
+                    StartDate = taskViewModel.StartDate,
+                    EndDate = taskViewModel.EndDate,
+                    ProjectId = taskViewModel.ProjectId
+                };
 
-            await _repo.AddAsync(task);
-            await _uow.SaveAsync();
+                await _taskRepository.AddAsync(task);
+                await _unitOfWork.SaveAsync(); 
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
-            return task;
+        public async Task<bool> UpdateAsync(int taskId, ProjectTaskViewModel taskViewModel)
+        {
+            try
+            {
+                var Task = await _taskRepository.GetByIdAsync(taskId);
+                if (Task == null)
+                    return false;
+
+                Task.TaskName = taskViewModel.TaskName;
+                Task.Description = taskViewModel.Description;
+                Task.Status = taskViewModel.Status;
+                Task.Priority = taskViewModel.Priority;
+                Task.Progress = taskViewModel.Progress;
+                Task.StartDate = taskViewModel.StartDate;
+                Task.EndDate = taskViewModel.EndDate;
+
+                _taskRepository.Update(Task);
+                await _unitOfWork.SaveAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteAsync(int taskId)
+        {
+            try
+            {
+                var task = await _taskRepository.GetByIdAsync(taskId);
+                if (task == null)
+                    return false;
+
+                _taskRepository.Delete(task);
+                await _unitOfWork.SaveAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
-
 }

@@ -10,7 +10,7 @@ namespace ProjetAtrst.Interfaces.Services
         Task AcceptRequestAsync(int requestId);
         Task RejectRequestAsync(int requestId, RejectionType rejectionType);
         Task<(IEnumerable<ProjectRequest> Incoming, IEnumerable<ProjectRequest> Sent)> GetRequestsForDashboardAsync(string userId);
-        Task<ProjectRequest> GetByIdWithRelationsAsync(int userId);
+        Task<ProjectRequestDetailsViewModel> GetByIdWithRelationsAsync(int userId);
         Task<IEnumerable<ProjectRequest>> GetOutgoingRequestsAsync(string userId);
         Task<ProjectRequestCreateViewModel> PrepareRequestModelAsync(int projectId, string receiverId, RequestType type);
 

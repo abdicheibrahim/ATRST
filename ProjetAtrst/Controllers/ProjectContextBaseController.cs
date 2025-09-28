@@ -13,7 +13,7 @@ namespace ProjetAtrst.Controllers
             var actionName = context.RouteData.Values["action"]?.ToString();
             var projectId = HttpContext.Session.GetInt32("CurrentProjectId");
 
-            // تعيين projectId في ViewBag إذا كان موجوداً
+            
             if (projectId != null)
             {
                 ViewBag.CurrentProjectId = projectId;

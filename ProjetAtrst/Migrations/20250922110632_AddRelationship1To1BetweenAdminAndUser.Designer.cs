@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjetAtrst.Date;
 
@@ -11,9 +12,11 @@ using ProjetAtrst.Date;
 namespace ProjetAtrst.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250922110632_AddRelationship1To1BetweenAdminAndUser")]
+    partial class AddRelationship1To1BetweenAdminAndUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -160,12 +163,7 @@ namespace ProjetAtrst.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Admins");
                 });
@@ -178,11 +176,8 @@ namespace ProjetAtrst.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<string>("AdminId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("ApprovedByAdminId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateOnly>("Birthday")
                         .HasColumnType("date");
@@ -273,7 +268,7 @@ namespace ProjetAtrst.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AdminId");
+                    b.HasIndex("ApprovedByAdminId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -292,7 +287,7 @@ namespace ProjetAtrst.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ApprovedByAdminId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Diploma")
                         .HasColumnType("nvarchar(max)");
@@ -307,6 +302,8 @@ namespace ProjetAtrst.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApprovedByAdminId");
 
                     b.ToTable("Associates");
                 });
@@ -356,7 +353,7 @@ namespace ProjetAtrst.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ApprovedByAdminId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Baccalaureat")
                         .HasColumnType("nvarchar(max)");
@@ -384,6 +381,8 @@ namespace ProjetAtrst.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApprovedByAdminId");
 
                     b.ToTable("Partners");
                 });
@@ -704,26 +703,37 @@ namespace ProjetAtrst.Migrations
             modelBuilder.Entity("ProjetAtrst.Models.Admin", b =>
                 {
                     b.HasOne("ProjetAtrst.Models.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
+                        .WithOne("Admin")
+                        .HasForeignKey("ProjetAtrst.Models.Admin", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
 
             modelBuilder.Entity("ProjetAtrst.Models.ApplicationUser", b =>
                 {
-                    b.HasOne("ProjetAtrst.Models.Admin", null)
+                    b.HasOne("ProjetAtrst.Models.Admin", "ApprovedByAdmin")
                         .WithMany("ApprovedUsers")
-                        .HasForeignKey("AdminId");
+                        .HasForeignKey("ApprovedByAdminId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("ApprovedByAdmin");
                 });
 
             modelBuilder.Entity("ProjetAtrst.Models.Associate", b =>
                 {
+                    b.HasOne("ProjetAtrst.Models.Admin", "ApprovedByAdmin")
+                        .WithMany()
+                        .HasForeignKey("ApprovedByAdminId");
+
                     b.HasOne("ProjetAtrst.Models.ApplicationUser", "User")
                         .WithOne("Associate")
                         .HasForeignKey("ProjetAtrst.Models.Associate", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("ApprovedByAdmin");
 
                     b.Navigation("User");
                 });
@@ -741,11 +751,17 @@ namespace ProjetAtrst.Migrations
 
             modelBuilder.Entity("ProjetAtrst.Models.Partner", b =>
                 {
+                    b.HasOne("ProjetAtrst.Models.Admin", "ApprovedByAdmin")
+                        .WithMany()
+                        .HasForeignKey("ApprovedByAdminId");
+
                     b.HasOne("ProjetAtrst.Models.ApplicationUser", "User")
                         .WithOne("Partner")
                         .HasForeignKey("ProjetAtrst.Models.Partner", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("ApprovedByAdmin");
 
                     b.Navigation("User");
                 });
@@ -754,7 +770,8 @@ namespace ProjetAtrst.Migrations
                 {
                     b.HasOne("ProjetAtrst.Models.Admin", "ApprovedByAdmin")
                         .WithMany("ApprovedProjects")
-                        .HasForeignKey("ApprovedByAdminId");
+                        .HasForeignKey("ApprovedByAdminId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("ApprovedByAdmin");
                 });
@@ -855,6 +872,8 @@ namespace ProjetAtrst.Migrations
 
             modelBuilder.Entity("ProjetAtrst.Models.ApplicationUser", b =>
                 {
+                    b.Navigation("Admin");
+
                     b.Navigation("Associate");
 
                     b.Navigation("Notifications");

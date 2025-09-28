@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using ProjetAtrst.Helpers;
 using ProjetAtrst.Interfaces;
 using ProjetAtrst.Interfaces.Services;
@@ -259,12 +260,6 @@ namespace ProjetAtrst.Services
             return await _unitOfWork.Users.GetAvailableUsersCountAsync(excludedIds);
         }
 
-        public async Task<List<ApplicationUser>> GetAllAvailableUsersAsync(int projectId)
-        {
-            var excludedIds = await GetInvitedOrMembersIdsAsync(projectId);
-            return await _unitOfWork.Users.GetAllAvailableUsersAsync(excludedIds);
-        }
-
         public async Task<List<ApplicationUser>> GetAvailableUsersAsync(List<string> excludedIds, int start, int pageSize, string searchValue = null, string sortColumn = null, string sortDirection = null)
         {
             return await _unitOfWork.Users.GetAvailableUsersAsync(excludedIds, start, pageSize, searchValue, sortColumn, sortDirection);
@@ -274,6 +269,42 @@ namespace ProjetAtrst.Services
         {
             return await _unitOfWork.Users.GetAvailableUsersCountAsync(excludedIds, searchValue);
         }
+
+        //public async Task<List<ApplicationUser>> GetAllAvailableUsersAsync(int projectId)
+        //{
+        //    var excludedIds = await GetInvitedOrMembersIdsAsync(projectId);
+        //    return await _unitOfWork.Users.GetAllAvailableUsersAsync(excludedIds);
+        //}
+        public async Task<List<ApplicationUser>> GetUsersAsync(int start, int pageSize, string searchValue = null, string sortColumn = null, string sortDirection = null)
+        {
+            return await _unitOfWork.Users.GetUsersForAdminAsync(start, pageSize, searchValue, sortColumn, sortDirection);
+        }
+
+        public async Task<int> GetUsersCountAsync(string searchValue = null)
+        {
+            return await _unitOfWork.Users.GetUsersCountForAdminAsync(searchValue);
+        }
+
+        public async Task<bool> ApproveUserAsync(string userId , string AdminId)
+        {
+            var user = await _unitOfWork.Users.GetByIdAsync(userId);
+            if (user == null) return false;
+
+            var Role = await _unitOfWork.Users.GetRoleAsync(AdminId);
+            if (Role != RoleType.Admin && Role !=RoleType.SuperAdmin )
+            {
+                throw new Exception("Approving user is not registered as Admin");
+            }
+
+            user.UserApprovalStatus = ApprovalStatus.Accepted;
+            user.ApprovedByAdminId = AdminId;
+            _unitOfWork.Users.Update(user);
+            await _unitOfWork.SaveAsync(); 
+            return true;
+        }
+
+
+
     }
 
 }

@@ -1,0 +1,155 @@
+﻿@{
+    Layout = "_LayoutAdmin";
+}
+
+<h2>Liste des utilisateurs</h2>
+
+<div class="table-responsive">
+    <table id="usersTable" class="table table-bordered table-striped w-100">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Nom et Prénom</th>
+                <th>Email</th>
+                <th>Profil Complet</th>
+                <th>Approuvé</th>
+                <th>Role</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="userDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" id="userDetailsContent">
+            <!-- سيتم ملؤه بالـ PartialView عبر AJAX -->
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var table = $('#usersTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: '/Admin/Users/Index',
+                    type: 'GET'
+                },
+                columns: [
+                    {
+                        data: "profilePicturePath",
+                        render: function (data) {
+                            return `<img src="${data}" style="height:50px; width:50px; object-fit:cover; border-radius:6px;" />`;
+                        },
+                        orderable: false
+                    },
+                    { data: "fullName" },
+                    { data: "email" },
+                    { data: "isComplete" },
+                    { data: "isApproved" },
+                    { data: "roleType" },
+                    {
+                        data: null,
+                        render: function (data, type, row) {
+                            let detailsBtn = `
+                                <button class="btn btn-outline-info btn-sm btn-details"
+                                        data-id="${row.id}" data-role="${row.roleType}">
+                                    <i class="bi bi-eye"></i> Details
+                                </button>`;
+
+                            if (row.isApproved === "Accepted") {
+                                return `
+                                    ${detailsBtn}
+                                    <button type="button" class="btn btn-secondary btn-sm" disabled>
+                                        <i class="bi bi-check-circle"></i> Validé
+                                    </button>`;
+                            } else {
+                                return `
+                                    ${detailsBtn}
+                                    <button class="btn btn-outline-success btn-sm btn-approve"
+                                            data-id="${row.id}">
+                                        <i class="bi bi-check-circle"></i> Approuver
+                                    </button>`;
+                            }
+                        },
+                        orderable: false
+                    }
+                ],
+                pageLength: 10,
+                responsive: true,
+                searching: true,
+                ordering: true
+            });
+
+            // ✅ Approuver
+            $('#usersTable').on('click', '.btn-approve', function () {
+                var userId = $(this).data('id');
+
+                $.ajax({
+                    url: '/Admin/Users/Approve',
+                    type: 'POST',
+                    data: { userId: userId },
+                    success: function (res) {
+                        if (res.success) {
+                            table.ajax.reload(null, false);
+                        } else {
+                            alert("Erreur lors de l'approbation");
+                        }
+                    },
+                    error: function () {
+                        alert("Une erreur s'est produite");
+                    }
+                });
+            });
+
+            // ✅ Détails (role spécifique)
+            function getDetailsUrl(role) {
+                switch (role.toLowerCase()) {
+                    case "researcher": return '@Url.Action("Details", "Researcher", new { area = "" })';
+                    case "associate": return '@Url.Action("Details", "Associate", new { area = "" })';
+                    case "partner":   return '@Url.Action("Details", "Partner", new { area = "" })';
+                    default:          return '@Url.Action("Details", "Users", new { area = "" })';
+                }
+            }
+
+            $('#usersTable').on('click', '.btn-details', function () {
+                var userId = $(this).data('id');
+                var role = $(this).data('role');
+
+                $.ajax({
+                    url: getDetailsUrl(role),
+                    type: 'GET',
+                    data: { id: userId },
+                    beforeSend: function () {
+                        $('#userDetailsContent').html(`
+                            <div class="text-center p-4">
+                                <i class="fas fa-spinner fa-spin"></i> Chargement...
+                            </div>
+                        `);
+                        $('#userDetailsModal').modal('show');
+                    },
+                    success: function (res) {
+                        $('#userDetailsContent').html(res);
+                    },
+                    error: function () {
+                        $('#userDetailsContent').html(`
+                            <div class="alert alert-danger m-3">
+                                Erreur lors du chargement des détails.
+                            </div>
+                        `);
+                    }
+                });
+            });
+
+        });
+    </script>
+}

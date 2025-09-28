@@ -14,6 +14,7 @@ namespace ProjetAtrst.Interfaces
         IProjectMembershipRepository ProjectMemberships { get; }
         IProjectRequestRepository ProjectRequest { get; }
         IAssociateRepository Associates { get; }
+        IAdminRepository Admins { get; }
         Task<int> SaveAsync();
     }
 }
