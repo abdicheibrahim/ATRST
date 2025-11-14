@@ -75,7 +75,9 @@ namespace ProjetAtrst
             builder.Services.AddScoped<IProjectRequestRepository, ProjectRequestRepository>();
             builder.Services.AddScoped<IDashboardService, DashboardService>();
             builder.Services.AddScoped<IProjectTaskRepository, ProjectTaskRepository>();
+            builder.Services.AddScoped<IProjectTaskAssignmentRepository, ProjectTaskAssignmentRepository>();
             builder.Services.AddScoped<IProjectTaskService, ProjectTaskService>();
+            builder.Services.AddScoped<IProjectTaskAssignmentService, ProjectTaskAssignmentService>();
             builder.Services.AddScoped<IAdminRepository, AdminRepository>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddHttpContextAccessor();

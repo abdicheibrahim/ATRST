@@ -13,9 +13,12 @@ namespace ProjetAtrst.Repositories
         }
         public async Task<IEnumerable<ProjectTask>> GetByProjectIdAsync(int projectId)
         {
-            return await _context.ProjectTasks
-                .Where(t => t.ProjectId == projectId)
-                .ToListAsync();
+            return await  _context.ProjectTasks
+            .Include(t => t.Assignments)
+                .ThenInclude(a => a.AssignedUser)
+            .Where(t => t.ProjectId == projectId)
+            .ToListAsync();
+
         }
         //public async Task<IEnumerable<ProjectTaskViewModel>> GetTaskViewModelsByProjectIdAsync(int projectId)
         //{

@@ -1,0 +1,41 @@
+﻿@{
+    var users = (SelectList)ViewBag.Users;
+
+    int taskId = ViewBag.TaskId != null ? (int)ViewBag.TaskId : 0;
+
+
+}
+
+<form asp-action="Assign" asp-controller="ProjectTaskAssignments" method="post" id="assignUserForm">
+    <input type="hidden" name="taskId" value="@taskId" />
+
+    <div class="mb-3">
+        <label for="userId" class="form-label">Utilisateur</label>
+        <select class="form-select" name="userId" asp-items="users"></select>
+    </div>
+
+    <div class="mb-3">
+        <label for="role" class="form-label">Rôle</label>
+        <select class="form-select" name="role">
+            <option value="Responsable">Responsable</option>
+            <option value="Participant">Participant</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-success">Assigner</button>
+</form>
+
+<script>
+    document.getElementById('assignUserForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const fd = new FormData(this);
+        fetch(this.action, { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(r => r.json())
+            .then(d => {
+                if (d.success) {
+                    bootstrap.Modal.getInstance(document.getElementById('assignUserModal')).hide();
+                    location.reload();
+                } else alert(d.message);
+            });
+    });
+</script>

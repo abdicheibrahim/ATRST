@@ -342,6 +342,7 @@ namespace ProjetAtrst.Services
 
             return memberships.Select(m => new ProjectMemberViewModel
             {
+                UserId = m.UserId,
                 Name = m.User.FullName,
                 Email = m.User.Email,
                 Role = m.Role,

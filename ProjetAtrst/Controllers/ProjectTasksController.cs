@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ProjetAtrst.Interfaces.Services;
 using ProjetAtrst.ViewModels.ProjectTask;
+using System.Security.Claims;
 namespace ProjetAtrst.Controllers
 {
 
@@ -246,5 +249,8 @@ namespace ProjetAtrst.Controllers
                 return Json(new { success = false, message = "Erreur lors du chargement des tâches" });
             }
         }
+
+      
+
     }
 }

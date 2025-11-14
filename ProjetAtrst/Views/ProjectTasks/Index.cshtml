@@ -1,21 +1,20 @@
 ﻿@model IEnumerable<ProjetAtrst.Models.ProjectTask>
 @{
-    ViewData["Title"] = "les tâches";
+    ViewData["Title"] = "Les tâches";
     Layout = "_LayoutProject";
 }
 
 <div class="mb-4">
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
-        <h2 class="mb-0">Les tâches</h2>
+        <h3 class="mb-0">Les tâches</h3>
         <div class="d-flex flex-column flex-sm-row gap-2">
             <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#createTaskModal">
-                <i class="bi bi-plus-square"></i> Add Task
+                <i class="bi bi-plus-square"></i> Ajouter une tâche
             </button>
         </div>
     </div>
 </div>
-
-<!-- عرض رسالة النجاح -->
+<!-- عرض رسائل النجاح أو الخطأ -->
 @if (TempData["SuccessMessage"] != null)
 {
     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -32,101 +31,117 @@
     </div>
 }
 
-<!-- جدول عرض المهام -->
-<div class="card">
-    <div class="card-body">
-        @if (Model != null && Model.Any())
-        {
-            <div class="table-responsive">
-                <table class="table table-striped table-hover">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Nom de la tâche</th>
-                            <th>Description</th>
-                            <th>Statut</th>
-                            <th>Priorité</th>
-                            <th>Progression</th>
-                            <th>Dates</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var task in Model)
+<!-- جدول المهام -->
+@if (Model != null && Model.Any())
+{
+    <table class="table table-bordered">
+        <thead class="table-success">
+            <tr>
+                <th><i class="bi bi-card-text me-1"></i>Nom de la tâche</th>
+                <th><i class="bi bi-info-circle me-1"></i>Description</th>
+                <th><i class="bi bi-flag me-1"></i>Statut</th>
+                <th><i class="bi bi-exclamation-triangle me-1"></i>Priorité</th>
+                <th><i class="bi bi-bar-chart me-1"></i>Progression</th>
+                <th><i class="bi bi-calendar me-1"></i>Dates</th>
+                <th><i class="bi bi-people me-1"></i>Membres assignés</th>
+                <th><i class="bi bi-gear me-1"></i>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var task in Model)
+            {
+                <tr>
+                    <td>@task.TaskName</td>
+                    <td>
+                        @(task.Description?.Length > 50
+                                        ? task.Description.Substring(0, 50) + "..."
+                                        : task.Description)
+                                                       </td>
+                                                       <td>
+                                                           <span class="badge
+                                            @(task.Status == "Pending" ? "bg-warning text-dark" :
+                                                                    task.Status == "InProgress" ? "bg-primary" : "bg-success")">
+                            @(task.Status == "Pending" ? "En attente" :
+                                                task.Status == "InProgress" ? "En cours" : "Terminée")
+                                                                                                  </span>
+                                                                                              </td>
+                                                                                              <td>
+                                                                                                  <span class="badge
+                                            @(task.Priority == 1 ? "bg-danger" :
+                                                                    task.Priority == 2 ? "bg-warning text-dark" : "bg-success")">
+                            @(task.Priority == 1 ? "Haute 🔴" :
+                                                task.Priority == 2 ? "Moyenne 🟡" : "Basse 🟢")
+                </span>
+            </td>
+            <td>
+                <div class="progress" style="height: 20px; width: 80px;">
+                    <div class="progress-bar" role="progressbar"
+                         style="width: @(task.Progress)%"
+                         aria-valuenow="@task.Progress" aria-valuemin="0" aria-valuemax="100">
+                        @task.Progress%
+                    </div>
+                </div>
+            </td>
+            <td>
+                <small>
+                    Début: @(task.StartDate.ToString("dd/MM/yyyy"))<br />
+                    Fin: @(task.EndDate.ToString("dd/MM/yyyy"))
+                </small>
+            </td>
+            <td>
+                @if (task.Assignments != null && task.Assignments.Any())
                         {
-                            <tr>
-                                <td>@task.TaskName</td>
-                                <td>
-                                    @(task.Description?.Substring(0, Math.Min(50, task.Description?.Length ?? 0)) + (task.Description?.Length > 50 ? "..." : ""))
-                                </td>
-                                <td>
-                                    <span class="badge
-                                                @(task.Status == "Pending" ? "bg-warning" :
-                                                                                    task.Status == "InProgress" ? "bg-primary" : "bg-success")">
-                                        @(task.Status == "Pending" ? "En attente" :
-                                                                        task.Status == "InProgress" ? "En cours" : "Terminée")
-                                                                                                                          </span>
-                                                                                                                      </td>
-                                                                                                                      <td>
-                                                                                                                          <span class="badge
-                                                @(task.Priority == 1 ? "bg-danger" :
-                                                                                    task.Priority == 2 ? "bg-warning" : "bg-success")">
-                                        @(task.Priority == 1 ? "Haute 🔴" :
-                                                                        task.Priority == 2 ? "Moyenne 🟡" : "Basse 🟢")
-                            </span>
-                        </td>
-                        <td>
-                            <div class="progress" style="height: 20px;">
-                                <div class="progress-bar"
-                                     role="progressbar"
-                                     style="width: @(task.Progress)%"
-                                     aria-valuenow="@task.Progress"
-                                     aria-valuemin="0"
-                                     aria-valuemax="100">
-                                    @task.Progress%
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <small>
-                                Début: @(task.StartDate.ToString("dd/MM/yyyy"))<br />
-                                Fin: @(task.EndDate.ToString("dd/MM/yyyy"))
-                            </small>
-                        </td>
-                        <td>
-                            <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-sm btn-outline-primary"
-                                        onclick="editTask(@task.TaskId)" title="Modifier">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button type="button" class="btn btn-sm btn-outline-danger"
-                                        onclick="deleteTask(@task.TaskId)" title="Supprimer">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                                        }
-                    </tbody>
-                </table>
-            </div>
-        }
-        else
-        {
-            <div class="text-center py-5">
-                <i class="fas fa-tasks fa-3x text-muted mb-3"></i>
-                <h4 class="text-muted">Aucune tâche trouvée</h4>
-                <p class="text-muted">Commencez par créer votre première tâche</p>
-            </div>
-        }
-    </div>
-</div>
+                            <ul class="list-unstyled mb-0">
+                                @foreach (var assign in task.Assignments)
+                                {
+                                    <li>
+                                        <i class="bi bi-person-circle"></i>
+                                        @assign.AssignedUser.FullName
+                                        <small class="text-muted">(@assign.Role)</small>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Aucun membre</span>
+                        }
+                    </td>
 
-<!-- الـ Modal لإنشاء المهمة -->
+            <td>
+                <button type="button" class="btn btn-sm btn-outline-primary me-1"
+                        onclick="editTask(@task.TaskId)" title="Modifier">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-danger"
+                        onclick="deleteTask(@task.TaskId)" title="Supprimer">
+                    <i class="fas fa-trash"></i>
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-success"
+                        onclick="assignUser(@task.TaskId)" title="Assigner un utilisateur">
+                    <i class="bi bi-person-plus"></i>
+                </button>
+
+            </td>
+        </tr>
+                }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="text-center py-4 text-muted">
+        <i class="fas fa-tasks fa-2x mb-2"></i>
+        <p>Aucune tâche trouvée. Commencez par en créer une.</p>
+    </div>
+}
+
+<!-- Modal لإنشاء المهمة -->
 <div class="modal fade" id="createTaskModal" tabindex="-1" aria-labelledby="createTaskModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="createTaskModalLabel">
+                <h5 class="modal-title">
                     <i class="fas fa-plus-circle me-2"></i> Créer une nouvelle tâche
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -156,7 +171,8 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        // Synchronize progress range slider with number input
+       
+
         document.addEventListener('DOMContentLoaded', function () {
             const progressRange = document.getElementById('progressRange');
             const progressInput = document.getElementById('progressInput');
@@ -173,7 +189,6 @@
                 });
             }
 
-            // Date validation logic
             const startDate = document.querySelector('input[name="StartDate"]');
             const endDate = document.querySelector('input[name="EndDate"]');
 
@@ -195,7 +210,6 @@
                 });
             }
 
-            // Auto-resize textarea
             const textarea = document.querySelector('textarea[name="Description"]');
             if (textarea) {
                 textarea.addEventListener('input', function () {
@@ -204,12 +218,10 @@
                 });
             }
 
-            // Form submission handling with AJAX
             const form = document.getElementById('createTaskForm');
             if (form) {
                 form.addEventListener('submit', function (e) {
                     e.preventDefault();
-
                     const formData = new FormData(this);
                     const submitButton = this.querySelector('button[type="submit"]');
                     const originalText = submitButton.innerHTML;
@@ -219,35 +231,24 @@
                     fetch(this.action, {
                         method: 'POST',
                         body: formData,
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
                     })
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            const modal = bootstrap.Modal.getInstance(document.getElementById('createTaskModal'));
-                            if (modal) modal.hide();
-
-                            // عرض رسالة النجاح
-                            const alertHtml = `
+                            bootstrap.Modal.getInstance(document.getElementById('createTaskModal')).hide();
+                            document.querySelector('h3').insertAdjacentHTML('afterend', `
                                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                                     ${data.message}
                                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                                 </div>
-                            `;
-                            document.querySelector('.mb-4').insertAdjacentHTML('afterend', alertHtml);
-
-                            // تحديث الجدول
+                            `);
                             location.reload();
                         } else {
-                            alert('Une erreur est survenue: ' + data.message);
+                            alert('Erreur: ' + data.message);
                         }
                     })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Une erreur est survenue lors de la création de la tâche.');
-                    })
+                    .catch(() => alert('Erreur lors de la création'))
                     .finally(() => {
                         submitButton.innerHTML = originalText;
                         submitButton.disabled = false;
@@ -256,141 +257,119 @@
             }
         });
 
-        // دوال للتعامل مع التعديل والحذف
         function editTask(taskId) {
             fetch(`/ProjectTasks/Edit/${taskId}`)
-                .then(response => response.text())
+                .then(r => r.text())
                 .then(html => {
                     document.getElementById('editTaskModalBody').innerHTML = html;
                     new bootstrap.Modal(document.getElementById('editTaskModal')).show();
-
-                    // تطبيق نفس المنطق للحقول في نموذج التعديل
                     applyEditFormLogic();
                 })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Erreur lors du chargement du formulaire de modification');
-                });
+                .catch(() => alert('Erreur lors du chargement du formulaire'));
         }
 
         function deleteTask(taskId) {
             if (confirm('Êtes-vous sûr de vouloir supprimer cette tâche?')) {
-                // إنشاء نموذج مخفي للحذف
                 const form = document.createElement('form');
                 form.method = 'post';
                 form.action = `/ProjectTasks/Delete/${taskId}`;
-
-                // إضافةAntiForgeryToken
                 const token = document.querySelector('input[name="__RequestVerificationToken"]');
                 if (token) {
-                    const hiddenField = document.createElement('input');
-                    hiddenField.type = 'hidden';
-                    hiddenField.name = '__RequestVerificationToken';
-                    hiddenField.value = token.value;
-                    form.appendChild(hiddenField);
+                    const hidden = document.createElement('input');
+                    hidden.name = '__RequestVerificationToken';
+                    hidden.value = token.value;
+                    form.appendChild(hidden);
                 }
-
                 document.body.appendChild(form);
                 form.submit();
             }
         }
+                function assignUser(taskId) {
+            fetch(`/ProjectTaskAssignments/Assign?taskId=${taskId}`)
+                .then(r => r.text())
+                .then(html => {
+                    const modalDiv = document.createElement('div');
+                    modalDiv.classList.add('modal', 'fade');
+                    modalDiv.id = 'assignUserModal';
+                    modalDiv.innerHTML = `
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header bg-success text-white">
+                                    <h5 class="modal-title">Assigner un utilisateur</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">${html}</div>
+                            </div>
+                        </div>`;
+                    document.body.appendChild(modalDiv);
+                    new bootstrap.Modal(modalDiv).show();
+                })
+                .catch(() => alert("Erreur lors du chargement du formulaire"));
+        }
 
         function applyEditFormLogic() {
-            // تطبيق نفس المنطق للحقول في نموذج التعديل
-            const progressRange = document.getElementById('progressRangeEdit');
-            const progressInput = document.getElementById('progressInputEdit');
-
-            if (progressRange && progressInput) {
-                progressRange.addEventListener('input', function () {
-                    progressInput.value = this.value;
-                });
-
-                progressInput.addEventListener('input', function () {
-                    progressRange.value = this.value;
-                    if (this.value < 0) this.value = 0;
-                    if (this.value > 100) this.value = 100;
+           
+            const pr = document.getElementById('progressRangeEdit');
+            const pi = document.getElementById('progressInputEdit');
+            if (pr && pi) {
+                pr.addEventListener('input', () => pi.value = pr.value);
+                pi.addEventListener('input', () => {
+                    pr.value = pi.value;
+                    if (pi.value < 0) pi.value = 0;
+                    if (pi.value > 100) pi.value = 100;
                 });
             }
 
-            // Date validation logic for edit form
-            const startDate = document.querySelector('#editTaskForm input[name="StartDate"]');
-            const endDate = document.querySelector('#editTaskForm input[name="EndDate"]');
+            const sd = document.querySelector('#editTaskForm input[name="StartDate"]');
+            const ed = document.querySelector('#editTaskForm input[name="EndDate"]');
+            if (sd) sd.addEventListener('change', () => {
+                if (ed?.value && new Date(sd.value) > new Date(ed.value)) {
+                    alert('Date de début > date de fin');
+                    sd.value = '';
+                }
+            });
+            if (ed) ed.addEventListener('change', () => {
+                if (sd?.value && new Date(ed.value) < new Date(sd.value)) {
+                    alert('Date de fin < date de début');
+                    ed.value = '';
+                }
+            });
 
-            if (startDate) {
-                startDate.addEventListener('change', function () {
-                    if (endDate && endDate.value && new Date(this.value) > new Date(endDate.value)) {
-                        alert('La date de début ne peut pas être postérieure à la date de fin');
-                        this.value = '';
-                    }
-                });
-            }
+            const ta = document.querySelector('#editTaskForm textarea[name="Description"]');
+            if (ta) ta.addEventListener('input', () => {
+                ta.style.height = 'auto';
+                ta.style.height = ta.scrollHeight + 'px';
+            });
 
-            if (endDate) {
-                endDate.addEventListener('change', function () {
-                    if (startDate && startDate.value && new Date(this.value) < new Date(startDate.value)) {
-                        alert('La date de fin ne peut pas être antérieure à la date de début');
-                        this.value = '';
-                    }
-                });
-            }
-
-            // Auto-resize textarea for edit form
-            const textarea = document.querySelector('#editTaskForm textarea[name="Description"]');
-            if (textarea) {
-                textarea.addEventListener('input', function () {
-                    this.style.height = 'auto';
-                    this.style.height = this.scrollHeight + 'px';
-                });
-            }
-
-            // Form submission handling for edit form
-            const editForm = document.getElementById('editTaskForm');
-            if (editForm) {
-                editForm.addEventListener('submit', function (e) {
+            const ef = document.getElementById('editTaskForm');
+            if (ef) {
+                ef.addEventListener('submit', function (e) {
                     e.preventDefault();
+                    const fd = new FormData(ef);
+                    const btn = ef.querySelector('button[type="submit"]');
+                    const txt = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mise à jour...';
+                    btn.disabled = true;
 
-                    const formData = new FormData(this);
-                    const submitButton = this.querySelector('button[type="submit"]');
-                    const originalText = submitButton.innerHTML;
-                    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mise à jour...';
-                    submitButton.disabled = true;
-
-                    fetch(this.action, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            const modal = bootstrap.Modal.getInstance(document.getElementById('editTaskModal'));
-                            if (modal) modal.hide();
-
-                            // عرض رسالة النجاح
-                            const alertHtml = `
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    ${data.message}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                </div>
-                            `;
-                            document.querySelector('.mb-4').insertAdjacentHTML('afterend', alertHtml);
-
-                            // تحديث الجدول
-                            location.reload();
-                        } else {
-                            alert('Une erreur est survenue: ' + data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Une erreur est survenue lors de la mise à jour de la tâche.');
-                    })
-                    .finally(() => {
-                        submitButton.innerHTML = originalText;
-                        submitButton.disabled = false;
-                    });
+                    fetch(ef.action, { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                        .then(r => r.json())
+                        .then(d => {
+                            if (d.success) {
+                                bootstrap.Modal.getInstance(document.getElementById('editTaskModal')).hide();
+                                document.querySelector('h3').insertAdjacentHTML('afterend', `
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        ${d.message}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                `);
+                                location.reload();
+                            } else alert('Erreur: ' + d.message);
+                        })
+                        .catch(() => alert('Erreur de mise à jour'))
+                        .finally(() => {
+                            btn.innerHTML = txt;
+                            btn.disabled = false;
+                        });
                 });
             }
         }

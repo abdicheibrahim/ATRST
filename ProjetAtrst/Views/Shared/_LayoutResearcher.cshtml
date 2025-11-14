@@ -1,4 +1,4 @@
-@using Microsoft.AspNetCore.Identity;
+﻿@using Microsoft.AspNetCore.Identity;
 @using ProjetAtrst.Interfaces.Services;
 @inject SignInManager<ApplicationUser> _SignInManager;
 @inject INotificationService NotificationService
@@ -88,6 +88,25 @@
             <a asp-controller="Project" asp-action="MyProjects" class="nav-link @(IsActive("Project","MyProjects"))">
                 <i class="bi bi-briefcase"></i> Mes projets
             </a>
+            @switch (user.RoleType)
+            {
+                case RoleType.Researcher:
+                    <a asp-controller="Researcher" asp-action="MyTasks" class="nav-link @(IsActive("Researcher", "MyTasks"))">
+                        <i class="bi bi-person-vcard"></i>My tâches
+                    </a>
+                    break;
+                case RoleType.Partner:
+                    <a asp-controller="Partner" asp-action="MyTasks" class="nav-link @(IsActive("Partner", "MyTasks"))">
+                        <i class="bi bi-person-vcard"></i>My tâches
+                    </a>
+                    break;
+                case RoleType.Associate:
+                    <a asp-controller="Associate" asp-action="MyTasks" class="nav-link @(IsActive("Associate", "MyTasks"))">
+                        <i class="bi bi-person-vcard"></i>My tâches
+                    </a>
+                    break;
+            }
+
             <a asp-controller="ProjectRequest" asp-action="Incoming" class="nav-link @(IsActive("ProjectRequest", "Incoming"))">
                 <i class="bi bi-envelope-arrow-down"></i>Demandes reçues
             </a>
